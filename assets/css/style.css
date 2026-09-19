@@ -1,0 +1,311 @@
+/* ===========================================================
+   Boshra Girls' Primary School — Portal Stylesheet
+   =========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap');
+
+:root {
+  /* Color tokens */
+  --bg-deep: #2E1F47;
+  --bg-mid: #563A7A;
+  --accent-coral: #FF7F8E;
+  --accent-coral-deep: #E85D6E;
+  --accent-gold: #FFC857;
+  --accent-mint: #6FCF97;
+  --text-light: #FFF9F0;
+  --text-muted: #D8CCEB;
+  --text-deep: #2E1F47;
+  --glass-fill: rgba(255, 255, 255, 0.14);
+  --glass-fill-strong: rgba(255, 255, 255, 0.22);
+  --glass-border: rgba(255, 255, 255, 0.32);
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  direction: rtl;
+  color: var(--text-light);
+  background: radial-gradient(circle at 20% 15%, #4A3072 0%, var(--bg-deep) 45%, #1C1330 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  line-height: 1.7;
+}
+
+/* ---------- Drifting background blobs (single orchestrated ambient motion) ---------- */
+.bg-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  z-index: 0;
+  pointer-events: none;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+.bg-blob.b1 {
+  width: 380px; height: 380px;
+  background: var(--accent-coral);
+  top: -80px; right: -100px;
+  animation-duration: 26s;
+}
+.bg-blob.b2 {
+  width: 320px; height: 320px;
+  background: var(--accent-gold);
+  bottom: -60px; left: -80px;
+  animation-duration: 20s;
+}
+.bg-blob.b3 {
+  width: 260px; height: 260px;
+  background: var(--accent-mint);
+  top: 40%; left: 60%;
+  animation-duration: 30s;
+}
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-30px, 40px) scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-blob { animation: none; }
+}
+
+/* ---------- Layout shells ---------- */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.brand-emblem {
+  font-size: 2.6rem;
+  margin-bottom: 6px;
+}
+
+.brand h1 {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 900;
+  margin: 0 0 4px;
+  color: var(--text-light);
+}
+
+.brand p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.teacher-credit {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--accent-gold);
+}
+
+.hub-teacher-credit {
+  margin: 0;
+  order: 2;
+}
+
+/* ---------- Glass card ---------- */
+.glass-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.field input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-deep);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.field input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 200, 87, 0.55);
+}
+
+.field-error {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #FFD9DC;
+  min-height: 1.2em;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 1.02rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.15s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-coral) 0%, var(--accent-coral-deep) 100%);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(232, 93, 110, 0.35);
+}
+
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  border: 1px solid var(--glass-border);
+}
+
+/* ---------- Games hub ---------- */
+.hub-header {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hub-header .welcome {
+  font-size: 1.1rem;
+}
+
+.hub-header .welcome strong {
+  color: var(--accent-gold);
+}
+
+.games-grid {
+  width: 100%;
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.game-tile {
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-md);
+  padding: 20px 14px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.game-tile:hover {
+  transform: translateY(-4px);
+  background: var(--glass-fill-strong);
+}
+
+.game-tile .tile-number {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--accent-gold);
+}
+
+.game-tile .tile-name {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.game-tile.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- Footer (mandatory on every page) ---------- */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 22px 16px 28px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Utility ---------- */
+.hidden { display: none !important; }
+
+.loader {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+  .glass-card { padding: 26px 20px; }
+  .games-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+}
