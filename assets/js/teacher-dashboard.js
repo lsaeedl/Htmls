@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   await refreshGames();
 });
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  clearTeacherSession();
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await syncLogout();
   window.location.href = 'login.html';
 });
 

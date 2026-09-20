@@ -81,7 +81,7 @@ function getCurrentStudent() {
 async function syncVerifyTeacherToken(idToken) {
   const result = await gsPost('verifyTeacherToken', { idToken });
   if (result.success) {
-    saveTeacherSession(result.teacher);
+    saveTeacherSession(result.teacher, result.authToken);
   }
   return result;
 }
@@ -93,24 +93,35 @@ async function syncVerifyTeacherToken(idToken) {
 async function syncLoginWithPassword(email, password) {
   const result = await gsPost('loginWithPassword', { email, password });
   if (result.success) {
-    saveTeacherSession(result.teacher);
+    saveTeacherSession(result.teacher, result.authToken);
   }
   return result;
 }
 
 async function syncSetPassword(email, newPassword) {
-  const teacher = getCurrentTeacher();
-  return await gsPost('setPassword', { email, newPassword, actorEmail: teacher ? teacher.email : '' });
+  return await gsPost('setPassword', { email, newPassword, ...teacherAuthHeader() });
+}
+
+async function syncLogout() {
+  const token = getTeacherToken();
+  if (token) {
+    try { await gsPost('logout', { authToken: token }); } catch (e) { /* best-effort */ }
+  }
+  clearTeacherSession();
 }
 
 /**
  * Teacher sessions are kept in localStorage (not sessionStorage) so a
  * teacher on their own device/browser doesn't have to sign in again
- * every time they close the tab. Identity was already verified once by
- * Google or by the password check — only the storage location differs.
+ * every time they close the tab. The stored "teacher" object is just
+ * for showing a name/permissions in the UI — every real permission
+ * check happens server-side against the authToken, which the server
+ * resolves back to an email via the Sessions sheet. A visitor can't
+ * forge access by editing this local object or guessing someone's email.
  */
-function saveTeacherSession(teacher) {
+function saveTeacherSession(teacher, authToken) {
   localStorage.setItem('teacher', JSON.stringify(teacher));
+  localStorage.setItem('teacherToken', authToken);
 }
 
 function getCurrentTeacher() {
@@ -118,17 +129,22 @@ function getCurrentTeacher() {
   return raw ? JSON.parse(raw) : null;
 }
 
+function getTeacherToken() {
+  return localStorage.getItem('teacherToken');
+}
+
 function clearTeacherSession() {
   localStorage.removeItem('teacher');
+  localStorage.removeItem('teacherToken');
 }
 
 function teacherAuthHeader() {
-  const teacher = getCurrentTeacher();
-  return teacher ? { actorEmail: teacher.email } : {};
+  const token = getTeacherToken();
+  return token ? { authToken: token } : {};
 }
 
 async function syncListTeachers() {
-  return await gsGet('listTeachers');
+  return await gsGet('listTeachers', teacherAuthHeader());
 }
 
 async function syncUpsertTeacher(teacherData) {
@@ -142,7 +158,7 @@ async function syncDeleteTeacher(email) {
 // ---------- Question management (teacher panel) ----------
 
 async function syncGetQuestionsByGame(gameId) {
-  return await gsGet('getQuestionsByGame', { gameId });
+  return await gsGet('getQuestionsByGame', { gameId, ...teacherAuthHeader() });
 }
 
 async function syncAddQuestion(questionData) {
@@ -201,17 +217,15 @@ async function syncDeleteGame(gameId) {
 // ---------- Reporting ----------
 
 async function syncGetResultsByGame(gameId, classFilter) {
-  const teacher = getCurrentTeacher();
   return await gsGet('getResultsByGame', {
     gameId,
-    actorEmail: teacher ? teacher.email : '',
-    classFilter: classFilter || ''
+    classFilter: classFilter || '',
+    ...teacherAuthHeader()
   });
 }
 
 async function syncGetResultsByStudent(studentCode) {
-  const teacher = getCurrentTeacher();
-  return await gsGet('getResultsByStudent', { studentCode, actorEmail: teacher ? teacher.email : '' });
+  return await gsGet('getResultsByStudent', { studentCode, ...teacherAuthHeader() });
 }
 
 /**
