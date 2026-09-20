@@ -187,24 +187,39 @@
           <div class="glass-card" style="max-width:none;">
             <div class="form-grid">
               <div class="field">
-                <label>نوع گزارش</label>
-                <select id="an_mode">
-                  <option value="game">بر اساس یک بازی (کل کلاس)</option>
-                  <option value="student">بر اساس یک دانش‌آموز</option>
+                <label>دامنه‌ی گزارش</label>
+                <select id="an_scope">
+                  <option value="student">یک دانش‌آموز خاص</option>
+                  <option value="class">یک کلاس</option>
+                  <option value="school">کل محدوده‌ی دسترسی شما (مدرسه/کلاس‌های شما)</option>
+                </select>
+              </div>
+              <div class="field" id="an_scopeValueWrap">
+                <label id="an_scopeValueLabel">کد دانش‌آموزی</label>
+                <input type="text" id="an_scopeValue" placeholder="مثلاً 110">
+              </div>
+              <div class="field">
+                <label>بازه‌ی زمانی</label>
+                <select id="an_timeframe">
+                  <option value="single">یک آزمون مشخص</option>
+                  <option value="all">همه‌ی آزمون‌ها (روند کلی)</option>
                 </select>
               </div>
               <div class="field" id="an_gameWrap"><label>بازی</label><select id="an_gameSelect"></select></div>
-              <div class="field" id="an_studentWrap" style="display:none;"><label>کد دانش‌آموزی</label><input type="text" id="an_studentCode"></div>
+              <div class="field" id="an_compareWrap">
+                <label>مقایسه با</label>
+                <select id="an_compareWith">
+                  <option value="">بدون مقایسه</option>
+                  <option value="classAverage">میانگین کلاس (فقط برای دانش‌آموز خاص)</option>
+                  <option value="schoolAverage">میانگین مدرسه</option>
+                </select>
+              </div>
             </div>
-            <div class="field" id="an_classFilterWrap" style="max-width:280px;">
-              <label>محدود کردن به یک کلاس خاص (اختیاری)</label>
-              <input type="text" id="an_classFilter" placeholder="مثلاً ۲الف — خالی = همه‌ی کلاس‌های مجاز شما">
-            </div>
-            <button type="button" id="an_buildBtn" class="btn btn-primary" style="max-width:240px;">ساخت پرامپت تحلیل</button>
+            <button type="button" id="an_buildBtn" class="btn btn-primary" style="max-width:240px; margin-top:10px;">ساخت پرامپت تحلیل</button>
 
             <div class="field" style="margin-top:16px;">
               <label>پرامپت آماده (کپی کنید و در ChatGPT یا Gemini پیست کنید)</label>
-              <textarea id="an_generatedPrompt" readonly style="min-height:200px;"></textarea>
+              <textarea id="an_generatedPrompt" readonly style="min-height:220px;"></textarea>
             </div>
             <button type="button" id="an_copyPromptBtn" class="btn btn-ghost" style="max-width:160px;">کپی پرامپت</button>
             <div id="an_status" class="status-msg"></div>
