@@ -473,12 +473,10 @@ function initAiTab() {
   document.getElementById('ai_copyPromptBtn').addEventListener('click', () => copyText('ai_generatedPrompt'));
   document.getElementById('ai_parseBtn').addEventListener('click', parseAndPreviewQuestions);
 
-  document.getElementById('an_mode').addEventListener('change', (e) => {
-    const isGame = e.target.value === 'game';
-    document.getElementById('an_gameWrap').style.display = isGame ? 'block' : 'none';
-    document.getElementById('an_studentWrap').style.display = isGame ? 'none' : 'block';
-    document.getElementById('an_classFilterWrap').style.display = isGame ? 'block' : 'none';
-  });
+  document.getElementById('an_scope').addEventListener('change', updateAnalysisFormVisibility);
+  document.getElementById('an_timeframe').addEventListener('change', updateAnalysisFormVisibility);
+  updateAnalysisFormVisibility();
+
   document.getElementById('an_buildBtn').addEventListener('click', buildAnalysisPrompt);
   document.getElementById('an_copyPromptBtn').addEventListener('click', () => copyText('an_generatedPrompt'));
 }
@@ -565,51 +563,86 @@ async function parseAndPreviewQuestions() {
   }
 }
 
+function updateAnalysisFormVisibility() {
+  const scope = document.getElementById('an_scope').value;
+  const timeframe = document.getElementById('an_timeframe').value;
+
+  const scopeValueWrap = document.getElementById('an_scopeValueWrap');
+  const scopeValueLabel = document.getElementById('an_scopeValueLabel');
+  scopeValueWrap.style.display = scope === 'school' ? 'none' : 'block';
+  scopeValueLabel.textContent = scope === 'student' ? 'کد دانش‌آموزی' : 'نام کلاس';
+
+  document.getElementById('an_gameWrap').style.display = timeframe === 'single' ? 'block' : 'none';
+
+  // "compare with class average" only makes sense when the scope is a single student.
+  const compareSelect = document.getElementById('an_compareWith');
+  const classAvgOption = compareSelect.querySelector('option[value="classAverage"]');
+  classAvgOption.disabled = scope !== 'student';
+  if (scope !== 'student' && compareSelect.value === 'classAverage') compareSelect.value = '';
+}
+
+function formatDuration(seconds) {
+  if (!seconds) return 'نامشخص';
+  const m = Math.floor(seconds / 60), s = seconds % 60;
+  return m > 0 ? `${m} دقیقه و ${s} ثانیه` : `${s} ثانیه`;
+}
+
+const SCOPE_LABELS = { student: 'دانش‌آموز', class: 'کلاس', school: 'محدوده‌ی دسترسی شما (مدرسه/کلاس‌های مجاز)' };
+const TIMEFRAME_LABELS = { single: 'یک آزمون مشخص', all: 'همه‌ی آزمون‌ها (روند کلی)' };
+
 async function buildAnalysisPrompt() {
   const statusEl = document.getElementById('an_status');
-  const mode = document.getElementById('an_mode').value;
-  statusEl.textContent = 'در حال دریافت داده‌ها...';
+  statusEl.textContent = 'در حال محاسبه...';
   statusEl.className = 'status-msg';
 
-  let results, subjectLine;
+  const scope = document.getElementById('an_scope').value;
+  const scopeValue = document.getElementById('an_scopeValue').value.trim();
+  const timeframe = document.getElementById('an_timeframe').value;
+  const gameId = document.getElementById('an_gameSelect').value;
+  const compareWith = document.getElementById('an_compareWith').value;
+  const game = allGames.find(g => String(g.gameId) === gameId);
 
-  if (mode === 'game') {
-    const gameId = document.getElementById('an_gameSelect').value;
-    const game = allGames.find(g => String(g.gameId) === gameId);
-    const classFilter = document.getElementById('an_classFilter').value.trim();
-    const res = await syncGetResultsByGame(gameId, classFilter);
-    if (!res.success) { statusEl.textContent = res.error; statusEl.className = 'status-msg status-err'; return; }
-    results = res.results;
-    subjectLine = `نتایج ${classFilter ? 'کلاس ' + classFilter : 'کلاس'} در بازی «${game ? game.title : gameId}»`;
-  } else {
-    const studentCode = document.getElementById('an_studentCode').value.trim();
-    const res = await syncGetResultsByStudent(studentCode);
-    if (!res.success) { statusEl.textContent = res.error; statusEl.className = 'status-msg status-err'; return; }
-    results = res.results;
-    subjectLine = `نتایج دانش‌آموز با کد ${studentCode} در همه‌ی بازی‌ها`;
-  }
-
-  if (!results.length) {
-    statusEl.textContent = 'هیچ نتیجه‌ی ثبت‌شده‌ای (نوبت رسمی) برای این مورد پیدا نشد.';
+  const res = await syncGetAnalyticsSummary({ scope, scopeValue, timeframe, gameId, compareWith });
+  if (!res.success) {
+    statusEl.textContent = res.error || 'خطا در دریافت داده‌ها';
     statusEl.className = 'status-msg status-err';
     return;
   }
 
-  const dataLines = results.map(r =>
-    `- کد دانش‌آموزی: ${r.studentCode} | بازی: ${r.gameId} | درست: ${r.correctCount} | غلط: ${r.wrongCount}`
-  ).join('\n');
+  const s = res.summary;
+  const subjectLine = scope === 'school'
+    ? SCOPE_LABELS.school
+    : `${SCOPE_LABELS[scope]} «${scopeValue}»`;
 
-  const prompt = `شما یک مشاور آموزشی دبستان هستید. بر اساس داده‌های زیر (فقط نتایج رسمی، بدون نمره‌ی عددی — فقط تعداد پاسخ درست/غلط)، یک تحلیل کوتاه و راهکارهای عملی برای آموزگار و والدین جهت بهبود یادگیری ارائه بده. لحن دلسوزانه، سازنده و بدون قضاوت باشد.
+  let statsBlock = `- دامنه: ${subjectLine}
+- بازه: ${TIMEFRAME_LABELS[timeframe]}${timeframe === 'single' ? ' (بازی «' + (game ? game.title : gameId) + '»)' : ''}
+- تعداد آزمون‌های رسمی ثبت‌شده: ${s.count}
+- میانگین درصد پاسخ درست: ${s.avgCorrectPercent}٪
+- میانگین زمان پاسخگویی: ${formatDuration(s.avgDurationSeconds)}
+- مجموع پاسخ درست: ${s.totalCorrect} | مجموع پاسخ غلط: ${s.totalWrong}`;
 
-${subjectLine}:
-${dataLines}
+  if (timeframe === 'all' && s.perGameBreakdown.length > 1) {
+    statsBlock += `\n- روند به تفکیک بازی:\n` + s.perGameBreakdown.map(g => {
+      const gInfo = allGames.find(x => String(x.gameId) === g.gameId);
+      return `  · ${gInfo ? gInfo.title : 'بازی ' + g.gameId}: میانگین ${g.avgCorrectPercent}٪ (${g.count} آزمون)`;
+    }).join('\n');
+  }
+
+  if (res.comparison) {
+    statsBlock += `\n- ${res.comparison.label}: میانگین پاسخ درست ${res.comparison.avgCorrectPercent}٪، میانگین زمان ${formatDuration(res.comparison.avgDurationSeconds)}`;
+  }
+
+  const prompt = `شما یک مشاور آموزشی دبستان هستید. بر اساس آمار خلاصه‌ی زیر (فقط نوبت‌های رسمی، بدون نمره‌ی عددی خام — فقط درصد و آمار تجمیعی)، یک تحلیل کوتاه و راهکارهای عملی ارائه بده. لحن دلسوزانه، سازنده و بدون قضاوت باشد.
+
+${statsBlock}
 
 لطفاً خروجی را در قالب زیر بده:
 ۱. جمع‌بندی کلی وضعیت
 ۲. نقاط قوت
 ۳. زمینه‌های نیازمند تمرین بیشتر
-۴. ۳ پیشنهاد عملی برای آموزگار
-۵. ۳ پیشنهاد عملی برای والدین جهت تمرین در خانه`;
+۴. تحلیل سرعت پاسخگویی (آیا مناسب سن دبستان است؟ نشانه‌ی عجله یا تردید هست؟)
+${res.comparison ? '۵. تحلیل مقایسه‌ای نسبت به میانگین ذکرشده\n۶' : '۵'}. پیشنهادهای عملی برای آموزگار
+${res.comparison ? '۷' : '۶'}. پیشنهادهای عملی برای والدین جهت تمرین در خانه`;
 
   document.getElementById('an_generatedPrompt').value = prompt;
   statusEl.textContent = 'پرامپت آماده شد.';

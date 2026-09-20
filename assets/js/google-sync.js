@@ -214,6 +214,14 @@ async function syncGetResultsByStudent(studentCode) {
   return await gsGet('getResultsByStudent', { studentCode, actorEmail: teacher ? teacher.email : '' });
 }
 
+/**
+ * params: { scope: 'student'|'class'|'school', scopeValue, timeframe: 'single'|'all',
+ *           gameId, compareWith: ''|'classAverage'|'schoolAverage' }
+ */
+async function syncGetAnalyticsSummary(params) {
+  return await gsPost('getAnalyticsSummary', { ...params, ...teacherAuthHeader() });
+}
+
 // ---------- Attempts ----------
 
 async function syncCheckAttempts(studentCode, gameId) {
@@ -264,8 +272,8 @@ async function syncGetGameSettings(gameId) {
 
 // ---------- Results ----------
 
-async function syncSaveResult(studentCode, gameId, correctCount, wrongCount) {
-  const result = await gsPost('saveResult', { studentCode, gameId, correctCount, wrongCount });
+async function syncSaveResult(studentCode, gameId, correctCount, wrongCount, durationSeconds) {
+  const result = await gsPost('saveResult', { studentCode, gameId, correctCount, wrongCount, durationSeconds });
 
   // Always keep a local trace too, so the student/teacher has something
   // to show even if the network call ultimately failed.

@@ -70,6 +70,7 @@ const GameEngine = (() => {
     state.settings = settingsResult.success ? settingsResult : { timerSeconds: 300 };
     state.correctCount = 0;
     state.wrongCount = 0;
+    state.startedAt = Date.now();
 
     startTimer(state.settings.timerSeconds || 300);
     runStage1();
@@ -263,11 +264,14 @@ const GameEngine = (() => {
     stopTimer();
     renderLoading('در حال ثبت نتیجه...');
 
+    const durationSeconds = Math.round((Date.now() - state.startedAt) / 1000);
+
     const result = await syncSaveResult(
       state.student.studentCode,
       state.gameId,
       state.correctCount,
-      state.wrongCount
+      state.wrongCount,
+      durationSeconds
     );
 
     renderResults(result);
@@ -276,14 +280,11 @@ const GameEngine = (() => {
   function renderResults(saveResult) {
     const perfect = state.wrongCount === 0;
     const official = saveResult && saveResult.isOfficial;
-    const attempts = state.correctCount + state.wrongCount;
-    const finalScore = attempts === 0 ? 0 : Math.round((state.correctCount / attempts) * 100);
 
     state.root.innerHTML = `
       <div class="results-card">
         ${perfect ? '<div class="perfect-badge">🌟 عالی بود! بدون هیچ غلطی! 🌟</div>' : ''}
         <h2>کارنامه بازی</h2>
-        <div class="result-score">امتیاز: <strong>${toFa(finalScore)} از ۱۰۰</strong></div>
         <div class="results-row">
           <div class="result-box result-correct">
             <span class="result-num">${toFa(state.correctCount)}</span>
