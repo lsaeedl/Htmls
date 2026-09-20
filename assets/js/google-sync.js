@@ -73,14 +73,15 @@ function getCurrentStudent() {
 
 // ---------- Teacher ----------
 
-async function syncVerifyTeacher(email) {
-  const result = await gsGet('verifyTeacher', { email });
+/**
+ * Verifies a Google Identity Services ID token (from the Sign in with
+ * Google button in login.html) against the backend, which checks the
+ * token's signature/audience with Google before trusting the email.
+ */
+async function syncVerifyTeacherToken(idToken) {
+  const result = await gsPost('verifyTeacherToken', { idToken });
   if (result.success) {
-    sessionStorage.setItem('teacher', JSON.stringify({
-      email: email,
-      role: result.role,
-      name: result.name
-    }));
+    sessionStorage.setItem('teacher', JSON.stringify(result.teacher));
   }
   return result;
 }
@@ -88,6 +89,45 @@ async function syncVerifyTeacher(email) {
 function getCurrentTeacher() {
   const raw = sessionStorage.getItem('teacher');
   return raw ? JSON.parse(raw) : null;
+}
+
+function teacherAuthHeader() {
+  const teacher = getCurrentTeacher();
+  return teacher ? { actorEmail: teacher.email } : {};
+}
+
+async function syncListTeachers() {
+  return await gsGet('listTeachers');
+}
+
+async function syncUpsertTeacher(teacherData) {
+  return await gsPost('upsertTeacher', { ...teacherData, ...teacherAuthHeader() });
+}
+
+async function syncDeleteTeacher(email) {
+  return await gsPost('deleteTeacher', { email, ...teacherAuthHeader() });
+}
+
+// ---------- Question management (teacher panel) ----------
+
+async function syncGetQuestionsByGame(gameId) {
+  return await gsGet('getQuestionsByGame', { gameId });
+}
+
+async function syncAddQuestion(questionData) {
+  return await gsPost('addQuestion', { ...questionData, ...teacherAuthHeader() });
+}
+
+async function syncUpdateQuestion(questionData) {
+  return await gsPost('updateQuestion', { ...questionData, ...teacherAuthHeader() });
+}
+
+async function syncDeleteQuestion(questionId) {
+  return await gsPost('deleteQuestion', { questionId, ...teacherAuthHeader() });
+}
+
+async function syncSaveGameSettings(settingsData) {
+  return await gsPost('saveGameSettings', { ...settingsData, ...teacherAuthHeader() });
 }
 
 // ---------- Attempts ----------
