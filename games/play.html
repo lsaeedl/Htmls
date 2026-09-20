@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بازی آموزشی | دبستان دخترانه بشری</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div>
+
+  <main class="page">
+    <div class="brand">
+      <div class="brand-emblem" id="gameEmoji">🎮</div>
+      <h1 id="gameTitle">در حال بارگذاری...</h1>
+      <p class="teacher-credit">آموزگار: خانم دهگودی</p>
+    </div>
+
+    <div id="gameRoot" class="page" style="padding:0; width:100%;"></div>
+  </main>
+
+  <footer class="site-footer">
+    طراحی و پیاده‌سازی: سعید سراوانی
+  </footer>
+
+  <script src="../assets/js/google-sync.js"></script>
+  <script src="game-engine.js"></script>
+  <script>
+    (async function () {
+      const params = new URLSearchParams(window.location.search);
+      const gameId = params.get('gameId');
+
+      if (!gameId) {
+        document.getElementById('gameRoot').innerHTML =
+          '<p style="text-align:center;">شناسه بازی مشخص نشده است.</p>';
+        return;
+      }
+
+      // Look up this game's title/icon/accent color from the Games list
+      // (falls back to defaults if the sheet lookup fails).
+      const gamesResult = await syncListGames();
+      const meta = gamesResult.success
+        ? gamesResult.games.find(g => String(g.gameId) === String(gameId))
+        : null;
+
+      if (meta) {
+        document.getElementById('gameTitle').textContent = meta.title || ('بازی ' + gameId);
+        document.getElementById('gameEmoji').textContent = meta.icon || '🎮';
+        if (meta.accentColor) {
+          document.documentElement.style.setProperty('--accent-coral', meta.accentColor);
+          document.documentElement.style.setProperty('--accent-coral-deep', meta.accentColor);
+        }
+      } else {
+        document.getElementById('gameTitle').textContent = 'بازی ' + gameId;
+      }
+
+      GameEngine.start(gameId);
+    })();
+  </script>
+</body>
+</html>
