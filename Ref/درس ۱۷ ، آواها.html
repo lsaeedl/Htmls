@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>ماجراجویی نام‌آواها</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:Tahoma,Arial,sans-serif;
+    background:#cfeff4;
+}
+
+button,input{
+    font-family:Tahoma,Arial,sans-serif;
+}
+
+
+/* =================================================
+BACKGROUND
+================================================= */
+
+.scene{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            #ffffff 0%,
+            #e8faff 20%,
+            #d9e8ff 48%,
+            #c7e7ec 100%
+        );
+}
+
+
+/* نورهای تزئینی */
+
+.light{
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    filter:blur(3px);
+    opacity:.55;
+}
+
+.light.one{
+    width:220px;
+    height:220px;
+    background:#fff5bb;
+    top:-100px;
+    left:-70px;
+}
+
+.light.two{
+    width:260px;
+    height:260px;
+    background:#e7caff;
+    right:-120px;
+    top:80px;
+}
+
+.light.three{
+    width:220px;
+    height:220px;
+    background:#b9f3ed;
+    bottom:-90px;
+    left:15%;
+}
+
+
+/* =================================================
+تصاویر واقعی دکور
+================================================= */
+
+.decor{
+    position:absolute;
+
+    width:125px;
+    height:125px;
+
+    border-radius:34px;
+
+    overflow:hidden;
+
+    border:6px solid rgba(255,255,255,.9);
+
+    box-shadow:
+        0 15px 35px rgba(48,77,100,.22),
+        inset 0 0 0 2px rgba(255,255,255,.6);
+
+    transform:rotate(var(--r));
+
+    opacity:.88;
+
+    animation:
+        decorFloat 5s ease-in-out infinite;
+}
+
+.decor img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.d1{
+    top:3%;
+    left:2%;
+    --r:-8deg;
+}
+
+.d2{
+    top:4%;
+    right:2%;
+    --r:8deg;
+    animation-delay:.7s;
+}
+
+.d3{
+    top:39%;
+    left:-35px;
+    --r:-10deg;
+    animation-delay:1.2s;
+}
+
+.d4{
+    top:39%;
+    right:-35px;
+    --r:10deg;
+    animation-delay:1.8s;
+}
+
+.d5{
+    bottom:3%;
+    left:2%;
+    --r:7deg;
+    animation-delay:2.2s;
+}
+
+.d6{
+    bottom:3%;
+    right:2%;
+    --r:-7deg;
+    animation-delay:2.8s;
+}
+
+.d7{
+    bottom:23%;
+    left:22%;
+    width:90px;
+    height:90px;
+    --r:-8deg;
+    animation-delay:3.2s;
+}
+
+.d8{
+    bottom:23%;
+    right:22%;
+    width:90px;
+    height:90px;
+    --r:8deg;
+    animation-delay:3.7s;
+}
+
+@keyframes decorFloat{
+    0%,100%{
+        margin-top:0;
+    }
+    50%{
+        margin-top:-8px;
+    }
+}
+
+
+/* =================================================
+START SCREEN
+================================================= */
+
+#start{
+    position:fixed;
+    inset:0;
+    z-index:50;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+.startCard{
+    width:min(92vw,470px);
+
+    padding:30px 24px;
+
+    border-radius:42px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.98),
+            rgba(245,252,255,.94)
+        );
+
+    border:5px solid white;
+
+    box-shadow:
+        0 30px 70px rgba(39,71,91,.28),
+        inset 0 2px 0 white;
+
+    text-align:center;
+}
+
+.startLogo{
+    font-size:72px;
+
+    filter:
+        drop-shadow(
+            0 12px 7px
+            rgba(70,80,90,.2)
+        );
+
+    animation:
+        logo 2s ease-in-out infinite;
+}
+
+@keyframes logo{
+    50%{
+        transform:
+            translateY(-8px)
+            rotate(4deg);
+    }
+}
+
+.startTitle{
+    font-size:32px;
+    font-weight:900;
+    color:#506f80;
+    margin:5px 0;
+}
+
+.startSub{
+    font-size:14px;
+    color:#91a3ad;
+    font-weight:800;
+    margin-bottom:22px;
+}
+
+.startLabel{
+    display:block;
+    color:#597381;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+#childName{
+    width:100%;
+    height:58px;
+
+    border:3px solid #d7e9ee;
+    border-radius:20px;
+
+    outline:none;
+
+    background:white;
+
+    text-align:center;
+
+    font-size:20px;
+    font-weight:900;
+
+    color:#587281;
+}
+
+#startBtn{
+    width:100%;
+    height:60px;
+
+    margin-top:16px;
+
+    border:0;
+    border-radius:21px;
+
+    color:#604f69;
+
+    font-size:19px;
+    font-weight:900;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe3a9,
+            #ffc9df 50%,
+            #d9d0ff
+        );
+
+    box-shadow:
+        0 7px 0 #d09daf,
+        0 15px 25px rgba(80,70,90,.18);
+}
+
+
+/* =================================================
+GAME
+================================================= */
+
+#game{
+    display:none;
+
+    position:fixed;
+    inset:0;
+    z-index:20;
+}
+
+
+/* =================================================
+TOP HUD
+================================================= */
+
+.hud{
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:10px;
+
+    height:58px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    z-index:30;
+}
+
+.badge{
+    height:48px;
+
+    display:flex;
+    align-items:center;
+
+    padding:
+        0 14px;
+
+    border-radius:19px;
+
+    background:
+        rgba(255,255,255,.92);
+
+    border:
+        3px solid white;
+
+    box-shadow:
+        0 10px 25px
+        rgba(45,70,90,.15);
+
+    color:#577180;
+
+    font-weight:900;
+
+    backdrop-filter:blur(10px);
+}
+
+.stats{
+    display:flex;
+    gap:6px;
+}
+
+.stat{
+    min-width:58px;
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:3px;
+
+    border-radius:17px;
+
+    background:
+        rgba(255,255,255,.94);
+
+    border:
+        3px solid white;
+
+    box-shadow:
+        0 10px 25px
+        rgba(45,70,90,.15);
+
+    font-size:13px;
+    font-weight:900;
+    color:#5b7480;
+}
+
+
+/* =================================================
+QUESTION
+================================================= */
+
+.instruction{
+    position:absolute;
+
+    top:78px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:min(90vw,560px);
+
+    padding:10px 18px;
+
+    border-radius:22px;
+
+    background:
+        rgba(255,255,255,.91);
+
+    border:
+        3px solid white;
+
+    box-shadow:
+        0 12px 30px
+        rgba(45,70,90,.13);
+
+    text-align:center;
+
+    color:#526f7c;
+
+    font-size:15px;
+    font-weight:900;
+
+    z-index:30;
+}
+
+
+/* =================================================
+MAIN
+================================================= */
+
+.main{
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:14px;
+
+    padding:
+        125px
+        15px
+        20px;
+}
+
+
+/* =================================================
+EMOJI 3D
+================================================= */
+
+.emojiStage{
+    position:relative;
+
+    width:min(45vw,300px);
+    height:min(45vw,300px);
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            white,
+            #f2fbff 42%,
+            #d5edf5 75%,
+            #c0dfe8 100%
+        );
+
+    border:
+        7px solid white;
+
+    box-shadow:
+
+        0 28px 55px
+        rgba(38,69,87,.27),
+
+        inset
+        0 5px 12px white,
+
+        inset
+        0 -10px 20px
+        rgba(95,150,170,.15);
+}
+
+.emojiStage:before{
+    content:"";
+
+    position:absolute;
+
+    width:65%;
+    height:22%;
+
+    top:8%;
+    left:17.5%;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.65);
+
+    filter:blur(8px);
+}
+
+.emoji{
+    position:relative;
+    z-index:2;
+
+    font-size:
+        clamp(105px,20vw,165px);
+
+    filter:
+        drop-shadow(
+            0 16px 8px
+            rgba(35,55,65,.22)
+        );
+
+    animation:
+        character 2.2s ease-in-out infinite;
+}
+
+@keyframes character{
+    0%,100%{
+        transform:
+            translateY(0)
+            rotate(-2deg);
+    }
+
+    50%{
+        transform:
+            translateY(-11px)
+            rotate(2deg);
+    }
+}
+
+
+/* =================================================
+OPTIONS
+================================================= */
+
+.options{
+    width:min(92vw,600px);
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:10px;
+
+    z-index:30;
+}
+
+.option{
+
+    min-height:58px;
+
+    border:
+        3px solid white;
+
+    border-radius:21px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff9df,
+            #ffe4ed 52%,
+            #e4deff
+        );
+
+    box-shadow:
+
+        0 7px 0 #c4aeb9,
+
+        0 14px 25px
+        rgba(45,70,90,.16);
+
+    color:#536873;
+
+    font-size:
+        clamp(14px,3.7vw,20px);
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    transition:
+        transform .12s,
+        filter .15s;
+}
+
+.option:active{
+    transform:translateY(5px);
+}
+
+.option.correct{
+    animation:
+        correct .6s ease;
+}
+
+.option.wrong{
+    animation:
+        wrong .5s ease;
+}
+
+@keyframes correct{
+    0%{
+        transform:scale(1);
+    }
+
+    35%{
+        transform:
+            scale(1.1)
+            rotate(-2deg);
+    }
+
+    70%{
+        transform:
+            scale(1.04)
+            rotate(2deg);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+@keyframes wrong{
+    0%,100%{
+        transform:translateX(0);
+    }
+
+    20%{
+        transform:translateX(-10px);
+    }
+
+    40%{
+        transform:translateX(10px);
+    }
+
+    60%{
+        transform:translateX(-8px);
+    }
+
+    80%{
+        transform:translateX(8px);
+    }
+}
+
+
+/* =================================================
+MESSAGE
+================================================= */
+
+#message{
+    position:fixed;
+
+    left:50%;
+    top:48%;
+
+    z-index:500;
+
+    padding:
+        13px 22px;
+
+    border-radius:24px;
+
+    background:white;
+
+    border:
+        3px solid white;
+
+    box-shadow:
+        0 20px 45px
+        rgba(35,60,75,.25);
+
+    font-size:18px;
+    font-weight:900;
+
+    white-space:nowrap;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transform:
+        translate(-50%,-50%)
+        scale(.7);
+}
+
+#message.show{
+    animation:
+        message .9s ease forwards;
+}
+
+@keyframes message{
+
+    0%{
+        opacity:0;
+        transform:
+            translate(-50%,-50%)
+            scale(.7);
+    }
+
+    20%{
+        opacity:1;
+        transform:
+            translate(-50%,-50%)
+            scale(1.08);
+    }
+
+    70%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:0;
+        transform:
+            translate(-50%,-75%)
+            scale(.9);
+    }
+}
+
+
+/* =================================================
+EXPLOSION
+================================================= */
+
+#explosion{
+    position:fixed;
+
+    left:50%;
+    top:45%;
+
+    z-index:450;
+
+    display:none;
+
+    font-size:95px;
+
+    pointer-events:none;
+}
+
+#explosion.show{
+    display:block;
+
+    animation:
+        explosion .7s ease forwards;
+}
+
+@keyframes explosion{
+
+    0%{
+        opacity:0;
+
+        transform:
+            translate(-50%,-50%)
+            scale(.1);
+    }
+
+    30%{
+        opacity:1;
+
+        transform:
+            translate(-50%,-50%)
+            scale(1.2);
+    }
+
+    60%{
+        transform:
+            translate(-50%,-50%)
+            scale(1.8);
+    }
+
+    100%{
+        opacity:0;
+
+        transform:
+            translate(-50%,-50%)
+            scale(3.2);
+    }
+}
+
+
+/* =================================================
+PARTICLES
+================================================= */
+
+#particles{
+    position:fixed;
+    inset:0;
+
+    z-index:440;
+
+    pointer-events:none;
+}
+
+.starParticle{
+    position:absolute;
+
+    font-size:24px;
+
+    animation:
+        particle 1s ease-out forwards;
+}
+
+@keyframes particle{
+
+    0%{
+        opacity:1;
+
+        transform:
+            translate(0,0)
+            scale(.5);
+    }
+
+    100%{
+        opacity:0;
+
+        transform:
+            translate(
+                var(--x),
+                var(--y)
+            )
+            scale(1.4)
+            rotate(180deg);
+    }
+}
+
+
+/* =================================================
+FINISH
+================================================= */
+
+#finish{
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:900;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:15px;
+
+    background:
+        rgba(42,68,82,.72);
+
+    backdrop-filter:
+        blur(12px);
+}
+
+.finishCard{
+
+    width:min(94vw,540px);
+
+    padding:
+        27px 20px;
+
+    text-align:center;
+
+    border-radius:38px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #edfaff
+        );
+
+    border:
+        5px solid white;
+
+    box-shadow:
+        0 35px 80px
+        rgba(20,45,60,.35);
+}
+
+.trophy{
+    font-size:65px;
+}
+
+.finishTitle{
+    font-size:30px;
+    font-weight:900;
+    color:#557789;
+}
+
+.finishName{
+    color:#8498a2;
+    font-weight:900;
+    margin:6px;
+}
+
+.scoreBig{
+    font-size:58px;
+    font-weight:900;
+    color:#c68e47;
+    margin:3px;
+}
+
+.resultGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin:14px 0;
+}
+
+.result{
+    padding:11px;
+
+    border-radius:18px;
+
+    background:#edf7fa;
+
+    color:#59717d;
+
+    font-weight:900;
+}
+
+#restart{
+    width:100%;
+    height:55px;
+
+    border:0;
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe0a5,
+            #ffc9db,
+            #ddd3ff
+        );
+
+    color:#624f69;
+
+    font-size:18px;
+    font-weight:900;
+
+    box-shadow:
+        0 7px 0 #d09ca9;
+}
+
+
+/* =================================================
+MOBILE
+================================================= */
+
+@media(max-width:600px){
+
+    .decor{
+        width:82px;
+        height:82px;
+        border-width:4px;
+        border-radius:24px;
+        opacity:.72;
+    }
+
+    .d7,
+    .d8{
+        width:65px;
+        height:65px;
+    }
+
+    .hud{
+        top:6px;
+        left:6px;
+        right:6px;
+    }
+
+    .badge{
+        height:43px;
+        padding:0 10px;
+        font-size:12px;
+    }
+
+    .stat{
+        min-width:44px;
+        height:43px;
+        font-size:10px;
+    }
+
+    .instruction{
+        top:64px;
+        width:90%;
+        padding:7px 10px;
+        font-size:11px;
+    }
+
+    .main{
+        padding:
+            105px
+            10px
+            10px;
+
+        gap:9px;
+    }
+
+    .emojiStage{
+        width:min(50vw,245px);
+        height:min(50vw,245px);
+    }
+
+    .emoji{
+        font-size:
+            clamp(
+                85px,
+                21vw,
+                135px
+            );
+    }
+
+    .options{
+        width:94vw;
+        gap:7px;
+    }
+
+    .option{
+        min-height:48px;
+        border-radius:16px;
+        border-width:2px;
+        font-size:13px;
+        box-shadow:
+            0 5px 0 #c4aeb9,
+            0 9px 15px rgba(45,70,90,.12);
+    }
+
+}
+
+
+@media(max-height:650px){
+
+    .emojiStage{
+        width:min(39vw,210px);
+        height:min(39vw,210px);
+    }
+
+    .emoji{
+        font-size:95px;
+    }
+
+    .main{
+        gap:6px;
+        padding-top:98px;
+    }
+
+    .instruction{
+        top:60px;
+    }
+
+    .option{
+        min-height:43px;
+    }
+
+}
+
+
+/* جلوگیری از انتخاب */
+
+button{
+    -webkit-user-select:none;
+    user-select:none;
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =================================================
+SCENE
+================================================= -->
+
+<div class="scene">
+
+    <div class="light one"></div>
+    <div class="light two"></div>
+    <div class="light three"></div>
+
+
+    <!--
+    تصاویر دکور
+    -->
+
+    <div class="decor d1">
+        <img src="https://cdn.imgurl.ir/uploads/q420608_photo-output.png">
+    </div>
+
+    <div class="decor d2">
+        <img src="https://cdn.imgurl.ir/uploads/d326980_photo-output.png">
+    </div>
+
+    <div class="decor d3">
+        <img src="https://cdn.imgurl.ir/uploads/k93552_photo-output.png">
+    </div>
+
+    <div class="decor d4">
+        <img src="https://cdn.imgurl.ir/uploads/23063_photo-output.png">
+    </div>
+
+    <div class="decor d5">
+        <img src="https://cdn.imgurl.ir/uploads/x829597_photo-output.png">
+    </div>
+
+    <div class="decor d6">
+        <img src="https://cdn.imgurl.ir/uploads/n85904_photo-output.png">
+    </div>
+
+    <div class="decor d7">
+        <img src="https://cdn.imgurl.ir/uploads/p84468_photo-output.png">
+    </div>
+
+    <div class="decor d8">
+        <img src="https://cdn.imgurl.ir/uploads/v0114_photo-output.png">
+    </div>
+
+
+</div>
+
+
+<!-- =================================================
+START
+================================================= -->
+
+<div id="start">
+
+    <div class="startCard">
+
+        <div class="startLogo">
+            🎧✨
+        </div>
+
+        <div class="startTitle">
+            ماجراجویی نام‌آواها
+        </div>
+
+        <div class="startSub">
+            تصویر را ببین و نام‌آوای درست را پیدا کن!
+        </div>
+
+        <label class="startLabel">
+            🌸 نام کودک
+        </label>
+
+        <input
+            id="childName"
+            type="text"
+            placeholder="نامت را بنویس"
+            autocomplete="off"
+        >
+
+        <button id="startBtn">
+            🚀 شروع ماجراجویی
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+GAME
+================================================= -->
+
+<div id="game">
+
+
+    <!-- HUD -->
+
+    <div class="hud">
+
+        <div class="badge">
+            🎵 نام‌آواها
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                ⭐
+                <span id="score">
+                    0
+                </span>
+            </div>
+
+            <div class="stat">
+                🎯
+                <span id="question">
+                    1
+                </span>/7
+            </div>
+
+            <div class="stat">
+                ❌
+                <span id="mistakes">
+                    0
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- سؤال فقط یک بار -->
+
+    <div class="instruction">
+        هر تصویر چه آوایی دارد؟
+        نام‌آوای درست را انتخاب کن.
+    </div>
+
+
+    <!-- MAIN -->
+
+    <div class="main">
+
+
+        <div class="emojiStage">
+
+            <div
+                id="emoji"
+                class="emoji">
+                🍂
+            </div>
+
+        </div>
+
+
+        <div
+            id="options"
+            class="options">
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =================================================
+EFFECTS
+================================================= -->
+
+<div id="message"></div>
+
+<div id="explosion">
+    💥
+</div>
+
+<div id="particles"></div>
+
+
+<!-- =================================================
+FINISH
+================================================= -->
+
+<div id="finish">
+
+    <div class="finishCard">
+
+        <div class="trophy">
+            🏆🎉
+        </div>
+
+        <div class="finishTitle">
+            کارنامه‌ی نام‌آواها
+        </div>
+
+        <div
+            id="finishName"
+            class="finishName">
+        </div>
+
+        <div class="scoreBig">
+
+            <span id="finalScore">
+                0
+            </span>
+
+            ⭐
+
+        </div>
+
+
+        <div class="resultGrid">
+
+            <div class="result">
+
+                🎯 پاسخ درست
+
+                <br>
+
+                <span id="correctCount">
+                    0
+                </span>/7
+
+            </div>
+
+
+            <div class="result">
+
+                ❌ اشتباه
+
+                <br>
+
+                <span id="wrongCount">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="result">
+
+                ⭐ امتیاز
+
+                <br>
+
+                <span id="points">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="result">
+
+                🏆 موفقیت
+
+                <br>
+
+                <span id="percent">
+                    0
+                </span>%
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="finalText"
+            style="
+            font-weight:900;
+            color:#536d7a;
+            margin:12px;
+            ">
+        </div>
+
+
+        <button id="restart">
+            🔄 دوباره بازی کن
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =================================================
+داده‌های قطعی بازی
+
+سماور و قل‌قل عمداً وجود ندارند.
+================================================= */
+
+const QUESTIONS = [
+
+    {
+        emoji:"🍂",
+        answer:"خش خش"
+    },
+
+    {
+        emoji:"🐱",
+        answer:"میو میو"
+    },
+
+    {
+        emoji:"🌬️",
+        answer:"هوهو"
+    },
+
+    {
+        emoji:"🐶",
+        answer:"واق واق"
+    },
+
+    {
+        emoji:"🚰",
+        answer:"شرشر"
+    },
+
+    {
+        emoji:"🐦‍⬛",
+        answer:"قار قار"
+    },
+
+    {
+        emoji:"🐸",
+        answer:"قور قور"
+    }
+
+];
+
+
+/* =================================================
+نام‌آواها
+
+فقط همین ۷ مورد
+================================================= */
+
+const SOUNDS = [
+
+    "خش خش",
+
+    "میو میو",
+
+    "هوهو",
+
+    "واق واق",
+
+    "شرشر",
+
+    "قار قار",
+
+    "قور قور"
+
+];
+
+
+/* =================================================
+متغیرها
+================================================= */
+
+let current = 0;
+
+let score = 0;
+
+let mistakes = 0;
+
+let playerName = "";
+
+let locked = false;
+
+
+/* =================================================
+شروع
+================================================= */
+
+document
+.getElementById("startBtn")
+.addEventListener(
+    "click",
+    startGame
+);
+
+
+document
+.getElementById("childName")
+.addEventListener(
+    "keydown",
+    function(e){
+
+        if(e.key === "Enter"){
+
+            startGame();
+
+        }
+
+    }
+);
+
+
+function startGame(){
+
+    playerName =
+        document
+        .getElementById("childName")
+        .value
+        .trim();
+
+
+    if(!playerName){
+
+        document
+        .getElementById("childName")
+        .focus();
+
+        return;
+
+    }
+
+
+    current = 0;
+
+    score = 0;
+
+    mistakes = 0;
+
+
+    document
+    .getElementById("start")
+    .style.display =
+        "none";
+
+
+    document
+    .getElementById("game")
+    .style.display =
+        "block";
+
+
+    showQuestion();
+
+}
+
+
+/* =================================================
+نمایش سؤال
+================================================= */
+
+function showQuestion(){
+
+    locked = false;
+
+
+    const question =
+        QUESTIONS[current];
+
+
+    /*
+    نمایش ایموجی
+    */
+
+    document
+    .getElementById("emoji")
+    .textContent =
+        question.emoji;
+
+
+    /*
+    شماره سؤال
+    */
+
+    document
+    .getElementById("question")
+    .textContent =
+        current + 1;
+
+
+    /*
+    گزینه‌ها
+    */
+
+    const options =
+        document
+        .getElementById("options");
+
+
+    options.innerHTML = "";
+
+
+    /*
+    جواب درست همیشه تضمینی
+    داخل گزینه‌ها قرار دارد.
+
+    سه جواب دیگر تصادفی انتخاب می‌شوند.
+    */
+
+    let wrongOptions =
+        shuffle(
+            SOUNDS.filter(
+                function(sound){
+
+                    return sound !==
+                        question.answer;
+
+                }
+            )
+        )
+        .slice(0,3);
+
+
+    let finalOptions =
+        shuffle(
+            [
+                question.answer,
+                ...wrongOptions
+            ]
+        );
+
+
+    finalOptions.forEach(
+        function(sound){
+
+            const button =
+                document
+                .createElement("button");
+
+
+            button.className =
+                "option";
+
+
+            button.textContent =
+                "🔊 " + sound;
+
+
+            button.addEventListener(
+                "click",
+                function(){
+
+                    checkAnswer(
+                        button,
+                        sound,
+                        question.answer
+                    );
+
+                }
+            );
+
+
+            options.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    updateStats();
+
+}
+
+
+/* =================================================
+بررسی پاسخ
+================================================= */
+
+function checkAnswer(
+    button,
+    selected,
+    correct
+){
+
+    if(locked){
+        return;
+    }
+
+
+    if(
+        selected === correct
+    ){
+
+        correctAnswer(button);
+
+    }
+
+    else{
+
+        wrongAnswer(button);
+
+    }
+
+}
+
+
+/* =================================================
+درست
+================================================= */
+
+function correctAnswer(button){
+
+    locked = true;
+
+
+    score += 10;
+
+
+    button.classList.add(
+        "correct"
+    );
+
+
+    playCorrect();
+
+
+    showMessage(
+        "🎉 آفرین! درست بود!",
+        true
+    );
+
+
+    createParticles();
+
+
+    updateStats();
+
+
+    setTimeout(
+        function(){
+
+            current++;
+
+
+            if(
+                current >=
+                QUESTIONS.length
+            ){
+
+                showFinish();
+
+            }
+
+            else{
+
+                showQuestion();
+
+            }
+
+        },
+        800
+    );
+
+}
+
+
+/* =================================================
+غلط
+================================================= */
+
+function wrongAnswer(button){
+
+    mistakes++;
+
+
+    /*
+    پنج امتیاز کسر
+    */
+
+    score =
+        Math.max(
+            0,
+            score - 5
+        );
+
+
+    button.classList.remove(
+        "wrong"
+    );
+
+
+    void button.offsetWidth;
+
+
+    button.classList.add(
+        "wrong"
+    );
+
+
+    playWrong();
+
+
+    showExplosion();
+
+
+    showMessage(
+        "💥 اشتباه! دوباره تلاش کن.",
+        false
+    );
+
+
+    updateStats();
+
+}
+
+
+/* =================================================
+مخلوط کردن
+================================================= */
+
+function shuffle(array){
+
+    const result =
+        [...array];
+
+
+    for(
+        let i =
+        result.length - 1;
+
+        i > 0;
+
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+
+        [
+            result[i],
+            result[j]
+        ] =
+        [
+            result[j],
+            result[i]
+        ];
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =================================================
+آپدیت
+================================================= */
+
+function updateStats(){
+
+    document
+    .getElementById("score")
+    .textContent =
+        score;
+
+
+    document
+    .getElementById("mistakes")
+    .textContent =
+        mistakes;
+
+
+    document
+    .getElementById("question")
+    .textContent =
+        Math.min(
+            current + 1,
+            QUESTIONS.length
+        );
+
+}
+
+
+/* =================================================
+پیام
+================================================= */
+
+function showMessage(
+    text,
+    good
+){
+
+    const message =
+        document
+        .getElementById("message");
+
+
+    message.textContent =
+        text;
+
+
+    message.style.color =
+        good
+        ?
+        "#45916c"
+        :
+        "#d25770";
+
+
+    message.classList.remove(
+        "show"
+    );
+
+
+    void message.offsetWidth;
+
+
+    message.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =================================================
+انفجار
+================================================= */
+
+function showExplosion(){
+
+    const explosion =
+        document
+        .getElementById("explosion");
+
+
+    explosion.classList.remove(
+        "show"
+    );
+
+
+    void explosion.offsetWidth;
+
+
+    explosion.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =================================================
+ذرات فشفشه
+================================================= */
+
+function createParticles(){
+
+    const container =
+        document
+        .getElementById(
+            "particles"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const symbols = [
+        "⭐",
+        "✨",
+        "🌟",
+        "💫",
+        "🎉"
+    ];
+
+
+    for(
+        let i = 0;
+        i < 14;
+        i++
+    ){
+
+        const particle =
+            document
+            .createElement("div");
+
+
+        particle.className =
+            "starParticle";
+
+
+        particle.textContent =
+            symbols[
+                Math.floor(
+                    Math.random() *
+                    symbols.length
+                )
+            ];
+
+
+        particle.style.left =
+            "50%";
+
+
+        particle.style.top =
+            "43%";
+
+
+        particle.style.setProperty(
+            "--x",
+            (
+                Math.random() *
+                280 - 140
+            ) + "px"
+        );
+
+
+        particle.style.setProperty(
+            "--y",
+            (
+                Math.random() *
+                220 - 110
+            ) + "px"
+        );
+
+
+        particle.style.animationDelay =
+            (
+                Math.random() *
+                .12
+            ) + "s";
+
+
+        container.appendChild(
+            particle
+        );
+
+    }
+
+
+    setTimeout(
+        function(){
+
+            container.innerHTML = "";
+
+        },
+        1100
+    );
+
+}
+
+
+/* =================================================
+صدای درست
+================================================= */
+
+let audio = null;
+
+
+function getAudio(){
+
+    if(!audio){
+
+        audio =
+            new(
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+
+    if(
+        audio.state ===
+        "suspended"
+    ){
+
+        audio.resume();
+
+    }
+
+
+    return audio;
+
+}
+
+
+function tone(
+    frequency,
+    duration,
+    type,
+    volume
+){
+
+    try{
+
+        const ctx =
+            getAudio();
+
+
+        const oscillator =
+            ctx.createOscillator();
+
+
+        const gain =
+            ctx.createGain();
+
+
+        oscillator.type =
+            type;
+
+
+        oscillator.frequency.value =
+            frequency;
+
+
+        gain.gain.setValueAtTime(
+            .001,
+            ctx.currentTime
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            volume,
+            ctx.currentTime + .02
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            ctx.currentTime +
+            duration
+        );
+
+
+        oscillator.connect(
+            gain
+        );
+
+
+        gain.connect(
+            ctx.destination
+        );
+
+
+        oscillator.start();
+
+
+        oscillator.stop(
+            ctx.currentTime +
+            duration
+        );
+
+    }
+
+    catch(e){}
+
+}
+
+
+function playCorrect(){
+
+    tone(
+        620,
+        .12,
+        "sine",
+        .13
+    );
+
+
+    setTimeout(
+        function(){
+
+            tone(
+                800,
+                .13,
+                "sine",
+                .14
+            );
+
+        },
+        110
+    );
+
+
+    setTimeout(
+        function(){
+
+            tone(
+                1050,
+                .20,
+                "sine",
+                .16
+            );
+
+        },
+        230
+    );
+
+}
+
+
+/* =================================================
+صدای غلط
+================================================= */
+
+function playWrong(){
+
+    tone(
+        180,
+        .18,
+        "sawtooth",
+        .28
+    );
+
+
+    setTimeout(
+        function(){
+
+            tone(
+                100,
+                .30,
+                "square",
+                .30
+            );
+
+        },
+        150
+    );
+
+
+    setTimeout(
+        function(){
+
+            tone(
+                70,
+                .22,
+                "sawtooth",
+                .25
+            );
+
+        },
+        330
+    );
+
+}
+
+
+/* =================================================
+کارنامه
+================================================= */
+
+function showFinish(){
+
+    const maximum =
+        QUESTIONS.length * 10;
+
+
+    const percentage =
+        Math.max(
+            0,
+            Math.round(
+                score /
+                maximum *
+                100
+            )
+        );
+
+
+    document
+    .getElementById("finishName")
+    .textContent =
+        "🌸 " + playerName;
+
+
+    document
+    .getElementById("finalScore")
+    .textContent =
+        score;
+
+
+    document
+    .getElementById("correctCount")
+    .textContent =
+        QUESTIONS.length;
+
+
+    document
+    .getElementById("wrongCount")
+    .textContent =
+        mistakes;
+
+
+    document
+    .getElementById("points")
+    .textContent =
+        score;
+
+
+    document
+    .getElementById("percent")
+    .textContent =
+        percentage;
+
+
+    if(
+        mistakes === 0
+    ){
+
+        document
+        .getElementById("finalText")
+        .textContent =
+            "🏆 فوق‌العاده! همه را بدون اشتباه پیدا کردی!";
+
+    }
+
+    else{
+
+        document
+        .getElementById("finalText")
+        .textContent =
+            "🌟 آفرین! همه‌ی نام‌آواها را کامل کردی.";
+
+    }
+
+
+    document
+    .getElementById("finish")
+    .style.display =
+        "flex";
+
+
+    createParticles();
+
+}
+
+
+/* =================================================
+شروع دوباره
+================================================= */
+
+document
+.getElementById("restart")
+.addEventListener(
+    "click",
+    function(){
+
+        location.reload();
+
+    }
+);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>قطره‌های جادویی «نا»</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@600;700;800;900&display=swap');
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  font-family:"Vazirmatn",Tahoma,sans-serif;
+  background:#b9e8f5;
+}
+
+#game{
+  position:relative;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(225,250,255,.08),rgba(255,255,255,.03)),
+    url("https://cdn.imgurl.ir/uploads/n0265_IMG_5214.jpeg");
+  background-size:cover;
+  background-position:center;
+}
+
+/* نور محیط */
+#game:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:2;
+  background:
+    radial-gradient(circle at 50% 12%,
+      rgba(255,255,255,.45),
+      transparent 27%);
+}
+
+/* =========================
+   START
+========================= */
+
+#start{
+  position:fixed;
+  inset:0;
+  z-index:9000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+
+  background:
+    linear-gradient(
+      rgba(205,242,250,.58),
+      rgba(220,232,250,.62)
+    ),
+    url("https://cdn.imgurl.ir/uploads/n0265_IMG_5214.jpeg");
+
+  background-size:cover;
+  background-position:center;
+}
+
+.start-card{
+  width:min(92%,470px);
+  padding:25px;
+
+  border-radius:42px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.96),
+      rgba(239,249,253,.91)
+    );
+
+  border:4px solid white;
+
+  box-shadow:
+    0 30px 80px rgba(50,90,110,.3),
+    inset 0 4px 12px white;
+
+  text-align:center;
+
+  animation:cardIn .7s ease;
+}
+
+@keyframes cardIn{
+  from{
+    opacity:0;
+    transform:scale(.82) translateY(30px);
+  }
+  to{
+    opacity:1;
+    transform:scale(1) translateY(0);
+  }
+}
+
+.start-drop{
+  width:130px;
+  height:130px;
+  object-fit:contain;
+
+  filter:
+    drop-shadow(0 15px 15px rgba(50,100,120,.25));
+
+  animation:float 2.5s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-9px)}
+}
+
+.start-title{
+  color:#52768a;
+  font-size:clamp(28px,8vw,43px);
+  font-weight:900;
+}
+
+.start-sub{
+  color:#8299a5;
+  font-size:16px;
+  font-weight:800;
+  margin:5px 0 20px;
+}
+
+.name-label{
+  display:block;
+  margin-bottom:7px;
+  font-size:18px;
+  font-weight:900;
+  color:#536c7a;
+}
+
+.name-input{
+  width:100%;
+  height:57px;
+
+  border:3px solid #d3e7ed;
+  border-radius:20px;
+
+  outline:none;
+  background:white;
+
+  text-align:center;
+
+  font-family:inherit;
+  font-size:20px;
+  font-weight:900;
+  color:#526b79;
+}
+
+.name-input:focus{
+  border-color:#91c9d9;
+  box-shadow:0 0 0 5px rgba(110,190,215,.14);
+}
+
+.start-btn{
+  width:100%;
+  height:59px;
+  margin-top:15px;
+
+  border:0;
+  border-radius:22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffe2aa,
+      #ffcddd,
+      #d9d4ff
+    );
+
+  color:#65566a;
+
+  font-family:inherit;
+  font-size:20px;
+  font-weight:900;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 8px 0 #d09da9,
+    0 14px 25px rgba(60,80,100,.17);
+}
+
+.start-btn:active{
+  transform:translateY(5px);
+  box-shadow:0 3px 0 #d09da9;
+}
+
+/* =========================
+   NEON HOURGLASS
+========================= */
+
+#hourglass{
+  position:fixed;
+  inset:0;
+  z-index:8500;
+
+  display:none;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(85,220,255,.22),
+      rgba(25,45,75,.84)
+    );
+
+  backdrop-filter:blur(12px);
+}
+
+.hg-card{
+  width:min(90%,430px);
+  padding:28px;
+
+  border-radius:38px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(235,252,255,.96),
+      rgba(214,238,249,.9)
+    );
+
+  border:3px solid rgba(190,250,255,.95);
+
+  box-shadow:
+    0 0 20px rgba(76,220,255,.65),
+    0 0 55px rgba(76,220,255,.4),
+    inset 0 0 20px rgba(255,255,255,.8);
+
+  text-align:center;
+}
+
+.hg-title{
+  color:#527489;
+  font-size:28px;
+  font-weight:900;
+}
+
+.hg-sub{
+  color:#718c9a;
+  font-weight:800;
+}
+
+.hourglass{
+  position:relative;
+  width:150px;
+  height:190px;
+  margin:18px auto;
+}
+
+/* قاب نئونی */
+.hg-frame{
+  position:absolute;
+  left:20px;
+  top:5px;
+
+  width:110px;
+  height:180px;
+
+  border-left:5px solid #9deaff;
+  border-right:5px solid #9deaff;
+
+  filter:
+    drop-shadow(0 0 7px #5ddfff)
+    drop-shadow(0 0 18px rgba(50,220,255,.8));
+}
+
+/* شیشه بالا */
+.hg-top{
+  position:absolute;
+
+  left:27px;
+  top:7px;
+
+  width:96px;
+  height:76px;
+
+  border:5px solid #b9f5ff;
+
+  clip-path:
+    polygon(
+      0 0,
+      100% 0,
+      64% 100%,
+      36% 100%
+    );
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.65),
+      rgba(150,230,250,.15)
+    );
+
+  filter:
+    drop-shadow(0 0 8px #66e6ff);
+}
+
+/* شیشه پایین */
+.hg-bottom{
+  position:absolute;
+
+  left:27px;
+  bottom:7px;
+
+  width:96px;
+  height:76px;
+
+  border:5px solid #b9f5ff;
+
+  clip-path:
+    polygon(
+      36% 0,
+      64% 0,
+      100% 100%,
+      0 100%
+    );
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.65),
+      rgba(150,230,250,.15)
+    );
+
+  filter:
+    drop-shadow(0 0 8px #66e6ff);
+}
+
+/* شن بالا */
+.sand-top{
+  position:absolute;
+  z-index:2;
+
+  top:18px;
+  left:57px;
+
+  width:38px;
+  height:55px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffe7a8,
+      #ffc889
+    );
+
+  clip-path:
+    polygon(
+      0 0,
+      100% 0,
+      62% 100%,
+      38% 100%
+    );
+
+  filter:
+    drop-shadow(0 0 7px rgba(255,210,120,.8));
+}
+
+/* شن پایین */
+.sand-bottom{
+  position:absolute;
+  z-index:2;
+
+  bottom:17px;
+  left:52px;
+
+  width:48px;
+  height:42px;
+
+  border-radius:
+    50% 50% 45% 45%;
+
+  background:
+    radial-gradient(
+      circle at 50% 20%,
+      #fff0b5,
+      #ffc883
+    );
+
+  filter:
+    drop-shadow(0 0 8px rgba(255,210,120,.85));
+}
+
+/* جریان شن */
+.sand-stream{
+  position:absolute;
+  z-index:3;
+
+  left:73px;
+  top:69px;
+
+  width:5px;
+  height:65px;
+
+  border-radius:10px;
+
+  background:#ffe2a0;
+
+  box-shadow:
+    0 0 7px #ffd777,
+    0 0 14px rgba(255,210,100,.7);
+
+  animation:
+    sandFlow 1s linear infinite;
+}
+
+@keyframes sandFlow{
+  0%{
+    transform:scaleY(.05);
+    transform-origin:top;
+  }
+  100%{
+    transform:scaleY(1);
+    transform-origin:top;
+  }
+}
+
+/* نئون گوشه‌های ساعت */
+.hg-dot{
+  position:absolute;
+
+  width:10px;
+  height:10px;
+
+  border-radius:50%;
+
+  background:#dfffff;
+
+  box-shadow:
+    0 0 8px #61e8ff,
+    0 0 18px #61e8ff;
+}
+
+.hg-dot.a{left:14px;top:0}
+.hg-dot.b{right:14px;top:0}
+.hg-dot.c{left:14px;bottom:0}
+.hg-dot.d{right:14px;bottom:0}
+
+/* =========================
+   GAME HEADER
+========================= */
+
+.header{
+  position:relative;
+  z-index:100;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  gap:10px;
+
+  padding:9px 13px;
+}
+
+.title{
+  padding:7px 16px;
+
+  border-radius:22px;
+
+  background:rgba(255,255,255,.86);
+
+  border:3px solid white;
+
+  box-shadow:0 7px 18px rgba(60,90,110,.14);
+
+  color:#527487;
+
+  font-size:clamp(17px,4vw,25px);
+  font-weight:900;
+}
+
+.stats{
+  display:flex;
+  gap:6px;
+}
+
+.stat{
+  min-width:65px;
+
+  padding:7px 8px;
+
+  border-radius:17px;
+
+  background:rgba(255,255,255,.87);
+
+  border:3px solid white;
+
+  box-shadow:0 6px 14px rgba(60,90,110,.13);
+
+  text-align:center;
+
+  color:#607886;
+
+  font-size:14px;
+  font-weight:900;
+}
+
+/* =========================
+   QUESTION
+========================= */
+
+.question{
+  position:relative;
+  z-index:100;
+
+  width:min(94%,820px);
+
+  margin:2px auto;
+
+  padding:11px 17px;
+
+  border-radius:25px;
+
+  background:rgba(255,255,255,.88);
+
+  border:3px solid white;
+
+  box-shadow:
+    0 9px 22px rgba(60,90,110,.14);
+
+  text-align:center;
+
+  color:#506a79;
+
+  font-size:clamp(17px,4.2vw,25px);
+
+  font-weight:900;
+}
+
+.na{
+  display:inline-block;
+
+  padding:2px 11px;
+
+  border-radius:13px;
+
+  background:#ffe0ed;
+
+  color:#b35d84;
+}
+
+/* =========================
+   SUN
+========================= */
+
+.sun{
+  position:absolute;
+  z-index:20;
+
+  left:50%;
+  top:16%;
+
+  width:clamp(118px,20vw,175px);
+  height:clamp(118px,20vw,175px);
+
+  transform:translateX(-50%);
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #fffbd3 0%,
+      #ffe78f 42%,
+      #ffc76e 74%,
+      #f2a45e 100%
+    );
+
+  border:5px solid white;
+
+  box-shadow:
+    0 0 28px rgba(255,225,120,.9),
+    0 0 60px rgba(255,215,100,.6),
+    0 18px 30px rgba(70,80,80,.18),
+    inset 0 5px 12px white;
+
+  animation:sunFloat 3s ease-in-out infinite;
+}
+
+@keyframes sunFloat{
+  0%,100%{
+    transform:translateX(-50%) translateY(0);
+  }
+  50%{
+    transform:translateX(-50%) translateY(-7px);
+  }
+}
+
+.sun-eye{
+  position:absolute;
+  top:43%;
+
+  width:10px;
+  height:15px;
+
+  border-radius:50%;
+
+  background:#80624d;
+}
+
+.sun-eye.left{left:35%}
+.sun-eye.right{right:35%}
+
+.sun-mouth{
+  position:absolute;
+
+  left:50%;
+  top:56%;
+
+  width:35px;
+  height:18px;
+
+  transform:translateX(-50%);
+
+  border-bottom:4px solid #986b58;
+
+  border-radius:0 0 50% 50%;
+}
+
+/* =========================
+   DROPS
+========================= */
+
+#drops{
+  position:absolute;
+  z-index:50;
+
+  top:42%;
+  left:0;
+  right:0;
+  bottom:6%;
+
+  display:flex;
+  flex-wrap:wrap;
+
+  align-content:center;
+  justify-content:center;
+
+  gap:clamp(10px,2.5vw,28px);
+
+  padding:8px 18px;
+}
+
+.drop{
+  position:relative;
+
+  width:clamp(87px,12.5vw,122px);
+  height:clamp(97px,14.5vw,135px);
+
+  touch-action:none;
+
+  cursor:grab;
+
+  filter:
+    drop-shadow(
+      0 12px 12px
+      rgba(50,100,120,.22)
+    );
+
+  animation:
+    bob
+    var(--duration)
+    ease-in-out
+    infinite;
+
+  animation-delay:var(--delay);
+}
+
+.drop img{
+  position:absolute;
+  inset:0;
+
+  width:100%;
+  height:100%;
+
+  object-fit:contain;
+
+  pointer-events:none;
+}
+
+.word{
+  position:absolute;
+
+  left:50%;
+  top:52%;
+
+  width:88%;
+
+  transform:
+    translate(-50%,-50%);
+
+  text-align:center;
+
+  color:#426779;
+
+  font-size:clamp(13px,2.35vw,20px);
+
+  line-height:1.15;
+
+  font-weight:900;
+
+  text-shadow:
+    0 1px white,
+    0 2px 4px rgba(50,80,100,.15);
+
+  pointer-events:none;
+}
+
+@keyframes bob{
+  0%,100%{
+    transform:translateY(0) rotate(-1deg);
+  }
+  50%{
+    transform:translateY(-8px) rotate(1deg);
+  }
+}
+
+.dragging{
+  animation:none!important;
+  transform:scale(1.13)!important;
+  z-index:2000!important;
+}
+
+/* درست */
+.correct{
+  animation:
+    correct .8s ease forwards!important;
+}
+
+@keyframes correct{
+  0%{
+    opacity:1;
+    transform:scale(1);
+  }
+  35%{
+    transform:scale(1.3);
+  }
+  100%{
+    opacity:0;
+    transform:
+      translateY(-170px)
+      scale(.05);
+  }
+}
+
+/* غلط */
+.wrong{
+  animation:
+    wrong .7s ease forwards!important;
+}
+
+@keyframes wrong{
+  0%{
+    opacity:1;
+    transform:scale(1);
+  }
+  20%{
+    transform:scale(1.15) rotate(-10deg);
+  }
+  40%{
+    transform:scale(1.15) rotate(10deg);
+  }
+  100%{
+    opacity:0;
+    transform:scale(2.2);
+  }
+}
+
+/* =========================
+   EFFECTS
+========================= */
+
+#message{
+  position:fixed;
+  z-index:4000;
+
+  left:50%;
+  top:40%;
+
+  max-width:90%;
+
+  transform:
+    translate(-50%,-50%)
+    scale(.7);
+
+  padding:12px 22px;
+
+  border-radius:23px;
+
+  background:rgba(255,255,255,.96);
+
+  border:3px solid white;
+
+  box-shadow:
+    0 12px 30px rgba(50,80,100,.23);
+
+  text-align:center;
+
+  font-size:18px;
+  font-weight:900;
+
+  opacity:0;
+
+  pointer-events:none;
+}
+
+#message.show{
+  animation:message .95s ease forwards;
+}
+
+@keyframes message{
+  0%{
+    opacity:0;
+    transform:
+      translate(-50%,-50%)
+      scale(.7);
+  }
+  20%{
+    opacity:1;
+    transform:
+      translate(-50%,-50%)
+      scale(1.05);
+  }
+  70%{
+    opacity:1;
+    transform:
+      translate(-50%,-50%)
+      scale(1);
+  }
+  100%{
+    opacity:0;
+    transform:
+      translate(-50%,-70%)
+      scale(.9);
+  }
+}
+
+/* فشفشه */
+#firework{
+  position:fixed;
+
+  left:50%;
+  top:28%;
+
+  z-index:4500;
+
+  width:12px;
+  height:12px;
+
+  border-radius:50%;
+
+  opacity:0;
+
+  pointer-events:none;
+}
+
+#firework.show{
+  animation:fire .9s ease-out forwards;
+}
+
+@keyframes fire{
+  0%{
+    opacity:1;
+
+    box-shadow:
+      0 0 0 0 white,
+      0 0 0 0 #ffd875,
+      0 0 0 0 #ffb8d1;
+  }
+
+  100%{
+    opacity:0;
+
+    box-shadow:
+      -110px -70px 0 7px white,
+      110px -70px 0 7px #ffd875,
+      -135px 5px 0 7px #ffb8d1,
+      135px 5px 0 7px #aee9ff,
+      -70px 90px 0 7px #d6c8ff,
+      70px 90px 0 7px #ffe0a5;
+  }
+}
+
+/* بمب */
+#bomb{
+  position:fixed;
+
+  left:50%;
+  top:45%;
+
+  z-index:4600;
+
+  font-size:85px;
+
+  opacity:0;
+
+  pointer-events:none;
+}
+
+#bomb.show{
+  animation:bomb .75s ease forwards;
+}
+
+@keyframes bomb{
+  0%{
+    opacity:0;
+    transform:
+      translate(-50%,-50%)
+      scale(.2);
+  }
+
+  30%{
+    opacity:1;
+    transform:
+      translate(-50%,-50%)
+      scale(1.2)
+      rotate(-8deg);
+  }
+
+  60%{
+    transform:
+      translate(-50%,-50%)
+      scale(1.5)
+      rotate(8deg);
+  }
+
+  100%{
+    opacity:0;
+    transform:
+      translate(-50%,-50%)
+      scale(2.8);
+  }
+}
+
+/* =========================
+   FINISH
+========================= */
+
+#finish{
+  position:fixed;
+  inset:0;
+
+  z-index:8000;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:15px;
+
+  background:
+    rgba(45,72,88,.7);
+
+  backdrop-filter:blur(11px);
+}
+
+.finish-card{
+  width:min(94%,580px);
+
+  padding:27px;
+
+  border-radius:40px;
+
+  background:
+    linear-gradient(
+      145deg,
+      white,
+      #eef8fc
+    );
+
+  border:4px solid white;
+
+  box-shadow:
+    0 30px 80px
+    rgba(25,55,75,.35);
+
+  text-align:center;
+}
+
+.trophy{
+  font-size:65px;
+}
+
+.finish-title{
+  color:#527487;
+
+  font-size:
+    clamp(28px,7vw,42px);
+
+  font-weight:900;
+}
+
+.finish-name{
+  color:#8296a1;
+
+  font-size:18px;
+  font-weight:900;
+}
+
+.final-score{
+  margin:5px;
+
+  color:#ca954b;
+
+  font-size:60px;
+  font-weight:900;
+}
+
+.result-grid{
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:10px;
+
+  margin:15px 0;
+}
+
+.result{
+  padding:13px;
+
+  border-radius:20px;
+
+  background:#eaf4f8;
+
+  color:#597180;
+
+  font-weight:900;
+}
+
+.finish-message{
+  margin:12px;
+
+  color:#526d7b;
+
+  font-size:18px;
+
+  font-weight:900;
+}
+
+.restart{
+  border:0;
+
+  padding:14px 30px;
+
+  border-radius:22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffe0a8,
+      #ffc8db
+    );
+
+  color:#65495f;
+
+  font-family:inherit;
+
+  font-size:20px;
+
+  font-weight:900;
+
+  box-shadow:
+    0 7px 0 #d09aa7;
+
+  cursor:pointer;
+}
+
+.restart:active{
+  transform:translateY(5px);
+  box-shadow:0 3px 0 #d09aa7;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
+
+  .header{
+    flex-direction:column;
+    gap:4px;
+    padding:5px 8px;
+  }
+
+  .title{
+    width:100%;
+    text-align:center;
+    padding:5px;
+  }
+
+  .stats{
+    width:100%;
+    justify-content:center;
+  }
+
+  .stat{
+    min-width:60px;
+    padding:5px;
+  }
+
+  .question{
+    padding:8px 10px;
+    font-size:16px;
+  }
+
+  .sun{
+    top:17%;
+    width:116px;
+    height:116px;
+  }
+
+  #drops{
+    top:40%;
+    bottom:6%;
+    gap:7px 9px;
+    padding:5px;
+  }
+
+  .drop{
+    width:79px;
+    height:89px;
+  }
+
+  .word{
+    font-size:12px;
+  }
+
+  #message{
+    font-size:15px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     START SCREEN
+===================================================== -->
+
+<div id="start">
+
+  <div class="start-card">
+
+    <img
+      class="start-drop"
+      src="https://cdn.imgurl.ir/uploads/o031792_photo-output.png"
+      alt="قطره آب">
+
+    <div class="start-title">
+      💧 قطره‌های جادویی «نا»
+    </div>
+
+    <div class="start-sub">
+      قطره‌های درست را به خورشید برسان! ☀️
+    </div>
+
+    <label class="name-label">
+      🌸 نام کودک
+    </label>
+
+    <input
+      id="childName"
+      class="name-input"
+      type="text"
+      placeholder="نامت را بنویس..."
+      autocomplete="off">
+
+    <button
+      class="start-btn"
+      id="startBtn"
+      type="button">
+
+      🚀 شروع مأموریت
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     NEON HOURGLASS
+===================================================== -->
+
+<div id="hourglass">
+
+  <div class="hg-card">
+
+    <div class="hg-title">
+      ✨ آماده‌ای قهرمان؟
+    </div>
+
+    <div class="hourglass">
+
+      <div class="hg-frame"></div>
+
+      <div class="hg-top"></div>
+
+      <div class="hg-bottom"></div>
+
+      <div class="sand-top"></div>
+
+      <div class="sand-stream"></div>
+
+      <div class="sand-bottom"></div>
+
+      <div class="hg-dot a"></div>
+      <div class="hg-dot b"></div>
+      <div class="hg-dot c"></div>
+      <div class="hg-dot d"></div>
+
+    </div>
+
+    <div class="hg-sub">
+      🌊 دریا در حال آماده شدن است...
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     GAME
+===================================================== -->
+
+<div id="game" style="display:none">
+
+
+  <header class="header">
+
+    <div class="title">
+      🌊 قطره‌های جادویی «نا»
+    </div>
+
+    <div class="stats">
+
+      <div class="stat">
+        ⭐ <span id="score">0</span>
+      </div>
+
+      <div class="stat">
+        💧 <span id="found">0</span>/6
+      </div>
+
+      <div class="stat">
+        ❌ <span id="mistakes">0</span>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- سوال جدا از خورشید -->
+
+  <div class="question">
+
+    ☀️ کلمه‌هایی را که با
+    <span class="na">«نا»</span>
+    ترکیب می‌شوند، به خورشید بکش!
+
+  </div>
+
+
+  <!-- خورشید بدون هیچ نوشته -->
+
+  <div class="sun" id="sun">
+
+    <div class="sun-eye left"></div>
+    <div class="sun-eye right"></div>
+    <div class="sun-mouth"></div>
+
+  </div>
+
+
+  <!-- قطره‌ها -->
+
+  <div id="drops"></div>
+
+
+  <!-- افکت‌ها -->
+
+  <div id="firework"></div>
+
+  <div id="bomb">💣</div>
+
+  <div id="message"></div>
+
+
+  <!-- =================================================
+       FINISH
+  ================================================== -->
+
+  <div id="finish">
+
+    <div class="finish-card">
+
+      <div class="trophy">
+        🏆☀️🌊🎆
+      </div>
+
+      <div class="finish-title">
+        مأموریت کامل شد!
+      </div>
+
+      <div
+        class="finish-name"
+        id="finishName">
+      </div>
+
+      <div class="final-score">
+        <span id="finalScore">0</span> ⭐
+      </div>
+
+      <div class="result-grid">
+
+        <div class="result">
+          💧 پاسخ درست
+          <br>
+          <span id="finalCorrect">0</span>
+          /6
+        </div>
+
+        <div class="result">
+          ❌ پاسخ غلط
+          <br>
+          <span id="finalMistakes">0</span>
+        </div>
+
+        <div class="result">
+          🎯 درصد موفقیت
+          <br>
+          <span id="finalPercent">0%</span>
+        </div>
+
+        <div class="result">
+          ⭐ امتیاز
+          <br>
+          <span id="finalPoints">0</span>
+        </div>
+
+      </div>
+
+      <div
+        class="finish-message"
+        id="finishMessage">
+      </div>
+
+      <button
+        class="restart"
+        id="restart"
+        type="button">
+
+        🔄 دوباره بازی کن
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   کلمات
+===================================================== */
+
+/*
+   ۶ کلمه صحیح:
+   مناسب
+   راضی
+   تمام
+   سالم
+   مرتب
+   امید
+
+   ۵ کلمه حواس پرت‌کننده:
+   تلاش
+   دست
+   جواب
+   نظم
+   کتاب
+*/
+
+const words = [
+
+  {text:"مناسب", correct:true},
+  {text:"راضی", correct:true},
+  {text:"تلاش", correct:false},
+  {text:"تمام", correct:true},
+  {text:"دست", correct:false},
+  {text:"سالم", correct:true},
+  {text:"جواب", correct:false},
+  {text:"نظم", correct:false},
+  {text:"مرتب", correct:true},
+  {text:"امید", correct:true},
+  {text:"کتاب", correct:false}
+
+];
+
+
+/* =====================================================
+   متغیرها
+===================================================== */
+
+let childName = "";
+
+let score = 0;
+
+let found = 0;
+
+let mistakes = 0;
+
+let finished = false;
+
+
+/* =====================================================
+   عناصر
+===================================================== */
+
+const start =
+  document.getElementById("start");
+
+const hourglass =
+  document.getElementById("hourglass");
+
+const game =
+  document.getElementById("game");
+
+const drops =
+  document.getElementById("drops");
+
+const sun =
+  document.getElementById("sun");
+
+const message =
+  document.getElementById("message");
+
+const firework =
+  document.getElementById("firework");
+
+const bomb =
+  document.getElementById("bomb");
+
+
+/* =====================================================
+   شروع
+===================================================== */
+
+document
+  .getElementById("startBtn")
+  .addEventListener(
+    "click",
+    startGame
+  );
+
+
+document
+  .getElementById("childName")
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(e.key === "Enter"){
+        startGame();
+      }
+
+    }
+  );
+
+
+function startGame(){
+
+  const name =
+    document
+      .getElementById("childName")
+      .value
+      .trim();
+
+
+  if(!name){
+
+    document
+      .getElementById("childName")
+      .focus();
+
+    return;
+  }
+
+
+  childName = name;
+
+
+  start.style.display = "none";
+
+  hourglass.style.display = "flex";
+
+
+  setTimeout(
+    function(){
+
+      hourglass.style.display = "none";
+
+      game.style.display = "block";
+
+      createDrops();
+
+    },
+    1900
+  );
+
+}
+
+
+/* =====================================================
+   ساخت قطره‌ها
+===================================================== */
+
+function createDrops(){
+
+  drops.innerHTML = "";
+
+
+  const shuffled =
+    [...words].sort(
+      () => Math.random() - .5
+    );
+
+
+  shuffled.forEach(
+    function(item,index){
+
+      const drop =
+        document.createElement("div");
+
+
+      drop.className = "drop";
+
+
+      drop.dataset.correct =
+        item.correct;
+
+
+      drop.dataset.used =
+        "false";
+
+
+      drop.style.setProperty(
+        "--duration",
+        (2.4 + Math.random()*2) + "s"
+      );
+
+
+      drop.style.setProperty(
+        "--delay",
+        (-Math.random()*2) + "s"
+      );
+
+
+      drop.innerHTML = `
+
+        <img
+          src="https://cdn.imgurl.ir/uploads/o031792_photo-output.png"
+          draggable="false"
+          alt="قطره">
+
+        <div class="word">
+          ${item.text}
+        </div>
+
+      `;
+
+
+      setupDrag(drop);
+
+
+      drops.appendChild(drop);
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   DRAG
+===================================================== */
+
+function setupDrag(drop){
+
+  let dragging = false;
+
+  let startX = 0;
+
+  let startY = 0;
+
+  let originalLeft = 0;
+
+  let originalTop = 0;
+
+
+  drop.addEventListener(
+    "pointerdown",
+    function(e){
+
+      if(finished)
+        return;
+
+
+      if(drop.dataset.used === "true")
+        return;
+
+
+      e.preventDefault();
+
+
+      dragging = true;
+
+
+      drop.setPointerCapture(
+        e.pointerId
+      );
+
+
+      const rect =
+        drop.getBoundingClientRect();
+
+
+      startX = e.clientX;
+
+      startY = e.clientY;
+
+      originalLeft = rect.left;
+
+      originalTop = rect.top;
+
+
+      drop.classList.add("dragging");
+
+
+      drop.style.position = "fixed";
+
+      drop.style.left =
+        rect.left + "px";
+
+      drop.style.top =
+        rect.top + "px";
+
+      drop.style.margin = "0";
+
+    }
+  );
+
+
+  drop.addEventListener(
+    "pointermove",
+    function(e){
+
+      if(!dragging)
+        return;
+
+
+      e.preventDefault();
+
+
+      const dx =
+        e.clientX - startX;
+
+      const dy =
+        e.clientY - startY;
+
+
+      drop.style.left =
+        originalLeft + dx + "px";
+
+      drop.style.top =
+        originalTop + dy + "px";
+
+    }
+  );
+
+
+  function endDrag(){
+
+    if(!dragging)
+      return;
+
+
+    dragging = false;
+
+
+    const dropRect =
+      drop.getBoundingClientRect();
+
+
+    const sunRect =
+      sun.getBoundingClientRect();
+
+
+    const x =
+      dropRect.left +
+      dropRect.width/2;
+
+
+    const y =
+      dropRect.top +
+      dropRect.height/2;
+
+
+    const sx =
+      sunRect.left +
+      sunRect.width/2;
+
+
+    const sy =
+      sunRect.top +
+      sunRect.height/2;
+
+
+    const distance =
+      Math.sqrt(
+        Math.pow(x-sx,2) +
+        Math.pow(y-sy,2)
+      );
+
+
+    drop.classList.remove(
+      "dragging"
+    );
+
+
+    if(
+      distance <
+      sunRect.width * .8
+    ){
+
+      evaluate(drop);
+
+    }else{
+
+      returnDrop(drop);
+
+    }
+
+  }
+
+
+  drop.addEventListener(
+    "pointerup",
+    endDrag
+  );
+
+
+  drop.addEventListener(
+    "pointercancel",
+    endDrag
+  );
+
+}
+
+
+/* =====================================================
+   برگشت قطره
+===================================================== */
+
+function returnDrop(drop){
+
+  drop.style.position = "relative";
+
+  drop.style.left = "";
+
+  drop.style.top = "";
+
+  drop.style.margin = "";
+
+}
+
+
+/* =====================================================
+   بررسی
+===================================================== */
+
+function evaluate(drop){
+
+  if(
+    drop.dataset.used === "true"
+  )
+    return;
+
+
+  drop.dataset.used = "true";
+
+
+  if(
+    drop.dataset.correct === "true"
+  ){
+
+    /* درست */
+
+    found++;
+
+    score += 10;
+
+
+    drop.classList.add(
+      "correct"
+    );
+
+
+    playCorrectSound();
+
+    fireworks();
+
+
+    showMessage(
+      "🎉 آفرین! «نا» می‌تواند به این کلمه اضافه شود!",
+      true
+    );
+
+
+    /* خورشید می‌درخشد */
+
+    sun.style.transform =
+      "translateX(-50%) scale(1.16)";
+
+
+    setTimeout(
+      function(){
+
+        sun.style.transform =
+          "translateX(-50%)";
+
+      },
+      350
+    );
+
+
+    updateStats();
+
+
+    /*
+       پایان فوری:
+       به محض پیدا شدن ۶ جواب صحیح
+    */
+
+    if(found === 6){
+
+      setTimeout(
+        finishGame,
+        900
+      );
+
+    }
+
+  }else{
+
+    /* غلط */
+
+    mistakes++;
+
+
+    score =
+      Math.max(
+        0,
+        score - 5
+      );
+
+
+    drop.classList.add(
+      "wrong"
+    );
+
+
+    playWrongSound();
+
+    explode();
+
+
+    showMessage(
+      "💥 این کلمه با «نا» ترکیب نمی‌شود!",
+      false
+    );
+
+
+    updateStats();
+
+  }
+
+}
+
+
+/* =====================================================
+   آمار
+===================================================== */
+
+function updateStats(){
+
+  document.getElementById(
+    "score"
+  ).textContent = score;
+
+
+  document.getElementById(
+    "found"
+  ).textContent = found;
+
+
+  document.getElementById(
+    "mistakes"
+  ).textContent = mistakes;
+
+}
+
+
+/* =====================================================
+   پیام
+===================================================== */
+
+function showMessage(
+  text,
+  good
+){
+
+  message.textContent = text;
+
+  message.style.color =
+    good
+      ? "#4b966f"
+      : "#d45b73";
+
+
+  message.classList.remove(
+    "show"
+  );
+
+
+  void message.offsetWidth;
+
+
+  message.classList.add(
+    "show"
+  );
+
+}
+
+
+/* =====================================================
+   فشفشه
+===================================================== */
+
+function fireworks(){
+
+  firework.classList.remove(
+    "show"
+  );
+
+
+  void firework.offsetWidth;
+
+
+  firework.classList.add(
+    "show"
+  );
+
+}
+
+
+/* =====================================================
+   انفجار
+===================================================== */
+
+function explode(){
+
+  bomb.classList.remove(
+    "show"
+  );
+
+
+  void bomb.offsetWidth;
+
+
+  bomb.classList.add(
+    "show"
+  );
+
+}
+
+
+/* =====================================================
+   صدا
+===================================================== */
+
+let audioContext = null;
+
+
+function audio(){
+
+  if(!audioContext){
+
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+  }
+
+  return audioContext;
+
+}
+
+
+function tone(
+  frequency,
+  duration,
+  type = "sine"
+){
+
+  try{
+
+    const ctx = audio();
+
+
+    const osc =
+      ctx.createOscillator();
+
+
+    const gain =
+      ctx.createGain();
+
+
+    osc.type = type;
+
+    osc.frequency.value =
+      frequency;
+
+
+    gain.gain.setValueAtTime(
+      .001,
+      ctx.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      .15,
+      ctx.currentTime + .02
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      ctx.currentTime + duration
+    );
+
+
+    osc.connect(gain);
+
+    gain.connect(ctx.destination);
+
+
+    osc.start();
+
+
+    osc.stop(
+      ctx.currentTime + duration
+    );
+
+  }catch(e){}
+
+}
+
+
+function playCorrectSound(){
+
+  tone(600,.12);
+
+  setTimeout(
+    () => tone(800,.14),
+    120
+  );
+
+  setTimeout(
+    () => tone(1000,.18),
+    250
+  );
+
+}
+
+
+function playWrongSound(){
+
+  tone(
+    150,
+    .18,
+    "sawtooth"
+  );
+
+  setTimeout(
+    () => tone(
+      90,
+      .28,
+      "sawtooth"
+    ),
+    140
+  );
+
+}
+
+
+/* =====================================================
+   پایان
+===================================================== */
+
+function finishGame(){
+
+  if(finished)
+    return;
+
+
+  finished = true;
+
+
+  const percent =
+    Math.round(
+      found / 6 * 100
+    );
+
+
+  document.getElementById(
+    "finishName"
+  ).textContent =
+    "🌸 آفرین " + childName;
+
+
+  document.getElementById(
+    "finalScore"
+  ).textContent =
+    score;
+
+
+  document.getElementById(
+    "finalCorrect"
+  ).textContent =
+    found;
+
+
+  document.getElementById(
+    "finalMistakes"
+  ).textContent =
+    mistakes;
+
+
+  document.getElementById(
+    "finalPercent"
+  ).textContent =
+    percent + "%";
+
+
+  document.getElementById(
+    "finalPoints"
+  ).textContent =
+    score;
+
+
+  let text;
+
+
+  if(mistakes === 0){
+
+    text =
+      "🏆 بی‌نقص بودی! تو استاد پیشوند «نا» شدی! 🎆";
+
+  }else if(score >= 40){
+
+    text =
+      "🌟 عالی بود! خیلی خوب کلمه‌ها را شناختی!";
+
+  }else{
+
+    text =
+      "👏 مأموریت را کامل کردی!";
+
+  }
+
+
+  document.getElementById(
+    "finishMessage"
+  ).textContent =
+    text;
+
+
+  document.getElementById(
+    "finish"
+  ).style.display =
+    "flex";
+
+
+  fireworks();
+
+}
+
+
+/* =====================================================
+   دوباره
+===================================================== */
+
+document
+  .getElementById("restart")
+  .addEventListener(
+    "click",
+    function(){
+
+      location.reload();
+
+    }
+  );
+
+</script>
+
+</body>
+</html>

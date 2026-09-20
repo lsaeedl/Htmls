@@ -276,11 +276,14 @@ const GameEngine = (() => {
   function renderResults(saveResult) {
     const perfect = state.wrongCount === 0;
     const official = saveResult && saveResult.isOfficial;
+    const attempts = state.correctCount + state.wrongCount;
+    const finalScore = attempts === 0 ? 0 : Math.round((state.correctCount / attempts) * 100);
 
     state.root.innerHTML = `
       <div class="results-card">
         ${perfect ? '<div class="perfect-badge">🌟 عالی بود! بدون هیچ غلطی! 🌟</div>' : ''}
         <h2>کارنامه بازی</h2>
+        <div class="result-score">امتیاز: <strong>${toFa(finalScore)} از ۱۰۰</strong></div>
         <div class="results-row">
           <div class="result-box result-correct">
             <span class="result-num">${toFa(state.correctCount)}</span>

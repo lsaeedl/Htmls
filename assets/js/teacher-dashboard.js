@@ -348,6 +348,7 @@ function initTeachersTab() {
       name: document.getElementById('t_name').value.trim(),
       role: document.getElementById('t_role').value,
       allowedGames: document.getElementById('t_allowedGames').value.trim() || 'ALL',
+      allowedClasses: document.getElementById('t_allowedClasses').value.trim() || 'ALL',
       canEditQuestions: document.getElementById('t_canEditQuestions').checked,
       canManageGames: document.getElementById('t_canManageGames').checked,
       canManageTeachers: document.getElementById('t_canManageTeachers').checked
@@ -380,6 +381,7 @@ async function loadTeachers() {
       <td>${t.name || ''}</td>
       <td>${t.role}</td>
       <td>${t.allowedGames}</td>
+      <td>${t.allowedClasses}</td>
       <td style="font-size:0.78rem;">
         ${t.canEditQuestions ? '📝سوال ' : ''}${t.canManageGames ? '🎮بازی ' : ''}${t.canManageTeachers ? '👩‍🏫آموزگار' : ''}
       </td>
@@ -424,6 +426,7 @@ function editTeacher(t) {
   document.getElementById('t_name').value = t.name || '';
   document.getElementById('t_role').value = t.role;
   document.getElementById('t_allowedGames').value = t.allowedGames;
+  document.getElementById('t_allowedClasses').value = t.allowedClasses;
   document.getElementById('t_canEditQuestions').checked = t.canEditQuestions;
   document.getElementById('t_canManageGames').checked = t.canManageGames;
   document.getElementById('t_canManageTeachers').checked = t.canManageTeachers;
@@ -471,8 +474,10 @@ function initAiTab() {
   document.getElementById('ai_parseBtn').addEventListener('click', parseAndPreviewQuestions);
 
   document.getElementById('an_mode').addEventListener('change', (e) => {
-    document.getElementById('an_gameWrap').style.display = e.target.value === 'game' ? 'block' : 'none';
-    document.getElementById('an_studentWrap').style.display = e.target.value === 'student' ? 'block' : 'none';
+    const isGame = e.target.value === 'game';
+    document.getElementById('an_gameWrap').style.display = isGame ? 'block' : 'none';
+    document.getElementById('an_studentWrap').style.display = isGame ? 'none' : 'block';
+    document.getElementById('an_classFilterWrap').style.display = isGame ? 'block' : 'none';
   });
   document.getElementById('an_buildBtn').addEventListener('click', buildAnalysisPrompt);
   document.getElementById('an_copyPromptBtn').addEventListener('click', () => copyText('an_generatedPrompt'));
@@ -571,10 +576,11 @@ async function buildAnalysisPrompt() {
   if (mode === 'game') {
     const gameId = document.getElementById('an_gameSelect').value;
     const game = allGames.find(g => String(g.gameId) === gameId);
-    const res = await syncGetResultsByGame(gameId);
+    const classFilter = document.getElementById('an_classFilter').value.trim();
+    const res = await syncGetResultsByGame(gameId, classFilter);
     if (!res.success) { statusEl.textContent = res.error; statusEl.className = 'status-msg status-err'; return; }
     results = res.results;
-    subjectLine = `نتایج کلاس در بازی «${game ? game.title : gameId}»`;
+    subjectLine = `نتایج ${classFilter ? 'کلاس ' + classFilter : 'کلاس'} در بازی «${game ? game.title : gameId}»`;
   } else {
     const studentCode = document.getElementById('an_studentCode').value.trim();
     const res = await syncGetResultsByStudent(studentCode);

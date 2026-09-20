@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی آموزشی گنج واژه‌ها</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
+
+        :root {
+            --primary-color: #ff4757;
+            --secondary-color: #2ed573;
+            --accent-color: #ffa502;
+            --bg-sky: linear-gradient(to bottom, #1e3c72, #2a5298);
+            --font-main: 'Vazirmatn', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            user-select: none;
+        }
+
+        body {
+            background: var(--bg-sky);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        /* ستاره‌های درخشان در آسمان */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: blink 2s infinite ease-in-out;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* کانتینر اصلی بازی */
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 100vh;
+            max-height: 700px;
+            background: linear-gradient(to bottom, #74b9ff, #81ecec);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 8px solid #fff;
+            z-index: 2;
+        }
+
+        /* افکت لرزش برای پاسخ اشتباه */
+        .shake {
+            animation: shake 0.5s calc(1) ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        /* بوم انیمیشن سکه */
+        #coinCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* بخش‌های مختلف بازی */
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* داشبورد بالای بازی */
+        .hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 10;
+            font-size: 1.1rem;
+        }
+        .hud-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* نوار پیشرفت */
+        .progress-container {
+            width: 60%;
+            background: #dfe6e9;
+            height: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #fff;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #2ed573, #7bed9f);
+            transition: width 0.5s ease;
+        }
+
+        /* صفحه ورود */
+        #login-screen {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        }
+        .game-title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 0 #4834d4, 0 8px 20px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        .login-box h3 { color: #333; margin-bottom: 15px; }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            border: 3px solid #dfe6e9;
+            border-radius: 12px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+            margin-bottom: 20px;
+        }
+        input[type="text"]:focus { border-color: #6c5ce7; }
+        
+        /* دکمه‌ها */
+        .btn {
+            background: linear-gradient(to bottom, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #cf1b2b, 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+            text-shadow: 0 2px 2px rgba(0,0,0,0.2);
+        }
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #cf1b2b, 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* محیط گرافیکی جاده سه بعدی */
+        .environment-3d {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 45%;
+            background: #2ed573; /* چمن */
+            perspective: 150px;
+            overflow: hidden;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+        .road {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 200px;
+            height: 300px;
+            background: #747d8c;
+            transform: translateX(-50%) rotateX(60deg);
+            transform-origin: bottom center;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+        .road-line {
+            position: absolute;
+            width: 8px;
+            height: 100%;
+            left: 48%;
+            background: linear-gradient(to bottom, #fff 50%, transparent 50%);
+            background-size: 100% 40px;
+            animation: moveRoad 1s linear infinite paused;
+        }
+        
+        /* تابلوی راهنما کنار جاده */
+        .signboard {
+            position: absolute;
+            bottom: 120px;
+            right: 15%;
+            width: 110px;
+            background: #d2aa53;
+            border: 4px solid #8c6218;
+            border-radius: 8px;
+            padding: 5px;
+            color: #4a2f00;
+            font-weight: 900;
+            font-size: 0.9rem;
+            text-align: center;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+            transform: rotateZ(-5deg);
+            z-index: 5;
+        }
+        .signboard::after {
+            content: '';
+            position: absolute;
+            bottom: -44px;
+            left: 40%;
+            width: 12px;
+            height: 40px;
+            background: #8c6218;
+        }
+
+        /* صندوق گنج سه بعدی */
+        .chest-container {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%) scale(0.6);
+            z-index: 2;
+            transition: all 0.5s ease;
+        }
+        .chest {
+            width: 100px;
+            height: 80px;
+            position: relative;
+        }
+        .chest-lid {
+            width: 100px;
+            height: 40px;
+            background: #8c6218;
+            border-radius: 50px 50px 0 0;
+            border: 4px solid #573d0f;
+            border-bottom: none;
+            transform-origin: bottom;
+            transition: transform 1s;
+        }
+        .chest-body {
+            width: 100px;
+            height: 50px;
+            background: #704c11;
+            border: 4px solid #573d0f;
+            border-radius: 0 0 10px 10px;
+            position: relative;
+        }
+        .chest-lock {
+            position: absolute;
+            top: 0;
+            left: 40px;
+            width: 20px;
+            height: 20px;
+            background: #ffd32a;
+            border: 2px solid #ffa502;
+            border-radius: 50%;
+        }
+        /* باز شدن صندوق گنج */
+        .chest.open .chest-lid {
+            transform: rotateX(-110deg) translateY(-20px);
+        }
+
+        /* شخصیت بازی (کاراکتر فانتزی) */
+        .character {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            width: 70px;
+            height: 85px;
+            transform: translateX(-50%);
+            z-index: 4;
+            transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s;
+        }
+        .char-body {
+            width: 100%;
+            height: 100%;
+            background: #fffa65;
+            border-radius: 50% 50% 40% 40%;
+            border: 4px solid #fff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        .char-eyes {
+            position: absolute;
+            top: 20px;
+            width: 45px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .char-eye {
+            width: 14px;
+            height: 14px;
+            background: #333;
+            border-radius: 50%;
+            position: relative;
+        }
+        .char-eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+        }
+        .char-smile {
+            position: absolute;
+            bottom: 20px;
+            width: 24px;
+            height: 12px;
+            border-bottom: 4px solid #333;
+            border-radius: 0 0 15px 15px;
+        }
+
+        /* انیمیشن پریدن کاراکتر هنگام حرکت */
+        @keyframes jump {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-40px) scale(1.1); }
+        }
+
+        /* بخش سوالات و گیم‌پلی */
+        .gameplay-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 80px;
+            width: 100%;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .letter-card {
+            background: linear-gradient(135deg, #ff6b81, #ff4757);
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 900;
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            box-shadow: 0 8px 0 #cf1b2b, 0 12px 20px rgba(0,0,0,0.15);
+            transform: rotate(calc(var(--r, 0) * 1deg));
+            transition: transform 0.2s;
+        }
+        .letter-card:nth-child(even) { --r: 4; background: linear-gradient(135deg, #1e90ff, #3742fa); box-shadow: 0 8px 0 #1b3ccf, 0 12px 20px rgba(0,0,0,0.15);}
+        .letter-card:nth-child(3n) { --r: -5; background: linear-gradient(135deg, #ffa502, #ff7f50); box-shadow: 0 8px 0 #cf6d1b, 0 12px 20px rgba(0,0,0,0.15);}
+
+        .input-area {
+            width: 90%;
+            max-width: 400px;
+            margin-bottom: 15px;
+        }
+
+        /* صفحات پایان */
+        .end-card {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            color: #333;
+            width: 90%;
+            max-width: 500px;
+        }
+        .medal {
+            font-size: 5rem;
+            animation: pulse 1.5s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* ریسپانسیو موبایل */
+        @media (max-width: 600px) {
+            .game-title { font-size: 2.2rem; }
+            .letter-card { width: 50px; height: 50px; font-size: 1.6rem; }
+            .hud { font-size: 0.9rem; padding: 8px 15px; }
+            .environment-3d { height: 40%; }
+            .character { width: 55px; height: 70px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars" id="starsContainer"></div>
+
+    <div class="game-container" id="gameContainer">
+        
+        <canvas id="coinCanvas"></canvas>
+
+        <div class="hud" id="gameHud" style="display: none;">
+            <div class="hud-item">🌟 مرحله: <span id="hud-level">۱</span>/۱۱</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="hud-item">💰 سکه: <span id="hud-coins">۰</span></div>
+            <div class="hud-item">❌ خطا: <span id="hud-errors">۰</span>/۳</div>
+        </div>
+
+        <div class="screen active" id="login-screen">
+            <h1 class="game-title">گنج واژه‌ها</h1>
+            <div class="login-box">
+                <h3>نام قشنگت رو بنویس:</h3>
+                <input type="text" id="student-name" placeholder="مثلاً: علی" maxlength="15" autocomplete="off">
+                <button class="btn" onclick="startGame()">شروع ماجراجویی 🚀</button>
+            </div>
+        </div>
+
+        <div class="screen" id="game-screen">
+            <div class="gameplay-area">
+                <h2>حروف به هم ریخته را مرتب کن:</h2>
+                
+                <div class="cards-container" id="lettersContainer"></div>
+
+                <div class="input-area">
+                    <input type="text" id="answer-input" placeholder="پاسخ را اینجا بنویس..." autocomplete="off">
+                    <button class="btn" onclick="checkAnswer()">بررسی پاسخ ✔</button>
+                </div>
+            </div>
+
+            <div class="environment-3d">
+                <div class="signboard">🏡 جاده‌ی <br><span id="signboard-name">نام</span></div>
+                
+                <div class="chest-container" id="treasureChest">
+                    <div class="chest">
+                        <div class="chest-lid"></div>
+                        <div class="chest-body">
+                            <div class="chest-lock"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="road">
+                    <div class="road-line"></div>
+                </div>
+
+                <div class="character" id="gameCharacter">
+                    <div class="char-body">
+                        <div class="char-eyes">
+                            <div class="char-eye"></div>
+                            <div class="char-eye"></div>
+                        </div>
+                        <div class="char-smile"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="screen" id="gameover-screen">
+            <div class="end-card">
+                <h1 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 15px;">فرصت تمام شد! 🦊</h1>
+                <p style="font-size: 1.2rem; margin-bottom: 25px;">اشکالی نداره قهرمان! دوباره تلاش کن تا به صندوق گنج برسی.</p>
+                <button class="btn" onclick="resetGame()">شروع مجدد 🔄</button>
+            </div>
+        </div>
+
+        <div class="screen" id="victory-screen">
+            <div class="end-card">
+                <div class="medal">🥇</div>
+                <h1 style="color: var(--secondary-color); font-size: 2.3rem; margin-bottom: 15px;" id="victory-title">آفرین!</h1>
+                <p style="font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; line-height: 1.8;" id="victory-msg">تو به گنج واژه‌ها رسیدی.</p>
+                <div style="background: #f1f2f6; padding: 15px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: #2f3542;">💰 کل سکه‌های جمع شده: <span id="final-coins" style="color: #ffa502; font-size: 1.6rem;">۰</span></h3>
+                </div>
+                <button class="btn" onclick="resetGame()">بازی دوباره 🔄</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // بانک اطلاعاتی مراحل بازی
+        const levels = [
+            { scrambled: ["ف", "ص", "د"], correct: "صدف" },
+            { scrambled: ["ن", "ل", "ز", "و", "ح"], correct: "حلزون" },
+            { scrambled: ["ب", "ا", "غ", "ی", "ر", "م"], correct: "مرغابی" },
+            { scrambled: ["ک", "ه", "ر", "ب"], correct: "برکه" },
+            { scrambled: ["ث", "ع", "ا", "ب"], correct: "باعث" },
+            { scrambled: ["ل", "ث", "م"], correct: "مثل" },
+            { scrambled: ["ر", "خ", "ت", "س", "ا"], correct: "استخر" },
+            { scrambled: ["د", "ر", "ن", "ه"], correct: "نرده" },
+            { scrambled: ["ث", "ع", "ب", "م"], correct: "مبعث" },
+            { scrambled: ["ر", "ب", "م", "ا", "ی", "پ"], correct: "پیامبر" },
+            { scrambled: ["ن", "س", "م", "ز", "ت", "ا", "ن"], correct: "زمستان" }
+        ];
+
+        let currentLevelIndex = 0;
+        let scoreCoins = 0;
+        let errorsCount = 0;
+        let studentName = "";
+
+        // ساخت موتور صوتی Web Audio API برای تولید صدای آفلاین
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'success') {
+                // صدای برنده شدن (دو نت موسیقیایی صعودی و شاد)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // نت C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // نت E5
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'error') {
+                // صدای بوق خطا (فرکانس پایین و خشن)
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        // ساخت افکت ستاره در پس‌زمینه آسمان
+        function initStars() {
+            const container = document.getElementById('starsContainer');
+            for (let i = 0; i < 40; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = star.style.height = Math.random() * 4 + 2 + 'px';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // تبدیل اعداد به فارسی برای ظاهر زیباتر صمیمی کودکانه
+        function toFarsiNumber(n) {
+            const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return n.toString().replace(/\d/g, x => farsiDigits[x]);
+        }
+
+        // جابجایی بین صفحات بازی
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // شروع بازی پس از ورود نام
+        function startGame() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            if (nameInput === "") {
+                alert("لطفاً ابتدا نام خودت رو بنویس عزیزم! 😊");
+                return;
+            }
+            studentName = nameInput;
+            document.getElementById('signboard-name').innerText = studentName;
+            document.getElementById('gameHud').style.display = 'flex';
+            
+            currentLevelIndex = 0;
+            scoreCoins = 0;
+            errorsCount = 0;
+            
+            updateHud();
+            loadLevel();
+            showScreen('game-screen');
+            updateCharacterPosition();
+        }
+
+        // بارگذاری اطلاعات مرحله فعلی
+        function loadLevel() {
+            if (currentLevelIndex >= levels.length) {
+                endGame(true);
+                return;
+            }
+
+            const levelData = levels[currentLevelIndex];
+            const container = document.getElementById('lettersContainer');
+            container.innerHTML = '';
+            document.getElementById('answer-input').value = '';
+
+            // تولید کارت‌های حروف با افکت چیدمان نامرتب فانتزی
+            levelData.scrambled.forEach(letter => {
+                const card = document.createElement('div');
+                card.className = 'letter-card';
+                card.innerText = letter;
+                // ایجاد انحراف زاویه تصادفی کوچک برای حس طبیعی‌تر و زیباتر
+                card.style.setProperty('--r', Math.floor(Math.random() * 14) - 7);
+                container.appendChild(card);
+            });
+
+            updateHud();
+        }
+
+        // به‌روزرسانی اطلاعات نوار ابزار بالا و پیشرفت جاده
+        function updateHud() {
+            document.getElementById('hud-level').innerText = toFarsiNumber(currentLevelIndex + 1);
+            document.getElementById('hud-coins').innerText = toFarsiNumber(scoreCoins);
+            document.getElementById('hud-errors').innerText = toFarsiNumber(errorsCount);
+            
+            const progressPercent = (currentLevelIndex / levels.length) * 100;
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+        }
+
+        // تغییر موقعیت شخصیت بر اساس پیشرفت روی جاده سه بعدی
+        function updateCharacterPosition() {
+            const char = document.getElementById('gameCharacter');
+            // محاسبه گام حرکتی به سمت صندوق گنج واقع در عمق جاده (بالای جاده)
+            const startBottom = 20; // موقعیت شروع در پایین صفحه
+            const endBottom = 160;  // موقعیت نهایی نزدیک صندوق گنج
+            
+            const step = (endBottom - startBottom) / levels.length;
+            const currentBottom = startBottom + (currentLevelIndex * step);
+            
+            // انیمیشن پرش رو به جلو هنگام حرکت روی جاده
+            char.style.animation = 'jump 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            char.style.bottom = currentBottom + 'px';
+            
+            // با نزدیک شدن به انتهای جاده، کاراکتر به دلیل پرسپکتیو کمی کوچک‌تر می‌شود
+            const scale = 1 - (currentLevelIndex * 0.03);
+            char.style.transform = `translateX(-50%) scale(${scale})`;
+
+            setTimeout(() => {
+                char.style.animation = '';
+            }, 600);
+        }
+
+        // بررسی درستی یا نادرستی کلمه وارد شده
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answer-input').value.trim();
+            const correctAnswer = levels[currentLevelIndex].correct;
+
+            if (userAnswer === "") return;
+
+            if (userAnswer === correctAnswer) {
+                // پاسخ درست است
+                playSound('success');
+                scoreCoins += 10;
+                startCoinShower();
+                
+                currentLevelIndex++;
+                updateCharacterPosition();
+
+                setTimeout(() => {
+                    loadLevel();
+                }, 800);
+
+            } else {
+                // پاسخ اشتباه است
+                playSound('error');
+                errorsCount++;
+                updateHud();
+
+                // افکت لرزش صفحه بازی
+                const container = document.getElementById('gameContainer');
+                container.classList.add('shake');
+                setTimeout(() => container.classList.remove('shake'), 500);
+
+                if (errorsCount >= 3) {
+                    setTimeout(() => {
+                        endGame(false);
+                    }, 600);
+                }
+            }
+        }
+
+        // پایان بازی (برد یا باخت)
+        function endGame(isVictory) {
+            document.getElementById('gameHud').style.display = 'none';
+            if (isVictory) {
+                document.getElementById('treasureChest').querySelector('.chest').classList.add('open');
+                document.getElementById('victory-title').innerText = `آفرین ${studentName}! 🎉`;
+                document.getElementById('victory-msg').innerText = `تو به گنج واژه‌ها رسیدی و تمام کلمات را با موفقیت یاد گرفتی.`;
+                document.getElementById('final-coins').innerText = toFarsiNumber(scoreCoins);
+                
+                // رگبار عظیم سکه به مناسبت برد نهایی
+                for(let i=0; i<5; i++) {
+                    setTimeout(startCoinShower, i * 400);
+                }
+
+                showScreen('victory-screen');
+            } else {
+                showScreen('gameover-screen');
+            }
+        }
+
+        // ریست کردن و بازگشت به صفحه اول
+        function resetGame() {
+            document.getElementById('treasureChest').querySelector('.chest').classList.remove('open');
+            document.getElementById('student-name').value = '';
+            showScreen('login-screen');
+        }
+
+        /* سیستم انیمیشن بارش سکه‌های طلایی با استفاده از Canvas */
+        const canvas = document.getElementById('coinCanvas');
+        const ctx = canvas.getContext('2d');
+        let coinsArray = [];
+
+        function resizeCanvas() {
+            canvas.width = document.getElementById('gameContainer').offsetWidth;
+            canvas.height = document.getElementById('gameContainer').offsetHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Coin {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.size = Math.random() * 8 + 12;
+                this.speedY = Math.random() * 5 + 4;
+                this.speedX = Math.random() * 4 - 2;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 10 - 5;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                
+                // رسم دایره سکه طلایی با افکت عمق رنگ
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffd32a';
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#ffa502';
+                ctx.stroke();
+
+                // خط مرکزی سکه برای حالت درخشش در حال چرخش
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                ctx.strokeStyle = '#ffa502';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        function startCoinShower() {
+            for (let i = 0; i < 25; i++) {
+                coinsArray.push(new Coin());
+            }
+        }
+
+        function animateCoins() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < coinsArray.length; i++) {
+                coinsArray[i].update();
+                coinsArray[i].draw();
+                
+                // حذف سکه‌هایی که از صفحه خارج شده‌اند
+                if (coinsArray[i].y > canvas.height) {
+                    coinsArray.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animateCoins);
+        }
+
+        // اجرای اولیه توابع پس‌زمینه
+        initStars();
+        animateCoins();
+
+        // امکان ارسال پاسخ با زدن کلید Enter در کادر ورود جواب
+        document.getElementById('answer-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

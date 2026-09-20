@@ -200,9 +200,13 @@ async function syncDeleteGame(gameId) {
 
 // ---------- Reporting ----------
 
-async function syncGetResultsByGame(gameId) {
+async function syncGetResultsByGame(gameId, classFilter) {
   const teacher = getCurrentTeacher();
-  return await gsGet('getResultsByGame', { gameId, actorEmail: teacher ? teacher.email : '' });
+  return await gsGet('getResultsByGame', {
+    gameId,
+    actorEmail: teacher ? teacher.email : '',
+    classFilter: classFilter || ''
+  });
 }
 
 async function syncGetResultsByStudent(studentCode) {

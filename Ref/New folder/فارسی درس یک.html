@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>بازی جادویی پیشوند «با»</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;700;800;900&display=swap');
+
+:root{
+    --pink:#ff6fbe;
+    --purple:#9b5cff;
+    --blue:#42dfff;
+    --green:#55e88a;
+    --yellow:#ffd85a;
+    --dark:#38205c;
+}
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    font-family:'Vazirmatn',Tahoma,sans-serif;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    overflow-x:hidden;
+    background:#f6dff4;
+}
+
+/* =====================================================
+   پس‌زمینه اصلی
+===================================================== */
+
+.game{
+    position:relative;
+    min-height:100vh;
+    width:100%;
+    overflow:hidden;
+    padding:18px;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.08),
+            rgba(255,255,255,.08)
+        ),
+        url("https://cdn.imgurl.ir/uploads/i785530_IMG_5237.jpeg");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+.game::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,.04);
+    pointer-events:none;
+    z-index:0;
+}
+
+.container{
+    position:relative;
+    z-index:5;
+    width:min(100%,1050px);
+    margin:auto;
+}
+
+/* =====================================================
+   صفحات
+===================================================== */
+
+.screen{
+    display:none;
+    min-height:calc(100vh - 36px);
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.screen.active{
+    display:flex;
+}
+
+/* =====================================================
+   کارت شروع
+===================================================== */
+
+.start-card{
+    width:min(94%,650px);
+    padding:34px 28px;
+    text-align:center;
+
+    border-radius:38px;
+
+    background:rgba(255,255,255,.78);
+    border:4px solid rgba(255,255,255,.95);
+
+    box-shadow:
+        0 20px 45px rgba(70,35,100,.25),
+        0 8px 0 rgba(155,92,255,.35),
+        inset 0 3px 12px rgba(255,255,255,.9);
+
+    backdrop-filter:blur(7px);
+    -webkit-backdrop-filter:blur(7px);
+}
+
+.logo{
+    width:110px;
+    height:110px;
+    margin:0 auto 12px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:65px;
+
+    background:linear-gradient(
+        135deg,
+        #fff0fb,
+        #ffd3ec,
+        #cbb4ff
+    );
+
+    border:5px solid white;
+
+    box-shadow:
+        0 12px 25px rgba(130,70,170,.25),
+        0 0 30px rgba(255,105,190,.35);
+
+    animation:floatLogo 2.5s ease-in-out infinite;
+}
+
+@keyframes floatLogo{
+    0%,100%{
+        transform:translateY(0) rotate(-2deg);
+    }
+
+    50%{
+        transform:translateY(-10px) rotate(2deg);
+    }
+}
+
+h1{
+    margin:8px 0;
+
+    color:#6d267b;
+
+    font-size:clamp(25px,5vw,40px);
+    font-weight:900;
+
+    text-shadow:
+        0 2px 0 white,
+        0 0 12px rgba(255,100,190,.35);
+}
+
+.start-description{
+    color:#4e3760;
+    font-size:18px;
+    line-height:2;
+    font-weight:800;
+    margin:14px 0 22px;
+}
+
+.name-box{
+    width:min(100%,390px);
+    height:60px;
+
+    display:block;
+    margin:0 auto 15px;
+
+    border:4px solid #bd73ff;
+    border-radius:22px;
+
+    background:rgba(255,255,255,.96);
+    color:#452654;
+
+    text-align:center;
+
+    font-size:19px;
+    font-weight:900;
+
+    outline:none;
+
+    box-shadow:
+        0 7px 0 rgba(145,75,210,.25),
+        0 0 22px rgba(180,90,255,.2);
+}
+
+.name-box:focus{
+    border-color:#ff68bb;
+
+    box-shadow:
+        0 7px 0 rgba(210,80,160,.25),
+        0 0 28px rgba(255,105,190,.35);
+}
+
+.main-btn{
+    border:0;
+    border-radius:22px;
+    padding:15px 32px;
+
+    color:white;
+
+    font-size:19px;
+    font-weight:900;
+
+    cursor:pointer;
+
+    background:linear-gradient(
+        135deg,
+        #ff69b9,
+        #a35cff
+    );
+
+    box-shadow:
+        0 8px 0 #7437b2,
+        0 15px 28px rgba(130,65,180,.3);
+
+    transition:.2s;
+}
+
+.main-btn:active{
+    transform:translateY(5px);
+
+    box-shadow:
+        0 3px 0 #7437b2,
+        0 8px 15px rgba(130,65,180,.25);
+}
+
+/* =====================================================
+   HUD
+===================================================== */
+
+.hud{
+    width:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    gap:10px;
+    flex-wrap:wrap;
+
+    margin-bottom:16px;
+}
+
+.badge{
+    padding:9px 15px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.9);
+    border:3px solid white;
+
+    color:#4a285e;
+
+    font-size:15px;
+    font-weight:900;
+
+    box-shadow:
+        0 5px 0 rgba(115,60,150,.2),
+        0 8px 18px rgba(80,40,100,.15);
+}
+
+.badge strong{
+    color:#a12d83;
+}
+
+.progress-wrap{
+    width:min(100%,800px);
+    height:15px;
+
+    margin:0 auto 18px;
+
+    background:rgba(255,255,255,.7);
+
+    border:2px solid white;
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.progress{
+    width:0%;
+    height:100%;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+        90deg,
+        #ff65b7,
+        #a35cff,
+        #49dfff,
+        #59e98b
+    );
+
+    transition:width .5s ease;
+}
+
+/* =====================================================
+   عنوان مرحله
+===================================================== */
+
+.stage-title{
+    text-align:center;
+
+    color:#572264;
+
+    font-size:clamp(21px,4vw,31px);
+    font-weight:900;
+
+    background:rgba(255,255,255,.86);
+
+    border:3px solid white;
+    border-radius:24px;
+
+    padding:12px 20px;
+
+    margin:0 auto 15px;
+
+    box-shadow:
+        0 7px 0 rgba(110,60,150,.18),
+        0 10px 22px rgba(70,40,90,.16);
+}
+
+/* =====================================================
+   مرحله اول
+===================================================== */
+
+.stage-panel{
+    width:100%;
+    padding:20px;
+
+    /*
+       شفاف‌تر شده تا تصویر پس‌زمینه
+       واضح‌تر دیده شود.
+    */
+
+    background:rgba(255,255,255,.18);
+
+    border:3px solid rgba(255,255,255,.48);
+    border-radius:34px;
+
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+
+    box-shadow:
+        0 15px 35px rgba(70,35,100,.12);
+}
+
+.instruction{
+    text-align:center;
+
+    color:#4a2a5c;
+
+    font-size:17px;
+    font-weight:900;
+
+    margin-bottom:20px;
+
+    background:rgba(255,255,255,.86);
+
+    border:2px solid white;
+    border-radius:18px;
+
+    padding:10px 14px;
+}
+
+/* =====================================================
+   شبکه حباب‌ها
+===================================================== */
+
+.bubble-grid{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:24px;
+
+    align-items:center;
+    justify-items:center;
+}
+
+/* =====================================================
+   حباب
+===================================================== */
+
+.word-bubble{
+    width:100%;
+    min-height:105px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+
+    padding:12px 8px;
+
+    border-radius:50%;
+
+    color:#fff;
+
+    font-size:clamp(18px,3vw,25px);
+    font-weight:900;
+
+    cursor:pointer;
+
+    border:4px solid rgba(255,255,255,.95);
+
+    box-shadow:
+        0 9px 0 rgba(90,45,120,.18),
+        0 0 20px rgba(255,255,255,.5),
+        inset 0 8px 12px rgba(255,255,255,.55),
+        inset 0 -10px 18px rgba(70,20,100,.15);
+
+    text-shadow:
+        0 2px 3px rgba(50,20,70,.55);
+
+    transition:
+        transform .2s,
+        box-shadow .2s,
+        opacity .3s;
+}
+
+.word-bubble::before{
+    content:"";
+
+    position:absolute;
+
+    width:22px;
+    height:12px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.8);
+
+    top:15px;
+    left:22px;
+
+    transform:rotate(-25deg);
+}
+
+.word-bubble:nth-child(4n+1){
+    background:linear-gradient(
+        145deg,
+        #ff9ed4,
+        #d84ca8
+    );
+}
+
+.word-bubble:nth-child(4n+2){
+    background:linear-gradient(
+        145deg,
+        #9feaff,
+        #4d9fff
+    );
+}
+
+.word-bubble:nth-child(4n+3){
+    background:linear-gradient(
+        145deg,
+        #c7a6ff,
+        #8855dc
+    );
+}
+
+.word-bubble:nth-child(4n+4){
+    background:linear-gradient(
+        145deg,
+        #a9f2c3,
+        #47bd8a
+    );
+}
+
+.word-bubble:hover{
+    transform:translateY(-6px) scale(1.04);
+}
+
+.word-bubble.correct{
+    animation:correctBubble .55s ease forwards;
+    pointer-events:none;
+}
+
+@keyframes correctBubble{
+    0%{
+        transform:scale(1);
+    }
+
+    45%{
+        transform:scale(1.15) rotate(4deg);
+    }
+
+    100%{
+        transform:scale(.1);
+        opacity:0;
+    }
+}
+
+.word-bubble.wrong{
+    animation:wrongBubble .4s ease;
+}
+
+@keyframes wrongBubble{
+    0%,100%{
+        transform:translateX(0);
+    }
+
+    25%{
+        transform:translateX(-9px);
+    }
+
+    50%{
+        transform:translateX(9px);
+    }
+
+    75%{
+        transform:translateX(-6px);
+    }
+}
+
+.stage-message{
+    min-height:46px;
+    margin-top:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#5b2a66;
+
+    font-size:18px;
+    font-weight:900;
+
+    text-align:center;
+}
+
+/* =====================================================
+   معرفی مرحله دوم
+===================================================== */
+
+.intro-card{
+    width:min(94%,650px);
+
+    padding:30px 25px;
+
+    text-align:center;
+
+    background:rgba(255,255,255,.9);
+
+    border:4px solid white;
+    border-radius:35px;
+
+    box-shadow:
+        0 18px 40px rgba(70,30,100,.25),
+        0 8px 0 rgba(155,92,255,.25);
+}
+
+.intro-icon{
+    font-size:75px;
+
+    margin-bottom:8px;
+
+    animation:floatLogo 2s infinite;
+}
+
+.intro-card h2{
+    color:#8c3485;
+
+    font-size:clamp(25px,5vw,36px);
+
+    margin:8px 0 15px;
+
+    font-weight:900;
+}
+
+.intro-card p{
+    color:#51345f;
+
+    font-size:18px;
+
+    font-weight:800;
+
+    line-height:2;
+}
+
+/* =====================================================
+   مرحله دوم حافظه
+===================================================== */
+
+.memory-panel{
+    width:100%;
+
+    padding:20px;
+
+    background:rgba(255,255,255,.22);
+
+    border:3px solid rgba(255,255,255,.55);
+    border-radius:34px;
+
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+
+    box-shadow:
+        0 15px 35px rgba(70,35,100,.12);
+}
+
+.memory-word{
+    width:min(100%,500px);
+
+    margin:0 auto 12px;
+
+    padding:13px 20px;
+
+    background:linear-gradient(
+        135deg,
+        rgba(255,255,255,.96),
+        rgba(255,220,246,.95)
+    );
+
+    border:4px solid #ff8acb;
+
+    border-radius:24px;
+
+    color:#8b2773;
+
+    font-size:clamp(25px,5vw,38px);
+
+    font-weight:900;
+
+    text-align:center;
+
+    box-shadow:
+        0 7px 0 rgba(190,70,145,.2),
+        0 0 25px rgba(255,100,190,.25);
+}
+
+/* =====================================================
+   اطلاعات مرحله حافظه
+   شمارنده اکنون داخل این بخش است
+   و روی کارت‌ها قرار نمی‌گیرد.
+===================================================== */
+
+.memory-info{
+    min-height:58px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:10px;
+    flex-wrap:wrap;
+
+    text-align:center;
+
+    color:#55345e;
+
+    font-weight:900;
+    font-size:16px;
+
+    margin-bottom:18px;
+}
+
+.countdown-inline{
+    min-width:58px;
+    height:46px;
+
+    padding:4px 13px;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:18px;
+
+    background:linear-gradient(
+        145deg,
+        #fff,
+        #ffe2f4
+    );
+
+    border:3px solid #ff72bd;
+
+    color:#8c317d;
+
+    font-size:25px;
+    font-weight:900;
+
+    box-shadow:
+        0 5px 0 rgba(180,65,145,.2),
+        0 0 18px rgba(255,80,180,.35);
+}
+
+.countdown-inline.show{
+    display:flex;
+
+    animation:countPulseInline .7s ease;
+}
+
+@keyframes countPulseInline{
+
+    0%{
+        transform:scale(.7);
+        opacity:.2;
+    }
+
+    60%{
+        transform:scale(1.12);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+/* =====================================================
+   کارت‌ها
+===================================================== */
+
+.cards-grid{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:20px;
+
+    max-width:900px;
+
+    margin:auto;
+}
+
+.memory-card{
+    height:190px;
+
+    perspective:1000px;
+
+    cursor:pointer;
+}
+
+.card-inner{
+    width:100%;
+    height:100%;
+
+    position:relative;
+
+    transform-style:preserve-3d;
+
+    transition:
+        transform .7s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+.memory-card.flipped .card-inner,
+.memory-card.locked .card-inner{
+    transform:rotateY(180deg);
+}
+
+.card-face{
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:15px;
+
+    border-radius:28px;
+
+    border:4px solid white;
+
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+
+    box-shadow:
+        0 9px 0 rgba(85,45,120,.2),
+        0 14px 28px rgba(65,30,100,.22),
+        inset 0 5px 10px rgba(255,255,255,.65);
+
+    text-align:center;
+
+    font-size:18px;
+    font-weight:900;
+}
+
+.card-back{
+    background:linear-gradient(
+        145deg,
+        #c8a5ff,
+        #7d55cf
+    );
+
+    color:white;
+
+    font-size:48px;
+
+    text-shadow:
+        0 3px 7px rgba(40,10,70,.35);
+}
+
+.card-back::after{
+    content:"؟";
+
+    position:absolute;
+
+    width:70px;
+    height:70px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:3px solid rgba(255,255,255,.8);
+}
+
+.card-front{
+    transform:rotateY(180deg);
+
+    color:#4d285c;
+
+    background:linear-gradient(
+        145deg,
+        #fff,
+        #fce4f5
+    );
+}
+
+.memory-card:nth-child(3n+1) .card-front{
+    border-color:#ff9bd3;
+
+    background:linear-gradient(
+        145deg,
+        #fff,
+        #ffe4f2
+    );
+}
+
+.memory-card:nth-child(3n+2) .card-front{
+    border-color:#76dfff;
+
+    background:linear-gradient(
+        145deg,
+        #fff,
+        #def8ff
+    );
+}
+
+.memory-card:nth-child(3n+3) .card-front{
+    border-color:#a991ff;
+
+    background:linear-gradient(
+        145deg,
+        #fff,
+        #eee8ff
+    );
+}
+
+.memory-card.correct .card-front{
+    background:linear-gradient(
+        145deg,
+        #d9ffdf,
+        #a9f4bd
+    ) !important;
+
+    border-color:#48c976 !important;
+
+    box-shadow:
+        0 0 28px rgba(65,220,115,.7),
+        0 9px 0 rgba(50,150,75,.2);
+}
+
+.memory-card.wrong .card-front{
+    animation:cardWrong .45s;
+
+    border-color:#ff5369 !important;
+}
+
+@keyframes cardWrong{
+
+    0%,100%{
+        transform:
+            rotateY(180deg)
+            translateX(0);
+    }
+
+    25%{
+        transform:
+            rotateY(180deg)
+            translateX(-8px);
+    }
+
+    50%{
+        transform:
+            rotateY(180deg)
+            translateX(8px);
+    }
+
+    75%{
+        transform:
+            rotateY(180deg)
+            translateX(-5px);
+    }
+}
+
+/* =====================================================
+   پیام وسط
+===================================================== */
+
+.toast{
+    position:fixed;
+
+    z-index:200;
+
+    left:50%;
+    top:45%;
+
+    transform:
+        translate(-50%,-50%)
+        scale(.7);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    width:min(90%,500px);
+
+    padding:18px 22px;
+
+    background:rgba(255,255,255,.96);
+
+    border:4px solid white;
+    border-radius:28px;
+
+    color:#55275f;
+
+    font-size:19px;
+    font-weight:900;
+
+    text-align:center;
+
+    box-shadow:
+        0 15px 35px rgba(70,30,100,.3),
+        0 7px 0 rgba(135,70,170,.2);
+
+    transition:.25s;
+}
+
+.toast.show{
+    opacity:1;
+
+    transform:
+        translate(-50%,-50%)
+        scale(1);
+}
+
+/* =====================================================
+   پایان و کارنامه
+===================================================== */
+
+.report{
+    width:min(94%,650px);
+
+    padding:30px 24px;
+
+    text-align:center;
+
+    background:rgba(255,255,255,.92);
+
+    border:4px solid white;
+    border-radius:36px;
+
+    box-shadow:
+        0 20px 45px rgba(70,30,100,.25),
+        0 8px 0 rgba(130,70,170,.2);
+}
+
+.trophy{
+    font-size:78px;
+
+    animation:floatLogo 2s infinite;
+}
+
+.report h2{
+    color:#8d347f;
+
+    font-size:32px;
+
+    margin:8px 0 20px;
+
+    font-weight:900;
+}
+
+.report-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:12px;
+
+    margin:20px 0;
+}
+
+.report-item{
+    padding:15px 8px;
+
+    border-radius:20px;
+
+    border:3px solid white;
+
+    background:linear-gradient(
+        145deg,
+        #fff0f8,
+        #eee4ff
+    );
+
+    box-shadow:
+        0 6px 0 rgba(100,50,130,.15);
+}
+
+.report-number{
+    display:block;
+
+    font-size:30px;
+
+    font-weight:900;
+
+    color:#9b438e;
+}
+
+.report-label{
+    font-size:14px;
+
+    color:#56385f;
+
+    font-weight:900;
+}
+
+.final-message{
+    color:#50345c;
+
+    font-size:18px;
+
+    font-weight:800;
+
+    line-height:2;
+}
+
+/* =====================================================
+   ذرات
+===================================================== */
+
+.spark{
+    position:fixed;
+
+    z-index:500;
+
+    pointer-events:none;
+
+    font-size:25px;
+
+    animation:
+        sparkFly .9s ease-out forwards;
+}
+
+@keyframes sparkFly{
+
+    0%{
+        opacity:1;
+
+        transform:
+            translate(0,0)
+            scale(.3);
+    }
+
+    100%{
+        opacity:0;
+
+        transform:
+            translate(var(--x),var(--y))
+            rotate(360deg)
+            scale(1.3);
+    }
+}
+
+/* =====================================================
+   موبایل
+===================================================== */
+
+@media(max-width:700px){
+
+    .game{
+        padding:10px;
+
+        background-attachment:scroll;
+    }
+
+    .screen{
+        min-height:calc(100vh - 20px);
+    }
+
+    .start-card,
+    .intro-card,
+    .report{
+        padding:25px 15px;
+    }
+
+    .stage-panel,
+    .memory-panel{
+        padding:12px;
+    }
+
+    .bubble-grid{
+        grid-template-columns:
+            repeat(2,1fr);
+
+        gap:18px;
+    }
+
+    .word-bubble{
+        min-height:92px;
+
+        font-size:18px;
+    }
+
+    .cards-grid{
+        grid-template-columns:1fr;
+
+        gap:14px;
+
+        max-width:430px;
+    }
+
+    .memory-card{
+        height:125px;
+    }
+
+    .card-face{
+        font-size:16px;
+
+        border-radius:22px;
+    }
+
+    .card-back{
+        font-size:38px;
+    }
+
+    .card-back::after{
+        width:55px;
+        height:55px;
+    }
+
+    .report-grid{
+        grid-template-columns:
+            1fr 1fr 1fr;
+    }
+
+    .badge{
+        font-size:13px;
+
+        padding:8px 10px;
+    }
+
+    .memory-info{
+        min-height:58px;
+
+        font-size:14px;
+
+        margin-bottom:14px;
+    }
+
+    .countdown-inline{
+        min-width:52px;
+        height:42px;
+
+        font-size:23px;
+    }
+}
+
+@media(max-width:390px){
+
+    .bubble-grid{
+        gap:14px;
+    }
+
+    .word-bubble{
+        min-height:82px;
+
+        font-size:16px;
+    }
+
+    .report-number{
+        font-size:25px;
+    }
+
+    .report-label{
+        font-size:12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<div class="container">
+
+<!-- =================================================
+     صفحه شروع
+================================================== -->
+
+<section id="startScreen" class="screen active">
+
+<div class="start-card">
+
+<div class="logo">✨</div>
+
+<h1>
+🎈 بازی جادویی پیشوند «با»
+</h1>
+
+<div class="start-description">
+
+آماده‌ای کلمه‌هایی را پیدا کنی که با «با» ساخته شده‌اند؟
+
+<br>
+
+بعد هم یک بازی حافظه‌ای جذاب منتظرت است! 🧠✨
+
+</div>
+
+<input
+id="nameInput"
+class="name-box"
+type="text"
+maxlength="20"
+autocomplete="off"
+placeholder="نام دانش‌آموز را وارد کن..."
+>
+
+<button
+id="startBtn"
+class="main-btn"
+type="button"
+>
+🚀 شروع بازی
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =================================================
+     مرحله اول
+================================================== -->
+
+<section id="stage1Screen" class="screen">
+
+<div class="hud">
+
+<div class="badge">
+👋
+<span id="playerName"></span>
+</div>
+
+<div class="badge">
+⭐ امتیاز:
+<strong id="score">۰</strong>
+</div>
+
+<div class="badge">
+❌ غلط:
+<strong id="wrongCount">۰</strong>
+</div>
+
+<div class="badge">
+🎯 مرحله:
+<strong>۱</strong>
+</div>
+
+</div>
+
+<div class="progress-wrap">
+
+<div
+id="progress1"
+class="progress"
+></div>
+
+</div>
+
+<div class="stage-title">
+
+کدام کلمه‌ها از ترکیب با «با» درست شده‌اند؟
+
+</div>
+
+<div class="stage-panel">
+
+<div class="instruction">
+
+✨ حباب‌هایی را انتخاب کن که کلمه‌ی ساخته‌شده با «با» هستند.
+
+</div>
+
+<div
+id="bubbleGrid"
+class="bubble-grid"
+></div>
+
+<div
+id="stage1Message"
+class="stage-message"
+>
+🫧 با دقت حباب درست را پیدا کن!
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =================================================
+     معرفی مرحله دوم
+================================================== -->
+
+<section id="stage2IntroScreen" class="screen">
+
+<div class="intro-card">
+
+<div class="intro-icon">
+🧠✨
+</div>
+
+<h2>
+🎉 مرحله‌ی دوم شروع شد!
+</h2>
+
+<p>
+
+حالا نوبت بازی حافظه‌ای است!
+
+<br><br>
+
+یک کلمه و سه کارت را می‌بینی.
+
+<br>
+
+<strong>۴ ثانیه</strong>
+فرصت داری معنی درست را به خاطر بسپاری.
+
+<br><br>
+
+بعد کارت‌ها برمی‌گردند و باید
+
+<strong>کارت درست</strong>
+
+را پیدا کنی! 🃏
+
+</p>
+
+<button
+id="beginMemoryBtn"
+class="main-btn"
+type="button"
+>
+🧠 شروع بازی حافظه
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =================================================
+     مرحله دوم
+================================================== -->
+
+<section id="stage2Screen" class="screen">
+
+<div class="hud">
+
+<div class="badge">
+👋
+<span id="playerName2"></span>
+</div>
+
+<div class="badge">
+⭐ امتیاز:
+<strong id="score2">۰</strong>
+</div>
+
+<div class="badge">
+❌ غلط:
+<strong id="wrongCount2">۰</strong>
+</div>
+
+<div class="badge">
+🎯
+<span id="memoryRound">۱</span>
+/ ۵
+</div>
+
+</div>
+
+<div class="progress-wrap">
+
+<div
+id="progress2"
+class="progress"
+></div>
+
+</div>
+
+<div class="memory-panel">
+
+<div class="stage-title">
+بازی حافظه‌ای 🧠
+</div>
+
+<div
+id="memoryWord"
+class="memory-word"
+>
+باادب
+</div>
+
+<!-- شمارنده اینجا نمایش داده می‌شود -->
+<div
+id="memoryInfo"
+class="memory-info"
+>
+
+<span id="memoryInfoText">
+👀 ۴ ثانیه فرصت داری معنی درست را به خاطر بسپاری...
+</span>
+
+<span
+id="countdown"
+class="countdown-inline"
+>
+۴
+</span>
+
+</div>
+
+<div
+id="cardsGrid"
+class="cards-grid"
+></div>
+
+</div>
+
+</section>
+
+
+<!-- =================================================
+     کارنامه
+================================================== -->
+
+<section id="reportScreen" class="screen">
+
+<div class="report">
+
+<div class="trophy">
+🏆
+</div>
+
+<h2>
+🎉 کارنامه‌ی قهرمان!
+</h2>
+
+<p class="final-message">
+
+<strong id="finalName"></strong>
+
+عزیز، بازی را به پایان رساندی! 🌟
+
+</p>
+
+<div class="report-grid">
+
+<div class="report-item">
+
+<span
+id="finalScore"
+class="report-number"
+>
+۰
+</span>
+
+<span class="report-label">
+⭐ امتیاز
+</span>
+
+</div>
+
+<div class="report-item">
+
+<span
+id="finalCorrect"
+class="report-number"
+>
+۰
+</span>
+
+<span class="report-label">
+✅ درست
+</span>
+
+</div>
+
+<div class="report-item">
+
+<span
+id="finalWrong"
+class="report-number"
+>
+۰
+</span>
+
+<span class="report-label">
+❌ غلط
+</span>
+
+</div>
+
+</div>
+
+<div
+id="finalText"
+class="final-message"
+></div>
+
+<button
+id="restartBtn"
+class="main-btn"
+type="button"
+>
+🔄 بازی دوباره
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+</div>
+
+<div
+id="toast"
+class="toast"
+></div>
+
+
+<script>
+
+/* =========================================================
+   مرحله اول
+========================================================= */
+
+const stage1Words = [
+
+    {text:"باادب",correct:true},
+    {text:"بانظم",correct:true},
+    {text:"باسواد",correct:true},
+    {text:"بادقت",correct:true},
+    {text:"باحجاب",correct:true},
+
+    {text:"بازار",correct:false},
+    {text:"بادام",correct:false},
+    {text:"باران",correct:false},
+    {text:"بادکنک",correct:false},
+    {text:"بادبان",correct:false},
+    {text:"کودک",correct:false},
+    {text:"کتاب",correct:false}
+
+];
+
+
+/* =========================================================
+   مرحله دوم
+========================================================= */
+
+const memoryLevels = [
+
+    {
+        word:"باادب",
+
+        correct:"کسی که ادب دارد",
+
+        wrong:[
+            "کسی که نظم دارد",
+            "کسی که سواد دارد"
+        ]
+    },
+
+    {
+        word:"بانظم",
+
+        correct:"کسی که نظم دارد",
+
+        wrong:[
+            "کسی که ادب دارد",
+            "کسی که دقت دارد"
+        ]
+    },
+
+    {
+        word:"باسواد",
+
+        correct:"کسی که سواد دارد",
+
+        wrong:[
+            "کسی که حجاب دارد",
+            "کسی که نظم دارد"
+        ]
+    },
+
+    {
+        word:"بادقت",
+
+        correct:"کسی که دقت دارد",
+
+        wrong:[
+            "کسی که ادب دارد",
+            "کسی که سواد دارد"
+        ]
+    },
+
+    {
+        word:"باحجاب",
+
+        correct:"کسی که حجاب دارد",
+
+        wrong:[
+            "کسی که دقت دارد",
+            "کسی که ادب دارد"
+        ]
+    }
+
+];
+
+
+/* =========================================================
+   وضعیت بازی
+========================================================= */
+
+let playerName = "";
+
+let score = 0;
+
+let wrongCount = 0;
+
+let correctCount = 0;
+
+let stage1Correct = 0;
+
+const stage1TotalCorrect = 5;
+
+let memoryIndex = 0;
+
+let memoryLocked = false;
+
+let memoryTimer = null;
+
+let memoryInterval = null;
+
+
+/* =========================================================
+   عناصر
+========================================================= */
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const stage1Screen =
+    document.getElementById("stage1Screen");
+
+const stage2IntroScreen =
+    document.getElementById("stage2IntroScreen");
+
+const stage2Screen =
+    document.getElementById("stage2Screen");
+
+const reportScreen =
+    document.getElementById("reportScreen");
+
+const nameInput =
+    document.getElementById("nameInput");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const beginMemoryBtn =
+    document.getElementById("beginMemoryBtn");
+
+const restartBtn =
+    document.getElementById("restartBtn");
+
+const bubbleGrid =
+    document.getElementById("bubbleGrid");
+
+const scoreEl =
+    document.getElementById("score");
+
+const score2El =
+    document.getElementById("score2");
+
+const wrongCountEl =
+    document.getElementById("wrongCount");
+
+const wrongCount2El =
+    document.getElementById("wrongCount2");
+
+const progress1 =
+    document.getElementById("progress1");
+
+const progress2 =
+    document.getElementById("progress2");
+
+const memoryWord =
+    document.getElementById("memoryWord");
+
+const memoryInfo =
+    document.getElementById("memoryInfo");
+
+const memoryInfoText =
+    document.getElementById("memoryInfoText");
+
+const cardsGrid =
+    document.getElementById("cardsGrid");
+
+const memoryRound =
+    document.getElementById("memoryRound");
+
+const countdown =
+    document.getElementById("countdown");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* =========================================================
+   عدد فارسی
+========================================================= */
+
+function persianNumber(number){
+
+    const digits = [
+        "۰","۱","۲","۳","۴",
+        "۵","۶","۷","۸","۹"
+    ];
+
+    return String(number).replace(
+        /[0-9]/g,
+        d => digits[d]
+    );
+}
+
+
+/* =========================================================
+   تغییر صفحه
+========================================================= */
+
+function showScreen(screen){
+
+    [
+        startScreen,
+        stage1Screen,
+        stage2IntroScreen,
+        stage2Screen,
+        reportScreen
+    ].forEach(
+        s => s.classList.remove("active")
+    );
+
+    screen.classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"instant"
+    });
+}
+
+
+/* =========================================================
+   صدا
+========================================================= */
+
+let audioContext = null;
+
+function initAudio(){
+
+    if(!audioContext){
+
+        const Audio =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if(Audio){
+            audioContext = new Audio();
+        }
+    }
+
+    if(
+        audioContext &&
+        audioContext.state === "suspended"
+    ){
+        audioContext.resume();
+    }
+}
+
+
+function tone(
+    frequency,
+    duration,
+    type="sine",
+    volume=.12
+){
+
+    if(!audioContext) return;
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    oscillator.type = type;
+
+    oscillator.frequency.setValueAtTime(
+        frequency,
+        audioContext.currentTime
+    );
+
+    gain.gain.setValueAtTime(
+        volume,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioContext.currentTime + duration
+    );
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioContext.currentTime + duration
+    );
+}
+
+
+function soundClick(){
+
+    initAudio();
+
+    tone(
+        650,
+        .08,
+        "sine",
+        .1
+    );
+}
+
+
+function soundCorrect(){
+
+    initAudio();
+
+    [523,659,784].forEach(
+        (f,i)=>{
+
+            setTimeout(
+                () => tone(
+                    f,
+                    .22,
+                    "triangle",
+                    .13
+                ),
+                i*80
+            );
+
+        }
+    );
+}
+
+
+function soundWrong(){
+
+    initAudio();
+
+    tone(
+        230,
+        .18,
+        "sawtooth",
+        .12
+    );
+
+    setTimeout(
+        () => tone(
+            150,
+            .25,
+            "sawtooth",
+            .1
+        ),
+        100
+    );
+}
+
+
+function soundWin(){
+
+    initAudio();
+
+    [
+        523,
+        659,
+        784,
+        1046
+    ].forEach(
+        (f,i)=>{
+
+            setTimeout(
+                () => tone(
+                    f,
+                    .35,
+                    "triangle",
+                    .13
+                ),
+                i*100
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   شروع بازی
+========================================================= */
+
+startBtn.addEventListener(
+    "click",
+    startGame
+);
+
+nameInput.addEventListener(
+    "keydown",
+    e => {
+
+        if(e.key === "Enter"){
+            startGame();
+        }
+
+    }
+);
+
+
+function startGame(){
+
+    const name =
+        nameInput.value.trim();
+
+    if(!name){
+
+        showToast(
+            "🌸 لطفاً اول نامت را وارد کن!"
+        );
+
+        nameInput.focus();
+
+        soundWrong();
+
+        return;
+    }
+
+    initAudio();
+
+    playerName = name;
+
+    document.getElementById(
+        "playerName"
+    ).textContent = playerName;
+
+    document.getElementById(
+        "playerName2"
+    ).textContent = playerName;
+
+    resetGame();
+
+    showScreen(
+        stage1Screen
+    );
+
+    createStage1();
+
+    showToast(
+        `سلام ${playerName} جان! 🌟`
+    );
+}
+
+
+/* =========================================================
+   ریست
+========================================================= */
+
+function resetGame(){
+
+    score = 0;
+
+    wrongCount = 0;
+
+    correctCount = 0;
+
+    stage1Correct = 0;
+
+    memoryIndex = 0;
+
+    memoryLocked = false;
+
+    clearTimeout(memoryTimer);
+
+    clearInterval(memoryInterval);
+
+    updateHUD();
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+    scoreEl.textContent =
+        persianNumber(score);
+
+    score2El.textContent =
+        persianNumber(score);
+
+    wrongCountEl.textContent =
+        persianNumber(wrongCount);
+
+    wrongCount2El.textContent =
+        persianNumber(wrongCount);
+
+    progress1.style.width =
+        `${(stage1Correct / stage1TotalCorrect) * 100}%`;
+}
+
+
+/* =========================================================
+   درهم‌ریختن
+========================================================= */
+
+function shuffle(array){
+
+    const arr = [...array];
+
+    for(
+        let i = arr.length - 1;
+        i > 0;
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            arr[i],
+            arr[j]
+        ] = [
+            arr[j],
+            arr[i]
+        ];
+    }
+
+    return arr;
+}
+
+
+/* =========================================================
+   مرحله اول
+========================================================= */
+
+function createStage1(){
+
+    bubbleGrid.innerHTML = "";
+
+    const shuffled =
+        shuffle(stage1Words);
+
+    shuffled.forEach(item => {
+
+        const bubble =
+            document.createElement("button");
+
+        bubble.type = "button";
+
+        bubble.className =
+            "word-bubble";
+
+        bubble.textContent =
+            item.text;
+
+        bubble.dataset.correct =
+            item.correct;
+
+        bubble.addEventListener(
+            "click",
+            () => handleBubble(
+                bubble,
+                item
+            )
+        );
+
+        bubbleGrid.appendChild(
+            bubble
+        );
+    });
+}
+
+
+/* =========================================================
+   انتخاب حباب
+========================================================= */
+
+function handleBubble(
+    bubble,
+    item
+){
+
+    if(
+        bubble.classList.contains("correct")
+    ){
+        return;
+    }
+
+    if(item.correct){
+
+        soundCorrect();
+
+        bubble.classList.add(
+            "correct"
+        );
+
+        score += 10;
+
+        correctCount++;
+
+        stage1Correct++;
+
+        updateHUD();
+
+        createSparks(
+            bubble
+        );
+
+        document.getElementById(
+            "stage1Message"
+        ).textContent =
+            "✨ آفرین! «با» در این کلمه نقش دارد.";
+
+        if(
+            stage1Correct ===
+            stage1TotalCorrect
+        ){
+
+            setTimeout(
+                finishStage1,
+                800
+            );
+        }
+
+    }else{
+
+        soundWrong();
+
+        wrongCount++;
+
+        score =
+            Math.max(
+                0,
+                score - 5
+            );
+
+        updateHUD();
+
+        bubble.classList.add(
+            "wrong"
+        );
+
+        document.getElementById(
+            "stage1Message"
+        ).textContent =
+            "❌ این کلمه از ترکیب «با» ساخته نشده؛ دوباره دقت کن!";
+
+        setTimeout(
+            () =>
+                bubble.classList.remove(
+                    "wrong"
+                ),
+            450
+        );
+    }
+}
+
+
+/* =========================================================
+   پایان مرحله اول
+========================================================= */
+
+function finishStage1(){
+
+    progress1.style.width =
+        "100%";
+
+    showToast(
+        "🎉 عالی! مرحله اول را کامل کردی!"
+    );
+
+    setTimeout(
+        () => {
+
+            showScreen(
+                stage2IntroScreen
+            );
+
+        },
+        1300
+    );
+}
+
+
+/* =========================================================
+   ورود مرحله دوم
+========================================================= */
+
+beginMemoryBtn.addEventListener(
+    "click",
+    () => {
+
+        soundClick();
+
+        memoryIndex = 0;
+
+        showScreen(
+            stage2Screen
+        );
+
+        startMemoryRound();
+    }
+);
+
+
+/* =========================================================
+   شروع هر دور حافظه
+========================================================= */
+
+function startMemoryRound(){
+
+    if(
+        memoryIndex >=
+        memoryLevels.length
+    ){
+
+        finishGame();
+
+        return;
+    }
+
+    memoryLocked = true;
+
+    clearTimeout(memoryTimer);
+
+    clearInterval(memoryInterval);
+
+    countdown.classList.remove(
+        "show"
+    );
+
+    const level =
+        memoryLevels[memoryIndex];
+
+    memoryWord.textContent =
+        level.word;
+
+    memoryRound.textContent =
+        persianNumber(
+            memoryIndex + 1
+        );
+
+    progress2.style.width =
+        `${(memoryIndex / memoryLevels.length) * 100}%`;
+
+    memoryInfoText.textContent =
+        "👀 معنی درست را به خاطر بسپار:";
+
+    createMemoryCards(
+        level
+    );
+
+    const cards =
+        document.querySelectorAll(
+            ".memory-card"
+        );
+
+    cards.forEach(
+        card =>
+            card.classList.add(
+                "flipped"
+            )
+    );
+
+    startFourSecondCountdown(
+        () => {
+
+            cards.forEach(
+                card =>
+                    card.classList.remove(
+                        "flipped"
+                    )
+            );
+
+            memoryLocked = false;
+
+            memoryInfoText.textContent =
+                "🧠 حالا کارت درست را انتخاب کن!";
+
+        }
+    );
+}
+
+
+/* =========================================================
+   ساخت کارت‌های حافظه
+========================================================= */
+
+function createMemoryCards(level){
+
+    cardsGrid.innerHTML = "";
+
+    const options =
+        shuffle([
+
+            {
+                text:level.correct,
+                correct:true
+            },
+
+            {
+                text:level.wrong[0],
+                correct:false
+            },
+
+            {
+                text:level.wrong[1],
+                correct:false
+            }
+
+        ]);
+
+    options.forEach(
+        option => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "memory-card";
+
+            card.innerHTML = `
+
+                <div class="card-inner">
+
+                    <div class="card-face card-back">
+                        🧠
+                    </div>
+
+                    <div class="card-face card-front">
+                        ${option.text}
+                    </div>
+
+                </div>
+
+            `;
+
+            card.dataset.correct =
+                option.correct;
+
+            card.addEventListener(
+                "click",
+                () =>
+                    handleMemoryCard(
+                        card,
+                        option.correct
+                    )
+            );
+
+            cardsGrid.appendChild(
+                card
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   شمارش دقیق ۴ ثانیه
+   شمارنده روی کارت‌ها نیست.
+========================================================= */
+
+function startFourSecondCountdown(
+    callback
+){
+
+    clearInterval(
+        memoryInterval
+    );
+
+    let seconds = 4;
+
+    countdown.textContent =
+        persianNumber(seconds);
+
+    countdown.classList.add(
+        "show"
+    );
+
+    memoryInterval =
+        setInterval(
+            () => {
+
+                seconds--;
+
+                if(seconds <= 0){
+
+                    clearInterval(
+                        memoryInterval
+                    );
+
+                    memoryInterval = null;
+
+                    countdown.classList.remove(
+                        "show"
+                    );
+
+                    callback();
+
+                    return;
+                }
+
+                countdown.textContent =
+                    persianNumber(seconds);
+
+                countdown.classList.remove(
+                    "show"
+                );
+
+                void countdown.offsetWidth;
+
+                countdown.classList.add(
+                    "show"
+                );
+
+            },
+            1000
+        );
+}
+
+
+/* =========================================================
+   انتخاب کارت حافظه
+========================================================= */
+
+function handleMemoryCard(
+    card,
+    isCorrect
+){
+
+    if(memoryLocked){
+        return;
+    }
+
+    if(
+        card.classList.contains("answered")
+    ){
+        return;
+    }
+
+    if(isCorrect){
+
+        memoryLocked = true;
+
+        card.classList.add(
+            "flipped",
+            "correct",
+            "answered"
+        );
+
+        soundCorrect();
+
+        score += 20;
+
+        correctCount++;
+
+        updateHUD();
+
+        progress2.style.width =
+            `${((memoryIndex + 1) / memoryLevels.length) * 100}%`;
+
+        createSparks(card);
+
+        memoryInfoText.textContent =
+            "🎉 آفرین! معنی درست را پیدا کردی!";
+
+        setTimeout(
+            () => {
+
+                memoryIndex++;
+
+                startMemoryRound();
+
+            },
+            1100
+        );
+
+    }else{
+
+        /*
+           پاسخ غلط:
+           امتیاز کم می‌شود
+           تعداد غلط افزایش پیدا می‌کند
+           و در کارنامه ثبت می‌شود.
+        */
+
+        wrongCount++;
+
+        score =
+            Math.max(
+                0,
+                score - 10
+            );
+
+        updateHUD();
+
+        card.classList.add(
+            "flipped",
+            "wrong"
+        );
+
+        soundWrong();
+
+        memoryInfoText.textContent =
+            "❌ اشتباه بود! ۱۰ امتیاز کم شد؛ دوباره انتخاب کن.";
+
+        setTimeout(
+            () => {
+
+                card.classList.remove(
+                    "flipped",
+                    "wrong"
+                );
+
+                memoryInfoText.textContent =
+                    "🧠 دوباره دقت کن و کارت درست را انتخاب کن!";
+
+            },
+            650
+        );
+    }
+}
+
+
+/* =========================================================
+   پایان بازی
+========================================================= */
+
+function finishGame(){
+
+    memoryLocked = true;
+
+    clearInterval(
+        memoryInterval
+    );
+
+    progress2.style.width =
+        "100%";
+
+    soundWin();
+
+    document.getElementById(
+        "finalName"
+    ).textContent =
+        playerName;
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        persianNumber(score);
+
+    document.getElementById(
+        "finalCorrect"
+    ).textContent =
+        persianNumber(correctCount);
+
+    document.getElementById(
+        "finalWrong"
+    ).textContent =
+        persianNumber(wrongCount);
+
+    let text = "";
+
+    if(wrongCount === 0){
+
+        text =
+            "🌟 فوق‌العاده بود! حتی یک اشتباه هم نداشتی! تو واقعاً استاد «با» هستی!";
+
+    }else if(wrongCount <= 2){
+
+        text =
+            "👏 خیلی خوب بود! با کمی دقت بیشتر می‌توانی حتی بهتر هم بشوی.";
+
+    }else{
+
+        text =
+            "💪 آفرین که تا پایان ادامه دادی! با تمرین بیشتر قوی‌تر می‌شوی.";
+
+    }
+
+    document.getElementById(
+        "finalText"
+    ).textContent =
+        text;
+
+    showScreen(
+        reportScreen
+    );
+
+    createFinalSparks();
+}
+
+
+/* =========================================================
+   بازی دوباره
+========================================================= */
+
+restartBtn.addEventListener(
+    "click",
+    () => {
+
+        soundClick();
+
+        resetGame();
+
+        showScreen(
+            stage1Screen
+        );
+
+        createStage1();
+
+    }
+);
+
+
+/* =========================================================
+   پیام
+========================================================= */
+
+let toastTimer = null;
+
+function showToast(
+    text,
+    duration=1300
+){
+
+    toast.textContent =
+        text;
+
+    toast.classList.add(
+        "show"
+    );
+
+    clearTimeout(
+        toastTimer
+    );
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            duration
+        );
+}
+
+
+/* =========================================================
+   افکت ذرات
+========================================================= */
+
+function createSparks(element){
+
+    const rect =
+        element.getBoundingClientRect();
+
+    const icons = [
+        "✨",
+        "⭐",
+        "💖",
+        "🌟",
+        "🎉"
+    ];
+
+    for(
+        let i=0;
+        i<12;
+        i++
+    ){
+
+        const spark =
+            document.createElement("div");
+
+        spark.className =
+            "spark";
+
+        spark.textContent =
+            icons[
+                Math.floor(
+                    Math.random() *
+                    icons.length
+                )
+            ];
+
+        spark.style.left =
+            `${rect.left + rect.width/2}px`;
+
+        spark.style.top =
+            `${rect.top + rect.height/2}px`;
+
+        spark.style.setProperty(
+            "--x",
+            `${Math.random()*220-110}px`
+        );
+
+        spark.style.setProperty(
+            "--y",
+            `${Math.random()*220-110}px`
+        );
+
+        document.body.appendChild(
+            spark
+        );
+
+        setTimeout(
+            () => spark.remove(),
+            900
+        );
+    }
+}
+
+
+function createFinalSparks(){
+
+    for(
+        let i=0;
+        i<30;
+        i++
+    ){
+
+        setTimeout(
+            () => {
+
+                const spark =
+                    document.createElement("div");
+
+                spark.className =
+                    "spark";
+
+                spark.textContent =
+                    [
+                        "✨",
+                        "⭐",
+                        "🎉",
+                        "🌟",
+                        "💎"
+                    ][
+                        Math.floor(
+                            Math.random()*5
+                        )
+                    ];
+
+                spark.style.left =
+                    `${Math.random()*100}vw`;
+
+                spark.style.top =
+                    `${Math.random()*70+10}vh`;
+
+                spark.style.setProperty(
+                    "--x",
+                    `${Math.random()*250-125}px`
+                );
+
+                spark.style.setProperty(
+                    "--y",
+                    `${Math.random()*250-125}px`
+                );
+
+                document.body.appendChild(
+                    spark
+                );
+
+                setTimeout(
+                    () => spark.remove(),
+                    900
+                );
+
+            },
+            i*80
+        );
+    }
+}
+
+</script>
+
+</body>
+</html>

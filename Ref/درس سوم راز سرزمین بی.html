@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>راز سرزمین بی ✨</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --pink:#ff8fcf;
+    --purple:#a978ff;
+    --blue:#6fdfff;
+    --mint:#8ff5d2;
+    --yellow:#ffe680;
+    --dark:#33233d;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:'Vazirmatn',Tahoma,sans-serif;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html, body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    background:#eadcff;
+}
+
+#background{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    z-index:0;
+}
+
+#backgroundOverlay{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,.05));
+}
+
+#particles{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:2;
+    pointer-events:none;
+}
+
+#app{
+    position:relative;
+    z-index:5;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+}
+
+#hud{
+    width:100%;
+    padding:12px 14px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.hudBox{
+    min-width:110px;
+    padding:8px 15px;
+    border-radius:18px;
+    background:rgba(255,255,255,.90);
+    border:3px solid rgba(255,255,255,.95);
+    box-shadow:0 7px 0 rgba(137,86,170,.18), 0 10px 25px rgba(91,52,120,.25), 0 0 18px rgba(255,255,255,.55);
+    color:#33223b;
+    font-size:15px;
+    font-weight:900;
+    text-align:center;
+}
+
+.hudBox span{
+    color:#8a43a9;
+}
+
+.screen{
+    position:absolute;
+    top:70px;
+    left:0;
+    right:0;
+    bottom:95px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    opacity:0;
+    pointer-events:none;
+    transform:scale(.94) translateY(15px);
+    transition:opacity .35s ease, transform .4s cubic-bezier(.2,1.4,.4,1);
+}
+
+.screen.active{
+    opacity:1;
+    pointer-events:auto;
+    transform:scale(1) translateY(0);
+}
+
+.welcomeCard{
+    width:min(92%,520px);
+    padding:28px 22px;
+    border-radius:32px;
+    background:rgba(255,255,255,.84);
+    border:4px solid rgba(255,255,255,.95);
+    box-shadow:0 12px 0 rgba(133,76,159,.18), 0 20px 45px rgba(80,40,100,.30), 0 0 35px rgba(255,154,220,.5);
+    text-align:center;
+    backdrop-filter:blur(7px);
+}
+
+.magicIcon{
+    font-size:78px;
+    animation:floating 2.8s ease-in-out infinite;
+    filter:drop-shadow(0 8px 10px rgba(80,40,90,.25));
+}
+
+@keyframes floating{
+    0%,100%{ transform:translateY(0) rotate(-3deg); }
+    50%{ transform:translateY(-12px) rotate(3deg); }
+}
+
+.mainTitle{
+    margin-top:8px;
+    font-size:clamp(30px,7vw,48px);
+    font-weight:900;
+    color:#8e3e91;
+    text-shadow:2px 3px 0 #fff, 0 0 18px #ff9bdd;
+}
+
+.description{
+    margin-top:8px;
+    color:#49334e;
+    font-size:17px;
+    font-weight:800;
+    line-height:2;
+}
+
+.nameBox{
+    margin-top:20px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+}
+
+.nameInput{
+    width:min(100%,380px);
+    height:60px;
+    padding:10px 18px;
+    border-radius:20px;
+    border:4px solid #b87dff;
+    background:#ffffff;
+    color:#28202d;
+    outline:none;
+    font-size:20px;
+    font-weight:900;
+    text-align:center;
+    box-shadow:0 7px 0 #9b70d8, 0 0 20px rgba(178,115,255,.45);
+}
+
+.nameInput:focus{
+    border-color:#ff8bcf;
+    box-shadow:0 7px 0 #d66da9, 0 0 28px rgba(255,139,207,.65);
+}
+
+.primaryButton{
+    border:none;
+    min-width:220px;
+    padding:15px 30px;
+    border-radius:22px;
+    color:#30203a;
+    font-size:19px;
+    font-weight:900;
+    cursor:pointer;
+    background:linear-gradient(135deg, #ffb6dd, #d2b5ff 50%, #9cecff);
+    border:3px solid white;
+    box-shadow:0 8px 0 #9d75bc, 0 0 22px rgba(255,144,210,.65);
+    transition:.15s;
+}
+
+.primaryButton:active{
+    transform:translateY(6px);
+    box-shadow:0 2px 0 #9d75bc, 0 0 15px rgba(255,144,210,.5);
+}
+
+.mapTitle{
+    font-size:30px;
+    font-weight:900;
+    color:#603a75;
+    text-shadow:2px 3px 0 white, 0 0 15px #ffb4e2;
+    margin-bottom:16px;
+}
+
+.map{
+    width:min(94%,600px);
+    display:flex;
+    flex-direction:column;
+    gap:11px;
+}
+
+.level{
+    width:100%;
+    min-height:62px;
+    padding:10px 17px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:linear-gradient(135deg, rgba(255,255,255,.95), rgba(246,230,255,.92));
+    border:3px solid white;
+    color:#39283e;
+    box-shadow:0 7px 0 rgba(126,81,150,.22), 0 10px 22px rgba(83,49,100,.20);
+}
+
+.level.active{
+    cursor:pointer;
+    border-color:#c58cff;
+    box-shadow:0 7px 0 #a26dd1, 0 0 22px #d5a8ff, 0 12px 28px rgba(90,50,110,.25);
+    animation:levelPulse 1.7s infinite;
+}
+
+@keyframes levelPulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.025); }
+}
+
+.level.completed{
+    border-color:#8fe4c7;
+    background:linear-gradient(135deg, #effff9, #d9fff0);
+}
+
+.level.locked{
+    opacity:.55;
+    filter:grayscale(.4);
+}
+
+.levelNumber{ font-size:20px; font-weight:900; }
+.levelName{ flex:1; margin-right:12px; font-size:17px; font-weight:900; }
+.levelIcon{ font-size:25px; }
+
+.puzzle{
+    width:min(94%,700px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+}
+
+/* کارت تصویر ۲ شامل فرمول و عبارت سوال */
+.wordImageCard{
+    width:min(96%,620px);
+    min-height:200px;
+    border-radius:28px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:18px 20px;
+    border:5px solid white;
+    box-shadow:0 10px 0 rgba(101,60,135,.22), 0 15px 35px rgba(72,38,90,.30), 0 0 30px rgba(255,190,230,.7);
+    background-image:url("https://cdn.imgurl.ir/uploads/k22499_photo-output.png");
+    background-size:cover;
+    background-position:center;
+    isolation:isolate;
+}
+
+.wordImageCard::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,.18);
+    z-index:-1;
+}
+
+.wordFormula{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    direction:rtl;
+    padding:8px 22px;
+    border-radius:20px;
+    background:rgba(255,255,255,.85);
+    border:3px solid rgba(255,255,255,.95);
+    box-shadow:0 6px 0 rgba(101,63,123,.18), 0 0 20px rgba(255,255,255,.8);
+}
+
+.prefix{
+    font-size:clamp(32px,7vw,50px);
+    font-weight:900;
+    color:#9a4dbe;
+    text-shadow:2px 3px 0 white, 0 0 15px #d69cff;
+}
+
+.plus{
+    font-size:clamp(26px,5vw,40px);
+    font-weight:900;
+    color:#ff579f;
+    text-shadow:2px 3px 0 white, 0 0 15px #ff86bd;
+}
+
+.base{
+    font-size:clamp(32px,7vw,50px);
+    font-weight:900;
+    color:#17131b;
+    text-shadow:2px 3px 0 white;
+}
+
+.questionInCard{
+    padding:6px 16px;
+    border-radius:15px;
+    background:rgba(255,255,255,.92);
+    border:2px solid white;
+    color:#302238;
+    font-size:clamp(15px,3.8vw,19px);
+    font-weight:900;
+    text-align:center;
+    box-shadow:0 4px 0 rgba(100,61,124,.15);
+}
+
+.options{
+    width:min(96%,620px);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:13px;
+}
+
+.option{
+    min-height:75px;
+    padding:12px 14px;
+    border-radius:22px;
+    border:4px solid white;
+    color:#19151d;
+    font-size:clamp(15px,3.5vw,19px);
+    font-weight:900;
+    line-height:1.6;
+    cursor:pointer;
+    background:linear-gradient(135deg, #ffd9ec, #ffeaf5);
+    box-shadow:0 8px 0 #c990ad, 0 12px 24px rgba(83,48,98,.25), 0 0 17px rgba(255,171,211,.55);
+    transition:transform .15s, box-shadow .15s;
+}
+
+.option:nth-child(2){
+    background:linear-gradient(135deg, #dceaff, #e9dfff);
+    box-shadow:0 8px 0 #9a8ac7, 0 12px 24px rgba(83,48,98,.25), 0 0 17px rgba(168,143,255,.55);
+}
+
+.option:nth-child(3){
+    background:linear-gradient(135deg, #d8fff1, #e7fff7);
+    box-shadow:0 8px 0 #8bbfac, 0 12px 24px rgba(83,48,98,.25), 0 0 17px rgba(115,240,198,.55);
+}
+
+.option:nth-child(4){
+    background:linear-gradient(135deg, #fff2c7, #ffe4d8);
+    box-shadow:0 8px 0 #d1aa76, 0 12px 24px rgba(83,48,98,.25), 0 0 17px rgba(255,213,113,.55);
+}
+
+.option:active{
+    transform:translateY(7px) scale(.98);
+    box-shadow:0 2px 0 #a17aaf, 0 5px 12px rgba(80,40,90,.2);
+}
+
+.option.correct{
+    background:linear-gradient(135deg, #aaffd8, #c7fff0) !important;
+    border-color:#48e5a5 !important;
+    box-shadow:0 8px 0 #43b987, 0 0 35px #55edb1 !important;
+    animation:correctPop .55s ease;
+}
+
+@keyframes correctPop{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+    100%{transform:scale(1)}
+}
+
+.option.wrong{
+    background:linear-gradient(135deg, #ffd0d8, #ffe1e8) !important;
+    border-color:#ff6377 !important;
+    box-shadow:0 8px 0 #c34b5c, 0 0 25px #ff667a !important;
+    animation:wrongShake .4s;
+}
+
+@keyframes wrongShake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-9px)}
+    40%{transform:translateX(9px)}
+    60%{transform:translateX(-7px)}
+    80%{transform:translateX(7px)}
+}
+
+.result{
+    min-height:42px;
+    width:min(96%,620px);
+    padding:8px 14px;
+    border-radius:18px;
+    background:rgba(255,255,255,.90);
+    border:3px solid white;
+    color:#37263e;
+    font-size:16px;
+    font-weight:900;
+    text-align:center;
+    box-shadow:0 6px 0 rgba(99,59,119,.16);
+}
+
+.rewardBox{
+    width:min(92%,520px);
+    padding:30px 20px;
+    border-radius:30px;
+    background:rgba(255,255,255,.87);
+    border:4px solid white;
+    text-align:center;
+    box-shadow:0 10px 0 rgba(107,66,133,.20), 0 20px 40px rgba(70,38,90,.25);
+}
+
+.treasure{
+    font-size:90px;
+    cursor:pointer;
+    animation:treasureFloat 1.8s infinite;
+}
+
+@keyframes treasureFloat{
+    0%,100%{ transform:translateY(0) rotate(-2deg); }
+    50%{ transform:translateY(-10px) rotate(2deg); }
+}
+
+.rewardTitle{ font-size:30px; font-weight:900; color:#8c479c; margin:10px 0; }
+.rewardText{ font-size:18px; font-weight:800; color:#49354e; line-height:1.9; }
+
+.endCard{
+    width:min(92%,550px);
+    padding:30px 20px;
+    border-radius:32px;
+    background:rgba(255,255,255,.88);
+    border:4px solid white;
+    text-align:center;
+    box-shadow:0 10px 0 rgba(103,63,129,.20), 0 20px 45px rgba(70,38,90,.27);
+}
+
+.trophy{ font-size:85px; animation:trophy .8s infinite alternate; }
+@keyframes trophy{
+    from{transform:translateY(0)}
+    to{transform:translateY(-10px) rotate(3deg)}
+}
+
+.endTitle{ font-size:clamp(28px,6vw,42px); font-weight:900; color:#824697; margin:8px 0 12px; }
+.endText{ color:#47344c; font-size:18px; font-weight:800; line-height:2; }
+
+.finalScore{
+    margin:15px auto;
+    width:max-content;
+    padding:10px 25px;
+    border-radius:20px;
+    background:#fff0bd;
+    border:3px solid white;
+    color:#b06b00;
+    font-size:28px;
+    font-weight:900;
+    box-shadow:0 6px 0 #d5ae69, 0 0 20px #ffe483;
+}
+
+#guide{
+    position:absolute;
+    left:50%;
+    bottom:12px;
+    transform:translateX(-50%);
+    z-index:20;
+    width:min(94%,650px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.guideBubble{
+    width:100%;
+    padding:11px 17px;
+    border-radius:20px;
+    background:rgba(255,255,255,.90);
+    border:3px solid white;
+    color:#38253e;
+    font-size:15px;
+    font-weight:900;
+    text-align:center;
+    box-shadow:0 6px 0 rgba(99,59,119,.18), 0 0 18px rgba(255,255,255,.7);
+}
+
+#toast{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(.4);
+    opacity:0;
+    z-index:1000;
+    padding:18px 28px;
+    border-radius:25px;
+    background:white;
+    border:4px solid white;
+    color:#38223e;
+    font-size:23px;
+    font-weight:900;
+    box-shadow:0 10px 0 rgba(90,50,110,.20), 0 0 40px rgba(255,255,255,.9);
+    pointer-events:none;
+    transition:.3s;
+}
+
+#toast.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+#toast.good{ background:#d9fff0; border-color:#66e5ae; box-shadow:0 0 40px #66e5ae; }
+#toast.bad{ background:#ffe0e5; border-color:#ff6678; box-shadow:0 0 40px #ff6678; }
+
+@media(max-width:650px){
+    .options{ grid-template-columns:1fr; gap:10px; }
+    .wordImageCard{ min-height:165px; }
+}
+</style>
+</head>
+
+<body>
+
+<img id="background" src="https://cdn.imgurl.ir/uploads/j61808_IMG_5231.jpeg" alt="">
+<div id="backgroundOverlay"></div>
+<canvas id="particles"></canvas>
+
+<div id="app">
+
+    <div id="hud">
+        <div class="hudBox">⭐ امتیاز: <span id="score">۰</span></div>
+        <div class="hudBox">💎 XP: <span id="xp">۰</span></div>
+        <div class="hudBox">🎯 مرحله: <span id="round">۰</span> / ۵</div>
+    </div>
+
+    <!-- WELCOME SCREEN -->
+    <section id="welcomeScreen" class="screen active">
+        <div class="welcomeCard">
+            <div class="magicIcon">🐰✨</div>
+            <h1 class="mainTitle">رازِ سرزمین «بی»</h1>
+            <p class="description">
+                آماده‌ای وارد سرزمین جادویی واژه‌ها بشی؟<br>
+                معنی کلمه‌هایی که با «بی» ساخته می‌شوند را پیدا کن! 🌸
+            </p>
+            <div class="nameBox">
+                <input id="nameInput" class="nameInput" type="text" maxlength="20" autocomplete="off" placeholder="✏️ نام قشنگت رو بنویس...">
+                <button id="startButton" class="primaryButton" type="button">🚀 شروع ماجراجویی</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAP SCREEN -->
+    <section id="mapScreen" class="screen">
+        <h2 class="mapTitle">🗺️ نقشه‌ی سرزمین «بی»</h2>
+        <div id="map" class="map"></div>
+    </section>
+
+    <!-- PUZZLE SCREEN -->
+    <section id="puzzleScreen" class="screen">
+        <div class="puzzle">
+            <!-- کادر تصویر ۲ با کلمه و عبارت سوال درون آن -->
+            <div class="wordImageCard">
+                <div class="wordFormula">
+                    <span id="prefix" class="prefix">بی</span>
+                    <span class="plus">+</span>
+                    <span id="baseWord" class="base">ادب</span>
+                </div>
+                <div class="questionInCard">
+                    💡 معنی درست این کلمه را انتخاب کن:
+                </div>
+            </div>
+
+            <div id="options" class="options"></div>
+            <div id="result" class="result"></div>
+        </div>
+    </section>
+
+    <!-- REWARD SCREEN -->
+    <section id="rewardScreen" class="screen">
+        <div class="rewardBox">
+            <div id="treasure" class="treasure">🎁✨</div>
+            <div id="rewardTitle" class="rewardTitle">صندوق جایزه!</div>
+            <div id="rewardText" class="rewardText">روی صندوق بزن تا جایزه‌ات را باز کنیم! 🥳</div>
+            <button id="nextButton" class="primaryButton" style="display:none;margin:18px auto 0;">مرحله‌ی بعد 🚀</button>
+        </div>
+    </section>
+
+    <!-- END SCREEN -->
+    <section id="endScreen" class="screen">
+        <div class="endCard">
+            <div class="trophy">🏆</div>
+            <h1 class="endTitle">آفرین قهرمان واژه‌ها! 🎉</h1>
+            <p id="endText" class="endText"></p>
+            <div id="finalScore" class="finalScore">۰ ⭐</div>
+            <button id="restartButton" class="primaryButton">🔄 بازی دوباره</button>
+        </div>
+    </section>
+
+    <div id="guide">
+        <div id="guideBubble" class="guideBubble">سلام دوست من! اسمت رو بنویس تا شروع کنیم! 🐰✨</div>
+    </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const LEVELS = [
+    {
+        name:"دروازه‌ی واژه‌ها",
+        base:"ادب",
+        full:"بی‌ادب",
+        meaning:"کسی که ادب ندارد",
+        distractors:["کسی که خیلی باادب است", "کسی که کتاب می‌خواند", "کسی که ورزش می‌کند"]
+    },
+    {
+        name:"جنگل معنی‌ها",
+        base:"نظم",
+        full:"بی‌نظم",
+        meaning:"کسی که نظم ندارد",
+        distractors:["کسی که وسایلش مرتب است", "کسی که همیشه تمیز است", "کسی که زود می‌خوابد"]
+    },
+    {
+        name:"غار کلمات",
+        base:"سلیقه",
+        full:"بی‌سلیقه",
+        meaning:"کسی که سلیقه ندارد",
+        distractors:["کسی که سلیقه‌ی خیلی خوبی دارد", "کسی که نقاشی زیبا می‌کشد", "کسی که کاردستی می‌سازد"]
+    },
+    {
+        name:"قلعه‌ی بی",
+        base:"حوصله",
+        full:"بی‌حوصله",
+        meaning:"کسی که حوصله ندارد",
+        distractors:["کسی که خیلی پرانرژی است", "کسی که همیشه شاد است", "کسی که با آرامش بازی می‌کند"]
+    },
+    {
+        name:"گنج واژه‌ها",
+        base:"هدف",
+        full:"بی‌هدف",
+        meaning:"کسی که هدف ندارد",
+        distractors:["کسی که هدف مشخصی دارد", "کسی که همیشه برنده می‌شود", "کسی که زیاد مطالعه می‌کند"]
+    }
+];
+
+let playerName = "";
+let currentLevel = 0;
+let score = 0;
+let xp = 0;
+let answered = false;
+let treasureOpened = false;
+
+const welcomeScreen = document.getElementById("welcomeScreen");
+const mapScreen = document.getElementById("mapScreen");
+const puzzleScreen = document.getElementById("puzzleScreen");
+const rewardScreen = document.getElementById("rewardScreen");
+const endScreen = document.getElementById("endScreen");
+const nameInput = document.getElementById("nameInput");
+const startButton = document.getElementById("startButton");
+const map = document.getElementById("map");
+const prefix = document.getElementById("prefix");
+const baseWord = document.getElementById("baseWord");
+const options = document.getElementById("options");
+const result = document.getElementById("result");
+const scoreDisplay = document.getElementById("score");
+const xpDisplay = document.getElementById("xp");
+const roundDisplay = document.getElementById("round");
+const guideBubble = document.getElementById("guideBubble");
+const toast = document.getElementById("toast");
+
+function faNumber(number){
+    const digits = "۰۱۲۳۴۵۶۷۸۹";
+    return String(number).replace(/[0-9]/g, d => digits[d]);
+}
+
+function showScreen(screen){
+    [welcomeScreen, mapScreen, puzzleScreen, rewardScreen, endScreen].forEach(s => s.classList.remove("active"));
+    screen.classList.add("active");
+}
+
+function updateHUD(){
+    scoreDisplay.textContent = faNumber(score);
+    xpDisplay.textContent = faNumber(xp);
+    roundDisplay.textContent = faNumber(currentLevel);
+}
+
+function guide(text){
+    guideBubble.innerHTML = text;
+}
+
+let toastTimer;
+function showToast(text, type){
+    clearTimeout(toastTimer);
+    toast.textContent = text;
+    toast.className = "";
+    toast.classList.add("show");
+    if(type) toast.classList.add(type);
+    toastTimer = setTimeout(() => { toast.className = ""; }, 1300);
+}
+
+startButton.addEventListener("click", startGame);
+nameInput.addEventListener("keydown", (e) => { if(e.key === "Enter") startGame(); });
+
+function startGame(){
+    const value = nameInput.value.trim();
+    if(!value){
+        nameInput.focus();
+        guide("اول اسمت رو توی کادر بنویس قهرمان! 🐰💗");
+        showToast("لطفاً اسمت را بنویس ✏️", "bad");
+        return;
+    }
+    playerName = value;
+    currentLevel = 0;
+    score = 0;
+    xp = 0;
+    updateHUD();
+    guide(`سلام ${playerName} جان! 🌸 مرحله‌ی اول آماده‌ست!`);
+    setTimeout(showMap, 500);
+}
+
+function showMap(){
+    showScreen(mapScreen);
+    renderMap();
+    guide(`${playerName} جان، فقط مرحله‌ی روشن را انتخاب کن! ✨`);
+}
+
+function renderMap(){
+    map.innerHTML = "";
+    LEVELS.forEach((level, index) => {
+        const item = document.createElement("div");
+        const completed = index < currentLevel;
+        const active = index === currentLevel;
+        const locked = index > currentLevel;
+
+        item.className = "level";
+        if(completed) item.classList.add("completed");
+        if(active) item.classList.add("active");
+        if(locked) item.classList.add("locked");
+
+        let icon = "🔒";
+        if(completed) icon = "✅";
+        if(active) icon = "✨";
+
+        item.innerHTML = `
+            <div class="levelNumber">${faNumber(index+1)}</div>
+            <div class="levelName">${level.name}</div>
+            <div class="levelIcon">${icon}</div>
+        `;
+
+        if(active){
+            item.addEventListener("click", () => startLevel(index));
+        }
+        map.appendChild(item);
+    });
+}
+
+function startLevel(index){
+    if(index !== currentLevel) return;
+    const level = LEVELS[index];
+    answered = false;
+    treasureOpened = false;
+
+    prefix.textContent = "بی";
+    baseWord.textContent = level.base;
+    result.textContent = "";
+
+    showScreen(puzzleScreen);
+    updateHUD();
+    guide("به کلمه با دقت نگاه کن و معنی درستش را پیدا کن! 💡");
+    createOptions(level);
+}
+
+function shuffle(array){
+    const arr = [...array];
+    for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createOptions(level){
+    options.innerHTML = "";
+    const allOptions = shuffle([level.meaning, ...level.distractors]);
+
+    allOptions.forEach(text => {
+        const button = document.createElement("button");
+        button.className = "option";
+        button.type = "button";
+        button.textContent = text;
+        button.addEventListener("click", () => checkAnswer(button, text, level));
+        options.appendChild(button);
+    });
+}
+
+function checkAnswer(button, selected, level){
+    if(answered) return;
+
+    if(selected === level.meaning){
+        answered = true;
+        button.classList.add("correct");
+        score += 100;
+        xp += 100;
+        updateHUD();
+
+        result.innerHTML = `
+            🌟 آفرین! <strong>بی + ${level.base}</strong> = <strong style="color:#8c439c">${level.full}</strong>
+            یعنی: ${level.meaning}
+        `;
+
+        guide(`آفرین ${playerName} جان! کاملاً درست گفتی! 🥳✨`);
+        showToast("آفرین! پاسخ درست بود 🎉", "good");
+        createParticles(window.innerWidth/2, window.innerHeight/2, 35);
+        document.querySelectorAll(".option").forEach(b => b.disabled = true);
+
+        setTimeout(showReward, 1300);
+    }else{
+        button.classList.add("wrong");
+        guide("نه قهرمان، دوباره معنی کلمه رو با دقت بررسی کن! 🤔");
+        result.textContent = "این پاسخ درست نیست؛ دوباره تلاش کن! 🌸";
+        showToast("دوباره فکر کن! 💭", "bad");
+        setTimeout(() => button.classList.remove("wrong"), 500);
+    }
+}
+
+const treasure = document.getElementById("treasure");
+const rewardTitle = document.getElementById("rewardTitle");
+const rewardText = document.getElementById("rewardText");
+const nextButton = document.getElementById("nextButton");
+
+function showReward(){
+    showScreen(rewardScreen);
+    treasureOpened = false;
+    treasure.textContent = "🎁✨";
+    rewardTitle.textContent = "صندوق جایزه!";
+    rewardText.textContent = "روی صندوق بزن تا جایزه‌ات را باز کنیم! 🥳";
+    nextButton.style.display = "none";
+    guide("روی صندوق گنج بزن تا جایزه‌ات را بگیری! 🎁✨");
+}
+
+treasure.addEventListener("click", openTreasure);
+
+function openTreasure(){
+    if(treasureOpened) return;
+    treasureOpened = true;
+    treasure.textContent = "🏆✨";
+    rewardTitle.textContent = "✨ جایزه گرفتی! ✨";
+    rewardText.innerHTML = `مرحله با موفقیت کامل شد!<br><strong style="color:#9b54a9">+۱۰۰ امتیاز</strong> 🥕`;
+    nextButton.style.display = "flex";
+    createParticles(window.innerWidth/2, window.innerHeight/2, 50);
+    guide(`عالی بود ${playerName} جان! آماده‌ی مرحله‌ی بعدی هستی! 🚀`);
+}
+
+nextButton.addEventListener("click", () => {
+    currentLevel++;
+    updateHUD();
+    if(currentLevel >= LEVELS.length){
+        showEnd();
+    }else{
+        showMap();
+    }
+});
+
+const endText = document.getElementById("endText");
+const finalScore = document.getElementById("finalScore");
+
+function showEnd(){
+    showScreen(endScreen);
+    finalScore.textContent = faNumber(score) + " ⭐";
+    endText.innerHTML = `
+        <strong>${playerName}</strong> عزیز! 🌸<br>
+        تو تمام مرحله‌های سرزمین «بی» را با موفقیت پشت سر گذاشتی!<br>
+        حالا یک <strong style="color:#8d479d">استاد واژه‌سازی</strong> هستی! 🏆
+    `;
+    guide("هورااا! تمام مراحل را با موفقیت تمام کردی! 🥳🏆");
+    createParticles(window.innerWidth/2, window.innerHeight/2, 80);
+}
+
+document.getElementById("restartButton").addEventListener("click", () => {
+    currentLevel = 0;
+    score = 0;
+    xp = 0;
+    updateHUD();
+    showMap();
+});
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let particles = [];
+
+function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+function createParticles(x, y, amount=25){
+    const emojis = ["✨", "⭐", "🌸", "💖", "💎"];
+    for(let i = 0; i < amount; i++){
+        particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - .5) * 8,
+            vy: (Math.random() - .5) * 8,
+            life: 1,
+            size: 12 + Math.random() * 18,
+            emoji: emojis[Math.floor(Math.random() * emojis.length)]
+        });
+    }
+}
+
+function animateParticles(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += .08;
+        p.life -= .018;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.font = `${p.size}px Arial`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(p.emoji, p.x, p.y);
+        ctx.restore();
+    });
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+updateHUD();
+guide("سلام دوست من! اسمت رو بنویس تا با هم وارد سرزمین جادویی کلمه‌ها بشیم! 🐰✨");
+</script>
+
+</body>
+</html>

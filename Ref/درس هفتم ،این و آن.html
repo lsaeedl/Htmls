@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ماجراجویی ماشین‌ها و خرگوش‌های سه‌بعدی</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Tahoma, 'Vazirmatn', sans-serif;
+    background: #0f4c81;
+    overflow-x: hidden;
+}
+
+/* آسمان سینمایی پیکسار */
+#game {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    padding: 16px 16px 0;
+    background: radial-gradient(circle at 50% 10%, #68d8d6 0%, #07b1ca 30%, #028090 70%, #004e64 100%);
+}
+
+#game::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: 
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.4), transparent 40%),
+        radial-gradient(circle at 20% 60%, rgba(240, 243, 189, 0.2), transparent 45%);
+}
+
+/* خورشید ژله‌ای درخشان */
+.sun-3d {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fff275 25%, #ff8c00 70%, #e52d27 100%);
+    box-shadow: 0 0 45px rgba(255, 170, 0, 0.8), inset -8px -12px 18px rgba(180, 40, 0, 0.6), inset 10px 10px 16px rgba(255, 255, 255, 0.95);
+    animation: sunPulse 4s ease-in-out infinite alternate;
+    z-index: 1;
+}
+
+@keyframes sunPulse {
+    0% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.08) rotate(10deg); }
+}
+
+/* ابرهای سه‌بعدی */
+.cloud-3d {
+    position: absolute;
+    background: linear-gradient(180deg, #ffffff 0%, #e2f1f8 100%);
+    border-radius: 50px;
+    box-shadow: 0 15px 30px rgba(0, 50, 100, 0.25), inset 0 -8px 12px #9ec5e8, inset 0 6px 8px #ffffff;
+    z-index: 2;
+    animation: cloudMove 25s linear infinite;
+}
+
+.cloud-3d::before, .cloud-3d::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+    box-shadow: inherit;
+}
+
+.c1 { width: 160px; height: 50px; top: 60px; left: -190px; }
+.c1::before { width: 70px; height: 70px; top: -32px; left: 20px; }
+.c1::after { width: 50px; height: 50px; top: -18px; right: 25px; }
+
+.c2 { width: 200px; height: 58px; top: 160px; left: -250px; animation-delay: 12s; }
+.c2::before { width: 85px; height: 85px; top: -40px; left: 30px; }
+.c2::after { width: 65px; height: 65px; top: -24px; right: 30px; }
+
+@keyframes cloudMove {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(100vw + 450px)); }
+}
+
+/* پرنده‌ها */
+.bird-wrapper {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    animation: birdFlight 16s linear infinite;
+}
+
+.bird {
+    font-size: 30px;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
+    animation: birdFlap 0.6s ease-in-out infinite alternate;
+}
+
+.bw1 { top: 10%; left: -80px; }
+.bw2 { top: 22%; left: -100px; animation-delay: 8s; transform: scale(0.8); }
+
+@keyframes birdFlight {
+    0% { transform: translateX(0) translateY(0); }
+    40% { transform: translateX(40vw) translateY(-25px); }
+    80% { transform: translateX(80vw) translateY(15px); }
+    100% { transform: translateX(calc(100vw + 120px)) translateY(-10px); }
+}
+
+@keyframes birdFlap {
+    from { transform: rotate(-6deg); }
+    to { transform: rotate(10deg); }
+}
+
+/* =========================================
+   کانتینر و کارت‌های شیشه‌ای
+========================================= */
+.container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 860px;
+    margin: auto;
+}
+
+.glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(240, 248, 255, 0.75));
+    backdrop-filter: blur(18px);
+    border: 4px solid #ffffff;
+    border-radius: 40px;
+    box-shadow: 
+        0 25px 50px rgba(0, 30, 60, 0.35),
+        0 12px 0 rgba(120, 180, 230, 0.8),
+        inset 0 4px 12px rgba(255, 255, 255, 0.95);
+    padding: 30px 24px;
+    text-align: center;
+}
+
+.start-box {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-sphere {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 55px;
+    background: radial-gradient(circle at 30% 25%, #ffffff 0%, #ff70a6 40%, #7000ff 80%, #3700b3 100%);
+    box-shadow: 0 18px 30px rgba(112, 0, 255, 0.45), 0 8px 0 #280080, inset -8px -12px 16px rgba(0, 0, 0, 0.35), inset 8px 8px 14px rgba(255, 255, 255, 0.8);
+    animation: sphereFloat 2s infinite ease-in-out alternate;
+}
+
+@keyframes sphereFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+h1 {
+    font-size: 28px;
+    color: #0b3954;
+    margin: 10px 0;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.9);
+}
+
+p {
+    font-size: 18px;
+    color: #2b5876;
+    font-weight: 700;
+    line-height: 1.8;
+}
+
+.name-input {
+    width: 85%;
+    max-width: 320px;
+    padding: 15px;
+    border: 3px solid rgba(135, 185, 255, 0.8);
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.btn-play {
+    margin-top: 22px;
+    padding: 16px 45px;
+    border: none;
+    border-radius: 28px;
+    font-size: 22px;
+    font-weight: 900;
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(180deg, #ff5e7e 0%, #e01e5a 60%, #990033 100%);
+    box-shadow: 0 10px 0 #6b0024, 0 18px 25px rgba(224, 30, 90, 0.45), inset 0 3px 6px rgba(255, 255, 255, 0.8);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn-play:active {
+    transform: translateY(6px);
+    box-shadow: 0 3px 0 #6b0024;
+}
+
+/* =========================================
+   محیط بازی
+========================================= */
+#play {
+    display: none;
+    padding: 6px 0 0;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.pill-glass {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(230, 245, 255, 0.85));
+    backdrop-filter: blur(10px);
+    border: 3px solid white;
+    border-radius: 24px;
+    padding: 9px 18px;
+    font-size: 15px;
+    font-weight: 900;
+    color: #0b3954;
+    box-shadow: 0 8px 0 rgba(70, 150, 210, 0.7), 0 12px 18px rgba(0, 0, 0, 0.12);
+}
+
+.question-title {
+    text-align: center;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 900;
+    margin: 4px 0 10px;
+    text-shadow: 0 4px 10px rgba(0, 30, 70, 0.6);
+}
+
+/* =========================================
+   صحنه ۳بعدی انیمیشنی
+========================================= */
+.stage-3d {
+    position: relative;
+    height: 290px;
+    margin: 0 auto;
+    border-radius: 36px;
+    overflow: hidden;
+    border: 5px solid #ffffff;
+    background: linear-gradient(180deg, #48cae4 0%, #a0e8af 58%, #52b788 59%, #2d6a4f 100%);
+    box-shadow: 
+        0 20px 40px rgba(0, 30, 60, 0.3),
+        0 10px 0 #1b4332,
+        inset 0 6px 14px rgba(255, 255, 255, 0.85);
+}
+
+.aim-line {
+    position: absolute;
+    border-top: 4px dashed #ffffff;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.9)) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    pointer-events: none;
+    z-index: 4;
+    transition: all 0.4s ease;
+}
+
+.hand-container {
+    position: absolute;
+    width: 135px;
+    height: 135px;
+    z-index: 6;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.35));
+}
+
+.hand-container svg { width: 100%; height: 100%; }
+
+.object-3d {
+    position: absolute;
+    line-height: 1;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 5;
+}
+
+/* حالت نزدیک */
+.stage-3d.is-near .hand-container {
+    right: 46%;
+    bottom: 25px;
+    transform: rotate(0deg);
+    animation: handNear 1.8s infinite alternate ease-in-out;
+}
+
+.stage-3d.is-near .object-3d {
+    font-size: 100px;
+    left: 18%;
+    bottom: 30px;
+    top: auto;
+    filter: drop-shadow(0 18px 12px rgba(0, 0, 0, 0.35));
+    animation: bounceNear 2.2s infinite ease-in-out;
+}
+
+.stage-3d.is-near .aim-line {
+    right: 56%;
+    bottom: 85px;
+    width: 140px;
+    transform: rotate(0deg);
+    transform-origin: right center;
+}
+
+@keyframes handNear {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-12px); }
+}
+
+@keyframes bounceNear {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.04); }
+}
+
+/* حالت دور */
+.stage-3d.is-far .hand-container {
+    right: 8%;
+    bottom: 15px;
+    transform: rotate(35deg);
+    transform-origin: 80% 80%;
+    animation: handFar 2.2s infinite alternate ease-in-out;
+}
+
+.stage-3d.is-far .object-3d {
+    font-size: 50px;
+    left: 14%;
+    top: 50px;
+    bottom: auto;
+    filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.25)) opacity(0.95);
+    animation: bounceFar 2.8s infinite ease-in-out;
+}
+
+.stage-3d.is-far .aim-line {
+    right: 22%;
+    bottom: 100px;
+    width: 270px;
+    transform: rotate(35deg);
+    transform-origin: right center;
+}
+
+@keyframes handFar {
+    0% { transform: rotate(35deg) translate(0, 0); }
+    100% { transform: rotate(35deg) translate(-10px, -8px); }
+}
+
+@keyframes bounceFar {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(1.02); }
+}
+
+/* =========================================
+   ماشین‌های رنگی سه‌بعدی
+========================================= */
+.options-zone {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    max-width: 620px;
+    margin: 12px auto 0;
+    position: relative;
+    z-index: 20;
+}
+
+.car-btn {
+    position: relative;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.car-body {
+    height: 84px;
+    border-radius: 28px 28px 18px 18px;
+    border: 4px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 29px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.35), inset 0 4px 8px rgba(255, 255, 255, 0.85);
+}
+
+.car-windshield {
+    position: absolute;
+    top: 6px;
+    width: 60%;
+    height: 18px;
+    border-radius: 12px 12px 6px 6px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(180,230,255,0.4) 100%);
+    border: 2px solid rgba(255,255,255,0.8);
+}
+
+.car-lights {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.light {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 30%, #ffea00 80%);
+    box-shadow: 0 0 10px #ffea00;
+}
+
+.car-wheels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 24px;
+    margin-top: -10px;
+    position: relative;
+    z-index: 5;
+}
+
+.wheel {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #555 0%, #111 80%);
+    border: 3px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 0 4px #000;
+}
+
+.car-pink .car-body {
+    background: linear-gradient(180deg, #ff70a6 0%, #e01e5a 60%, #85002a 100%);
+    box-shadow: 0 10px 0 #5c001c, 0 15px 25px rgba(224, 30, 90, 0.4);
+}
+
+.car-cyan .car-body {
+    background: linear-gradient(180deg, #48cae4 0%, #0096c7 60%, #023e8a 100%);
+    box-shadow: 0 10px 0 #012a5e, 0 15px 25px rgba(0, 150, 199, 0.4);
+}
+
+.car-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+}
+
+.car-btn:active {
+    transform: translateY(6px);
+}
+
+.car-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.car-btn.correct .car-body {
+    background: linear-gradient(180deg, #52b788 0%, #2d6a4f 60%, #1b4332 100%);
+    box-shadow: 0 10px 0 #0d281e, 0 0 30px #74c69d;
+    animation: carPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes carPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1) rotate(-3deg); }
+    100% { transform: scale(1.04); }
+}
+
+/* =========================================
+   چمنزار و سه خرگوش سه‌بعدی
+========================================= */
+.meadow-zone {
+    position: relative;
+    width: calc(100% + 32px);
+    margin: 5px -16px 0;
+    min-height: 155px;
+    background: linear-gradient(180deg, #70e000 0%, #38b000 45%, #007200 100%);
+    border-radius: 50% 50% 0 0 / 25px 25px 0 0;
+    border-top: 5px solid #a7f348;
+    box-shadow: 0 -10px 25px rgba(0, 50, 0, 0.35), inset 0 6px 12px rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding: 0 30px 10px;
+    z-index: 10;
+}
+
+.flower {
+    position: absolute;
+    font-size: 20px;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+    animation: flowerSway 3s ease-in-out infinite alternate;
+}
+.f1 { top: 18px; left: 12%; }
+.f2 { top: 12px; right: 15%; animation-delay: 1.5s; }
+.f3 { top: 25px; left: 48%; animation-delay: 0.8s; font-size: 16px; }
+
+@keyframes flowerSway {
+    from { transform: rotate(-8deg); }
+    to { transform: rotate(8deg); }
+}
+
+.bunnies-group {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.bunny-box {
+    position: relative;
+    width: 95px;
+    height: 115px;
+    cursor: pointer;
+}
+
+.bunny-box.center {
+    width: 110px;
+    height: 130px;
+    z-index: 2;
+}
+
+.bunny-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 12px 10px rgba(0, 30, 10, 0.35));
+}
+
+.bunny-left .bunny-svg {
+    animation: bunnyHopLeft 2.4s infinite ease-in-out;
+}
+
+.bunny-center .bunny-svg {
+    animation: bunnyHopCenter 2s infinite ease-in-out;
+}
+
+.bunny-right .bunny-svg {
+    animation: bunnyHopRight 2.2s infinite ease-in-out 0.6s;
+}
+
+@keyframes bunnyHopCenter {
+    0%, 100% { transform: translateY(0) scale(1, 1); }
+    30% { transform: translateY(-16px) scale(0.95, 1.05); }
+    50% { transform: translateY(0) scale(1.08, 0.92); }
+    70% { transform: translateY(-6px) scale(0.98, 1.02); }
+}
+
+@keyframes bunnyHopLeft {
+    0%, 100% { transform: rotate(-5deg) translateY(0); }
+    40% { transform: rotate(-5deg) translateY(-12px); }
+}
+
+@keyframes bunnyHopRight {
+    0%, 100% { transform: rotate(5deg) translateY(0); }
+    40% { transform: rotate(5deg) translateY(-14px); }
+}
+
+.bunny-jump {
+    animation: bunnyVictory 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+@keyframes bunnyVictory {
+    0% { transform: scale(1) translateY(0); }
+    40% { transform: scale(1.25) translateY(-50px) rotate(-10deg); }
+    70% { transform: scale(0.9) translateY(0) rotate(5deg); }
+    100% { transform: scale(1) translateY(0); }
+}
+
+.carrot-pop {
+    position: absolute;
+    top: -20px;
+    left: 35px;
+    font-size: 38px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.carrot-pop.show {
+    animation: carrotFly 1s forwards ease-out;
+}
+
+@keyframes carrotFly {
+    0% { opacity: 0; transform: translateY(20px) scale(0.3) rotate(0deg); }
+    50% { opacity: 1; transform: translateY(-40px) scale(1.4) rotate(25deg); }
+    100% { opacity: 0; transform: translateY(-70px) scale(1) rotate(45deg); }
+}
+
+/* =========================================
+   پیام و افکت‌ها
+========================================= */
+.toast-msg {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    z-index: 200;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    padding: 22px 35px;
+    border-radius: 35px;
+    font-size: 22px;
+    font-weight: 900;
+    color: #0b3954;
+    border: 4px solid #ffffff;
+    box-shadow: 0 25px 50px rgba(0, 30, 70, 0.4), 0 8px 0 #70b8ff;
+    text-align: center;
+    transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+.toast-msg.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.spark {
+    position: fixed;
+    z-index: 250;
+    font-size: 34px;
+    pointer-events: none;
+    animation: sparkFly 0.9s forwards ease-out;
+}
+
+@keyframes sparkFly {
+    0% { opacity: 1; transform: translate(0, 0) scale(0.3); }
+    100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(1.4) rotate(360deg); }
+}
+
+.explosion {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    font-size: 100px;
+    z-index: 100;
+    display: none;
+    pointer-events: none;
+}
+
+.explosion.show {
+    display: block;
+    animation: boom 0.75s ease;
+}
+
+@keyframes boom {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+    40% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+
+@media(max-width: 600px) {
+    #game { padding: 10px 10px 0; }
+    .sun-3d { width: 70px; height: 70px; right: 15px; top: 15px; }
+    .question-title { font-size: 22px; }
+    .stage-3d { height: 260px; }
+    .stage-3d.is-near .object-3d { font-size: 80px; left: 14%; bottom: 25px; }
+    .stage-3d.is-near .hand-container { right: 40%; bottom: 20px; width: 110px; height: 110px; }
+    .stage-3d.is-far .object-3d { font-size: 40px; left: 10%; top: 40px; }
+    .stage-3d.is-far .hand-container { right: 5%; bottom: 10px; width: 110px; height: 110px; }
+    .stage-3d.is-far .aim-line { width: 220px; right: 18%; bottom: 80px; }
+    .options-zone { gap: 12px; }
+    .car-body { height: 72px; font-size: 24px; }
+    .wheel { width: 24px; height: 24px; }
+    .meadow-zone { min-height: 130px; margin: 4px -10px 0; }
+    .bunny-box { width: 80px; height: 95px; }
+    .bunny-box.center { width: 95px; height: 110px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+    <!-- آسمان ۳بعدی -->
+    <div class="sun-3d"></div>
+    <div class="cloud-3d c1"></div>
+    <div class="cloud-3d c2"></div>
+
+    <div class="bird-wrapper bw1"><div class="bird">🕊️</div></div>
+    <div class="bird-wrapper bw2"><div class="bird">🐦</div></div>
+
+    <div class="container">
+        <!-- صفحه شروع -->
+        <section class="start-box" id="start">
+            <div class="glass-panel" style="max-width: 580px; margin: auto;">
+                <div class="logo-sphere">🚗</div>
+                <h1>🌈 ماجراجویی ماشین‌ها و خرگوش‌ها 🌈</h1>
+                <p>به جهت دست و فاصله اشیاء با دقت نگاه کن!<br>سوار ماشین درست شو و به خرگوش‌های ناز کمک کن.</p>
+                <p>نام قهرمان دانا را وارد کن:</p>
+                <input class="name-input" id="name" type="text" placeholder="نام دانش‌آموز..." autocomplete="off">
+                <br>
+                <button class="btn-play" id="startBtn" type="button">🎮 شروع بازی</button>
+            </div>
+        </section>
+
+        <!-- محیط بازی -->
+        <section id="play">
+            <div class="top-bar">
+                <div class="pill-glass">👋 <span id="childName"></span></div>
+                <div class="pill-glass">⭐ امتیاز: <span id="score">0</span></div>
+                <div class="pill-glass">🎯 سؤال <span id="number">1</span> / 10</div>
+            </div>
+
+            <div class="question-title">کدام کلمه درست است؟</div>
+
+            <!-- صحنه سه‌بعدی -->
+            <div class="stage-3d is-near" id="sceneBox">
+                <div class="aim-line" id="aimLine"></div>
+                <div class="object-3d" id="object">⚽</div>
+                
+                <div class="hand-container" id="handBox">
+                    <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="handGrad" cx="40%" cy="35%" r="65%">
+                                <stop offset="0%" stop-color="#FFE0B2"/>
+                                <stop offset="60%" stop-color="#FFB74D"/>
+                                <stop offset="100%" stop-color="#E65100"/>
+                            </radialGradient>
+                            <filter id="handShadow" x="-10%" y="-10%" width="130%" height="130%">
+                                <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000" flood-opacity="0.25"/>
+                            </filter>
+                        </defs>
+                        <path d="M125 70 L155 70 C158 70 160 75 160 85 C160 95 158 100 155 100 L125 100 Z" fill="#29B6F6" stroke="#FFFFFF" stroke-width="2.5"/>
+                        <g filter="url(#handShadow)">
+                            <rect x="15" y="65" width="80" height="24" rx="12" fill="url(#handGrad)" stroke="#FFFFFF" stroke-width="2.5"/>
+                            <rect x="70" y="55" width="60" height="48" rx="20" fill="url(#handGrad)" stroke="#FFFFFF" stroke-width="2.5"/>
+                            <path d="M85 58 C85 45 100 42 108 52 C112 58 108 65 95 65 Z" fill="url(#handGrad)" stroke="#FFFFFF" stroke-width="2"/>
+                            <path d="M92 70 Q95 78 92 88" stroke="#D84315" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                            <path d="M106 70 Q109 78 106 88" stroke="#D84315" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                            <ellipse cx="26" cy="77" rx="6" ry="7" fill="#FFF8E1" opacity="0.85"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- گزینه‌ها داخل ماشین‌های رنگی سه‌بعدی -->
+            <div class="options-zone" id="options"></div>
+
+            <!-- چمنزار پایین صفحه و سه خرگوش سه‌بعدی ناز -->
+            <div class="meadow-zone">
+                <div class="flower f1">🌸</div>
+                <div class="flower f2">🌼</div>
+                <div class="flower f3">🌷</div>
+
+                <div class="bunnies-group">
+                    <!-- خرگوش ۱ (چپ) -->
+                    <div class="bunny-box bunny-left">
+                        <svg class="bunny-svg" viewBox="0 0 120 120" fill="none">
+                            <ellipse cx="45" cy="30" rx="9" ry="24" transform="rotate(-15 45 30)" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <ellipse cx="45" cy="30" rx="4" ry="16" transform="rotate(-15 45 30)" fill="#FFAFCC"/>
+                            <ellipse cx="75" cy="30" rx="9" ry="24" transform="rotate(15 75 30)" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <ellipse cx="75" cy="30" rx="4" ry="16" transform="rotate(15 75 30)" fill="#FFAFCC"/>
+                            <circle cx="60" cy="80" r="26" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <circle cx="60" cy="58" r="22" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <circle cx="48" cy="62" r="5" fill="#FFAFCC" opacity="0.6"/>
+                            <circle cx="72" cy="62" r="5" fill="#FFAFCC" opacity="0.6"/>
+                            <ellipse cx="52" cy="54" rx="4" ry="6" fill="#1D2A44"/><circle cx="50" cy="52" r="1.5" fill="#FFF"/>
+                            <ellipse cx="68" cy="54" rx="4" ry="6" fill="#1D2A44"/><circle cx="66" cy="52" r="1.5" fill="#FFF"/>
+                            <polygon points="60,60 57,58 63,58" fill="#FF70A6"/>
+                        </svg>
+                    </div>
+
+                    <!-- خرگوش ۲ (وسط - قهرمان) -->
+                    <div class="bunny-box bunny-center center" id="bunnyCenter">
+                        <div class="carrot-pop" id="carrot">🥕</div>
+                        <svg class="bunny-svg" viewBox="0 0 140 140" fill="none">
+                            <defs>
+                                <radialGradient id="bWhite" cx="40%" cy="30%" r="70%">
+                                    <stop offset="0%" stop-color="#FFFFFF"/>
+                                    <stop offset="65%" stop-color="#F0F4F8"/>
+                                    <stop offset="100%" stop-color="#D0DBE5"/>
+                                </radialGradient>
+                            </defs>
+                            <ellipse cx="48" cy="36" rx="12" ry="32" transform="rotate(-12 48 36)" fill="url(#bWhite)" stroke="#FFF" stroke-width="2"/>
+                            <ellipse cx="48" cy="36" rx="6" ry="22" transform="rotate(-12 48 36)" fill="#FFAFCC"/>
+                            <ellipse cx="92" cy="36" rx="12" ry="32" transform="rotate(12 92 36)" fill="url(#bWhite)" stroke="#FFF" stroke-width="2"/>
+                            <ellipse cx="92" cy="36" rx="6" ry="22" transform="rotate(12 92 36)" fill="#FFAFCC"/>
+                            <circle cx="70" cy="98" r="32" fill="url(#bWhite)" stroke="#FFF" stroke-width="2"/>
+                            <circle cx="70" cy="70" r="28" fill="url(#bWhite)" stroke="#FFF" stroke-width="2"/>
+                            <circle cx="52" cy="76" r="6" fill="#FFAFCC" opacity="0.7"/>
+                            <circle cx="88" cy="76" r="6" fill="#FFAFCC" opacity="0.7"/>
+                            <ellipse cx="56" cy="66" rx="5" ry="7" fill="#1D2A44"/><circle cx="54" cy="64" r="2" fill="#FFF"/>
+                            <ellipse cx="84" cy="66" rx="5" ry="7" fill="#1D2A44"/><circle cx="82" cy="64" r="2" fill="#FFF"/>
+                            <polygon points="70,73 66,70 74,70" fill="#FF70A6"/>
+                            <path d="M66 75 Q70 79 74 75" stroke="#1D2A44" stroke-width="2" stroke-linecap="round" fill="none"/>
+                            <ellipse cx="56" cy="94" rx="7" ry="10" transform="rotate(20 56 94)" fill="url(#bWhite)"/>
+                            <ellipse cx="84" cy="94" rx="7" ry="10" transform="rotate(-20 84 94)" fill="url(#bWhite)"/>
+                            <text x="60" y="102" font-size="20">🥕</text>
+                        </svg>
+                    </div>
+
+                    <!-- خرگوش ۳ (راست) -->
+                    <div class="bunny-box bunny-right">
+                        <svg class="bunny-svg" viewBox="0 0 120 120" fill="none">
+                            <ellipse cx="45" cy="30" rx="9" ry="24" transform="rotate(-15 45 30)" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <ellipse cx="45" cy="30" rx="4" ry="16" transform="rotate(-15 45 30)" fill="#FFAFCC"/>
+                            <ellipse cx="75" cy="30" rx="9" ry="24" transform="rotate(15 75 30)" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <ellipse cx="75" cy="30" rx="4" ry="16" transform="rotate(15 75 30)" fill="#FFAFCC"/>
+                            <circle cx="60" cy="80" r="26" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <circle cx="60" cy="58" r="22" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <circle cx="48" cy="62" r="5" fill="#FFAFCC" opacity="0.6"/>
+                            <circle cx="72" cy="62" r="5" fill="#FFAFCC" opacity="0.6"/>
+                            <ellipse cx="52" cy="54" rx="4" ry="6" fill="#1D2A44"/><circle cx="50" cy="52" r="1.5" fill="#FFF"/>
+                            <ellipse cx="68" cy="54" rx="4" ry="6" fill="#1D2A44"/><circle cx="66" cy="52" r="1.5" fill="#FFF"/>
+                            <polygon points="60,60 57,58 63,58" fill="#FF70A6"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- صفحه پایان -->
+        <section id="endScreen" style="display:none; padding: 40px 0;">
+            <div class="glass-panel" style="max-width: 580px; margin: auto;">
+                <div class="logo-sphere">🏆</div>
+                <h1>فوق‌العاده بود قهرمان باهوش!</h1>
+                <p>تو و ۳ خرگوش مهربان تمام مراحل را با موفقیت تمام کردید.</p>
+                <div class="pill-glass" style="display:inline-block; margin: 15px 0; font-size: 19px;">امتیاز نهایی شما: <span id="finalScore">0</span> ⭐</div>
+                <br>
+                <button class="btn-play" id="restartBtn" type="button">🔄 ماجراجویی دوباره</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="toast-msg" id="message"></div>
+<div class="explosion" id="explosion">💥💣💥</div>
+
+<script>
+const rawQuestions = [
+    { item: "⚽", distance: "near", correct: "این", wrong: "آن" },
+    { item: "🌳", distance: "far", correct: "آن", wrong: "این" },
+    { item: "✏️", distance: "near", correct: "همین", wrong: "همان" },
+    { item: "📚", distance: "far", correct: "همان", wrong: "همین" },
+    { item: "🏠", distance: "near", correct: "این", wrong: "آن" },
+    { item: "🐦", distance: "far", correct: "آن", wrong: "این" },
+    { item: "🌷", distance: "near", correct: "همین", wrong: "همان" },
+    { item: "🚗", distance: "far", correct: "همان", wrong: "همین" },
+    { item: "🎒", distance: "near", correct: "این", wrong: "آن" },
+    { item: "🚲", distance: "far", correct: "آن", wrong: "این" }
+];
+
+let questions = [];
+let current = 0;
+let score = 0;
+let locked = false;
+
+const startSec = document.getElementById("start");
+const playSec = document.getElementById("play");
+const endSec = document.getElementById("endScreen");
+const startBtn = document.getElementById("startBtn");
+const restartBtn = document.getElementById("restartBtn");
+const nameInput = document.getElementById("name");
+const childName = document.getElementById("childName");
+const scoreText = document.getElementById("score");
+const numberText = document.getElementById("number");
+const sceneBox = document.getElementById("sceneBox");
+const object = document.getElementById("object");
+const options = document.getElementById("options");
+const bunnyCenter = document.getElementById("bunnyCenter");
+const carrot = document.getElementById("carrot");
+const message = document.getElementById("message");
+const explosion = document.getElementById("explosion");
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+startBtn.addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    if (!name) {
+        showToast("🌸 اول نام خودت را بنویس!");
+        return;
+    }
+    childName.textContent = name;
+    startSec.style.display = "none";
+    playSec.style.display = "block";
+    
+    // بر زدن کل سوالات در ابتدای بازی تا ترتیب دور و نزدیک تصادفی شود
+    questions = shuffleArray(rawQuestions);
+    loadQuestion();
+});
+
+nameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") startBtn.click();
+});
+
+function loadQuestion() {
+    locked = false;
+    const q = questions[current];
+
+    numberText.textContent = current + 1;
+    object.textContent = q.item;
+
+    sceneBox.classList.remove("is-near", "is-far");
+    sceneBox.classList.add(q.distance === "near" ? "is-near" : "is-far");
+
+    options.innerHTML = "";
+    const pair = [q.correct, q.wrong];
+    const shuffled = shuffleArray(pair);
+    const carStyles = ["car-pink", "car-cyan"];
+
+    shuffled.forEach((ans, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `car-btn ${carStyles[idx % 2]}`;
+        btn.dataset.answer = ans;
+
+        btn.innerHTML = `
+            <div class="car-body">
+                <div class="car-windshield"></div>
+                ${ans}
+                <div class="car-lights">
+                    <div class="light"></div>
+                    <div class="light"></div>
+                </div>
+            </div>
+            <div class="car-wheels">
+                <div class="wheel"></div>
+                <div class="wheel"></div>
+            </div>
+        `;
+
+        btn.addEventListener("click", function () {
+            checkAnswer(this, ans, q.correct);
+        });
+
+        options.appendChild(btn);
+    });
+}
+
+function checkAnswer(button, selectedAnswer, correctAnswer) {
+    if (locked) return;
+    locked = true;
+
+    document.querySelectorAll(".car-btn").forEach(b => b.disabled = true);
+
+    if (selectedAnswer === correctAnswer) {
+        button.classList.add("correct");
+        score += 10;
+        scoreText.textContent = score;
+
+        bunnyCenter.classList.add("bunny-jump");
+        carrot.classList.add("show");
+        setTimeout(() => {
+            bunnyCenter.classList.remove("bunny-jump");
+            carrot.classList.remove("show");
+        }, 900);
+
+        playGlassSound();
+        showToast("🎉 آفرین! سوار ماشین درست شدی!");
+        fireworks();
+
+        setTimeout(() => {
+            current++;
+            if (current >= questions.length) {
+                finishGame();
+            } else {
+                loadQuestion();
+            }
+        }, 1200);
+    } else {
+        score = Math.max(0, score - 5);
+        scoreText.textContent = score;
+
+        showExplosion();
+        playPopExplosionSound();
+        showToast(`💥 اشتباه بود! (پاسخ: ${correctAnswer}) ❌ -۵ امتیاز`, 1600);
+
+        setTimeout(() => {
+            current++;
+            if (current >= questions.length) {
+                finishGame();
+            } else {
+                loadQuestion();
+            }
+        }, 1800);
+    }
+}
+
+function finishGame() {
+    locked = true;
+    fireworks();
+    playSec.style.display = "none";
+    endSec.style.display = "block";
+    document.getElementById("finalScore").textContent = score;
+}
+
+restartBtn.addEventListener("click", () => {
+    current = 0;
+    score = 0;
+    scoreText.textContent = "0";
+    endSec.style.display = "none";
+    playSec.style.display = "block";
+    
+    // بر زدن مجدد سوالات برای دور جدید بازی
+    questions = shuffleArray(rawQuestions);
+    loadQuestion();
+});
+
+function showToast(text, duration = 1200) {
+    message.textContent = text;
+    message.classList.add("show");
+    clearTimeout(window.msgTimer);
+    window.msgTimer = setTimeout(() => message.classList.remove("show"), duration);
+}
+
+function showExplosion() {
+    explosion.classList.remove("show");
+    void explosion.offsetWidth;
+    explosion.classList.add("show");
+    setTimeout(() => explosion.classList.remove("show"), 750);
+}
+
+function fireworks() {
+    const icons = ["✨", "⭐", "🎉", "🌟", "🥕", "💎"];
+    for (let i = 0; i < 22; i++) {
+        const spark = document.createElement("div");
+        spark.className = "spark";
+        spark.textContent = icons[Math.floor(Math.random() * icons.length)];
+        spark.style.left = "50%";
+        spark.style.top = "45%";
+        spark.style.setProperty("--x", (Math.random() * 500 - 250) + "px");
+        spark.style.setProperty("--y", (Math.random() * 500 - 250) + "px");
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 900);
+    }
+}
+
+function playGlassSound() {
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.08, ctx.currentTime + idx * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.07 + 0.3);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + idx * 0.07);
+            osc.stop(ctx.currentTime + idx * 0.07 + 0.3);
+        });
+    } catch (e) {}
+}
+
+function playPopExplosionSound() {
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+
+        const bufferSize = ctx.sampleRate * 0.25;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = "lowpass";
+        noiseFilter.frequency.setValueAtTime(800, ctx.currentTime);
+        noiseFilter.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.25);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.3, ctx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noise.start();
+
+        const osc = ctx.createOscillator();
+        const oscGain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.22);
+
+        oscGain.gain.setValueAtTime(0.35, ctx.currentTime);
+        oscGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
+
+        osc.connect(oscGain);
+        oscGain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.22);
+    } catch (e) {}
+}
+</script>
+</body>
+</html>

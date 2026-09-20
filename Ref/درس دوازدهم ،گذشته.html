@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+      maximum-scale=1.0,user-scalable=no">
+
+<title>اژدهای زمان</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;700;800;900&display=swap');
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    font-family:"Vazirmatn",Tahoma,sans-serif;
+}
+
+body{
+    overflow:hidden;
+    background:#111936;
+}
+
+/* =========================
+   پس زمینه
+========================= */
+
+#game{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    min-height:650px;
+
+    background:
+        linear-gradient(
+            rgba(20,25,70,.30),
+            rgba(10,15,45,.72)
+        ),
+        url("https://cdn.imgurl.ir/uploads/a02454_IMG_1676.jpeg");
+
+    background-size:cover;
+    background-position:center;
+
+    overflow:hidden;
+}
+
+/* نورهای تزئینی */
+
+#game::before{
+    content:"";
+    position:absolute;
+    width:400px;
+    height:400px;
+    border-radius:50%;
+    background:rgba(120,200,255,.18);
+    filter:blur(70px);
+    top:-120px;
+    left:-100px;
+}
+
+#game::after{
+    content:"";
+    position:absolute;
+    width:350px;
+    height:350px;
+    border-radius:50%;
+    background:rgba(255,90,190,.15);
+    filter:blur(80px);
+    bottom:-150px;
+    right:-100px;
+}
+
+
+/* =========================
+   هدر
+========================= */
+
+.header{
+    position:relative;
+    z-index:5;
+
+    width:min(1100px,94%);
+    margin:auto;
+    padding-top:15px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.title{
+    font-size:clamp(22px,5vw,38px);
+    font-weight:900;
+    color:white;
+
+    text-shadow:
+        0 4px 0 rgba(0,0,0,.25),
+        0 8px 20px rgba(0,0,0,.45);
+}
+
+.stats{
+    display:flex;
+    gap:8px;
+}
+
+.stat{
+    padding:9px 14px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.35);
+
+    backdrop-filter:blur(15px);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.4),
+        0 10px 25px rgba(0,0,0,.2);
+
+    color:white;
+    font-weight:900;
+    white-space:nowrap;
+}
+
+
+/* =========================
+   جان
+========================= */
+
+#lives{
+    position:relative;
+    z-index:5;
+
+    text-align:center;
+
+    margin-top:3px;
+
+    font-size:25px;
+    letter-spacing:5px;
+
+    height:35px;
+}
+
+
+/* =========================
+   سؤال
+========================= */
+
+.questionBox{
+    position:relative;
+    z-index:5;
+
+    width:min(900px,94%);
+    margin:5px auto 0;
+
+    padding:14px 22px;
+
+    border-radius:28px;
+
+    background:rgba(255,255,255,.16);
+
+    border:
+        2px solid
+        rgba(255,255,255,.35);
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.3),
+        inset 0 1px 2px rgba(255,255,255,.4);
+
+    text-align:center;
+}
+
+.questionNumber{
+    display:inline-block;
+
+    padding:4px 15px;
+
+    border-radius:20px;
+
+    background:rgba(255,215,75,.9);
+
+    color:#432b00;
+
+    font-weight:900;
+}
+
+.question{
+    margin-top:7px;
+
+    font-size:
+        clamp(20px,4.8vw,31px);
+
+    line-height:1.8;
+
+    font-weight:900;
+
+    color:white;
+
+    text-shadow:
+        0 3px 8px rgba(0,0,0,.5);
+}
+
+
+/* =========================
+   اژدها
+========================= */
+
+.dragonArea{
+    position:relative;
+    z-index:4;
+
+    width:min(900px,95%);
+    height:250px;
+
+    margin:5px auto 0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.dragon{
+    position:relative;
+
+    width:min(370px,70vw);
+    height:235px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.dragon img{
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+
+    filter:
+        drop-shadow(
+            0 18px 20px rgba(0,0,0,.45)
+        );
+
+    user-select:none;
+    pointer-events:none;
+}
+
+
+/* ناحیه دهان */
+
+.mouth{
+    position:absolute;
+
+    width:105px;
+    height:75px;
+
+    /*
+      این مقدار را می‌توانی
+      بر اساس عکس اژدها تنظیم کنی
+    */
+
+    left:50%;
+    top:53%;
+
+    transform:translate(-50%,-50%);
+
+    border-radius:50%;
+
+    background:rgba(255,40,40,.02);
+
+    border:
+        4px solid
+        rgba(255,210,70,0);
+
+    transition:.25s;
+
+    pointer-events:none;
+}
+
+.mouth.active{
+    border-color:rgba(255,210,70,.9);
+
+    box-shadow:
+        0 0 15px #ffcc45,
+        0 0 35px #ff6b35;
+
+    transform:
+        translate(-50%,-50%)
+        scale(1.15);
+}
+
+.mouthText{
+    position:absolute;
+
+    bottom:-42px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:170px;
+
+    padding:5px;
+
+    border-radius:15px;
+
+    background:rgba(0,0,0,.45);
+
+    backdrop-filter:blur(10px);
+
+    color:white;
+
+    font-size:13px;
+    font-weight:900;
+
+    opacity:.9;
+}
+
+
+/* =========================
+   کارت ها
+========================= */
+
+.cardsTitle{
+    position:relative;
+    z-index:5;
+
+    text-align:center;
+
+    color:white;
+
+    font-size:16px;
+    font-weight:900;
+
+    margin:0 0 7px;
+}
+
+.cards{
+    position:relative;
+    z-index:8;
+
+    width:min(900px,95%);
+    margin:auto;
+
+    display:grid;
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:12px;
+}
+
+.card{
+    position:relative;
+
+    min-height:68px;
+
+    padding:13px 10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:22px;
+
+    color:white;
+
+    font-size:
+        clamp(18px,4vw,25px);
+
+    font-weight:900;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.32),
+            rgba(255,255,255,.10)
+        );
+
+    border:
+        2px solid
+        rgba(255,255,255,.4);
+
+    box-shadow:
+        0 9px 0 rgba(0,0,0,.2),
+        0 15px 25px rgba(0,0,0,.25),
+        inset 0 1px 2px rgba(255,255,255,.5);
+
+    backdrop-filter:blur(18px);
+
+    cursor:grab;
+
+    touch-action:none;
+
+    user-select:none;
+
+    transition:
+        transform .15s,
+        box-shadow .15s;
+}
+
+.card:active{
+    cursor:grabbing;
+}
+
+.card.dragging{
+    position:fixed;
+
+    z-index:1000;
+
+    transform:
+        translate(-50%,-50%)
+        rotate(4deg)
+        scale(1.08);
+
+    box-shadow:
+        0 25px 50px rgba(0,0,0,.45),
+        0 0 30px rgba(255,255,255,.3);
+}
+
+.card.correct{
+    animation:eat .7s forwards;
+}
+
+.card.wrong{
+    animation:burn .7s forwards;
+}
+
+
+@keyframes eat{
+
+    0%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+    50%{
+        transform:
+            scale(.7)
+            translateY(-20px);
+    }
+
+    100%{
+        transform:
+            scale(0)
+            translateY(-60px);
+        opacity:0;
+    }
+}
+
+
+@keyframes burn{
+
+    0%{
+        transform:rotate(0);
+        opacity:1;
+    }
+
+    20%{
+        transform:rotate(-8deg)
+                   scale(1.05);
+    }
+
+    40%{
+        transform:rotate(8deg);
+    }
+
+    60%{
+        transform:rotate(-7deg);
+    }
+
+    100%{
+        transform:
+            scale(.3)
+            rotate(15deg);
+        opacity:0;
+        filter:
+            brightness(2)
+            blur(3px);
+    }
+}
+
+
+/* =========================
+   پیام
+========================= */
+
+.message{
+    position:relative;
+    z-index:10;
+
+    width:min(700px,90%);
+
+    min-height:38px;
+
+    margin:6px auto 0;
+
+    text-align:center;
+
+    font-size:
+        clamp(16px,4vw,21px);
+
+    font-weight:900;
+
+    text-shadow:
+        0 3px 7px rgba(0,0,0,.6);
+}
+
+
+/* =========================
+   ذرات
+========================= */
+
+.particle{
+    position:fixed;
+
+    z-index:2000;
+
+    pointer-events:none;
+
+    font-size:27px;
+
+    animation:
+        particle .9s ease-out forwards;
+}
+
+@keyframes particle{
+
+    0%{
+        transform:
+            translate(0,0)
+            scale(.5);
+
+        opacity:1;
+    }
+
+    100%{
+        transform:
+            translate(
+                var(--x),
+                var(--y)
+            )
+            rotate(300deg)
+            scale(1.3);
+
+        opacity:0;
+    }
+}
+
+
+/* =========================
+   صفحه شروع
+========================= */
+
+.overlay{
+    position:fixed;
+
+    inset:0;
+
+    z-index:5000;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:
+        linear-gradient(
+            rgba(12,18,60,.55),
+            rgba(10,12,40,.88)
+        ),
+        url("https://cdn.imgurl.ir/uploads/a02454_IMG_1676.jpeg")
+        center/cover;
+}
+
+.startBox{
+    width:min(650px,95%);
+
+    padding:30px 22px;
+
+    border-radius:35px;
+
+    text-align:center;
+
+    background:
+        rgba(255,255,255,.17);
+
+    border:
+        2px solid
+        rgba(255,255,255,.4);
+
+    backdrop-filter:blur(25px);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.5);
+}
+
+.dragonEmoji{
+    font-size:70px;
+}
+
+.startBox h1{
+    margin:5px 0;
+
+    font-size:
+        clamp(30px,8vw,52px);
+
+    font-weight:900;
+
+    color:white;
+}
+
+.startBox p{
+    color:white;
+
+    font-size:18px;
+
+    line-height:2;
+
+    font-weight:700;
+}
+
+.startBtn{
+    border:none;
+
+    padding:15px 40px;
+
+    border-radius:25px;
+
+    font-family:inherit;
+
+    font-size:22px;
+
+    font-weight:900;
+
+    color:#422500;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe66d,
+            #ff9b42
+        );
+
+    box-shadow:
+        0 8px 0 rgba(90,45,0,.3),
+        0 15px 25px rgba(0,0,0,.3);
+
+    cursor:pointer;
+}
+
+
+/* =========================
+   کارنامه
+========================= */
+
+#result{
+    display:none;
+}
+
+.resultBox{
+    width:min(720px,95%);
+
+    max-height:94vh;
+
+    overflow:auto;
+
+    padding:25px 18px;
+
+    border-radius:35px;
+
+    text-align:center;
+
+    background:
+        rgba(255,255,255,.17);
+
+    border:
+        2px solid
+        rgba(255,255,255,.4);
+
+    backdrop-filter:blur(25px);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.5);
+}
+
+.resultIcon{
+    font-size:65px;
+}
+
+.resultBox h1{
+    margin:5px;
+
+    font-size:
+        clamp(27px,7vw,42px);
+
+    font-weight:900;
+}
+
+.scoreCircle{
+    width:130px;
+    height:130px;
+
+    margin:15px auto;
+
+    border-radius:50%;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.3),
+            rgba(255,255,255,.08)
+        );
+
+    border:
+        3px solid
+        rgba(255,255,255,.5);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.3),
+        inset 0 2px 5px rgba(255,255,255,.5);
+}
+
+.score{
+    font-size:42px;
+    font-weight:900;
+}
+
+.scoreLabel{
+    font-size:13px;
+    font-weight:700;
+}
+
+.grade{
+    font-size:24px;
+    font-weight:900;
+
+    margin:10px;
+}
+
+.resultStats{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:10px;
+
+    margin:15px 0;
+}
+
+.resultStat{
+    padding:13px;
+
+    border-radius:20px;
+
+    background:
+        rgba(255,255,255,.13);
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    font-weight:900;
+}
+
+.review{
+    text-align:right;
+}
+
+.review h3{
+    text-align:center;
+}
+
+.reviewItem{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:9px 12px;
+
+    margin:6px 0;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.11);
+
+    font-size:14px;
+
+    font-weight:700;
+}
+
+.good{
+    color:#aaffd0;
+}
+
+.bad{
+    color:#ffb8c0;
+}
+
+.restart{
+    border:none;
+
+    padding:14px 30px;
+
+    border-radius:22px;
+
+    font-family:inherit;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe66d,
+            #ff9b42
+        );
+
+    color:#402600;
+
+    cursor:pointer;
+}
+
+
+/* =========================
+   موبایل
+========================= */
+
+@media(max-width:600px){
+
+    #game{
+        min-height:100vh;
+    }
+
+    .header{
+        flex-direction:column;
+        gap:4px;
+    }
+
+    .stats{
+        width:100%;
+        justify-content:center;
+    }
+
+    .questionBox{
+        padding:9px 12px;
+    }
+
+    .question{
+        margin:2px 0;
+        line-height:1.65;
+    }
+
+    .dragonArea{
+        height:225px;
+    }
+
+    .dragon{
+        width:300px;
+        height:220px;
+    }
+
+    .mouth{
+        width:90px;
+        height:65px;
+        top:53%;
+    }
+
+    .cards{
+        gap:8px;
+    }
+
+    .card{
+        min-height:65px;
+        padding:8px 5px;
+    }
+
+    .cardsTitle{
+        font-size:14px;
+    }
+
+    .message{
+        margin-top:3px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     صفحه شروع
+========================= -->
+
+<div class="overlay" id="start">
+
+    <div class="startBox">
+
+        <div class="dragonEmoji">
+            🐉
+        </div>
+
+        <h1>
+            اژدهای زمان
+        </h1>
+
+        <p>
+            آماده‌ای؟ 😍
+            <br>
+            کارت فعل درست را
+            <b>بکش و داخل دهان اژدها بینداز!</b>
+            <br><br>
+            جواب درست ⭐ امتیاز می‌دهد
+            <br>
+            جواب غلط 💥 یک جان و ۱۰ امتیاز کم می‌کند.
+        </p>
+
+        <button
+            class="startBtn"
+            onclick="startGame()">
+
+            🚀 شروع بازی
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     بازی
+========================= -->
+
+<div id="game">
+
+    <div class="header">
+
+        <div class="title">
+            🐉 اژدهای زمان
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                ⭐
+                <span id="score">
+                    0
+                </span>
+            </div>
+
+            <div class="stat">
+                🎯
+                <span id="number">
+                    1
+                </span>
+                / 5
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="lives">
+        ❤️ ❤️ ❤️
+    </div>
+
+
+    <!-- سؤال -->
+
+    <div class="questionBox">
+
+        <div class="questionNumber">
+
+            سؤال
+            <span id="qNumber">
+                ۱
+            </span>
+
+        </div>
+
+        <div
+            class="question"
+            id="question">
+
+        </div>
+
+    </div>
+
+
+    <!-- اژدها -->
+
+    <div class="dragonArea">
+
+        <div class="dragon">
+
+            <img
+                src="https://cdn.imgurl.ir/uploads/l82926_IMG_3821.jpeg"
+                id="dragonImage"
+                alt="اژدها">
+
+            <div
+                class="mouth"
+                id="mouth">
+
+                <div class="mouthText">
+                    کارت درست را اینجا بینداز 👇
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="cardsTitle">
+        👆 کارت درست را بکش داخل دهان اژدها
+    </div>
+
+
+    <div
+        class="cards"
+        id="cards">
+    </div>
+
+
+    <div
+        class="message"
+        id="message">
+    </div>
+
+</div>
+
+
+<!-- =========================
+     کارنامه
+========================= -->
+
+<div
+    class="overlay"
+    id="result">
+
+    <div class="resultBox">
+
+        <div class="resultIcon">
+            🏆📜
+        </div>
+
+        <h1>
+            کارنامه اژدهای زمان
+        </h1>
+
+        <div class="scoreCircle">
+
+            <div
+                class="score"
+                id="finalScore">
+                0
+            </div>
+
+            <div class="scoreLabel">
+                امتیاز
+            </div>
+
+        </div>
+
+
+        <div
+            class="grade"
+            id="grade">
+        </div>
+
+
+        <div class="resultStats">
+
+            <div class="resultStat">
+                ✅ درست
+                <br>
+                <span id="correct">
+                    0
+                </span>
+            </div>
+
+            <div class="resultStat">
+                ❌ غلط
+                <br>
+                <span id="wrong">
+                    0
+                </span>
+            </div>
+
+            <div class="resultStat">
+                ⭐ امتیاز
+                <br>
+                <span id="points">
+                    0
+                </span>
+            </div>
+
+            <div class="resultStat">
+                🎯 درصد
+                <br>
+                <span id="percent">
+                    0%
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="review">
+
+            <h3>
+                📋 پاسخ‌های تو
+            </h3>
+
+            <div id="reviewList">
+            </div>
+
+        </div>
+
+
+        <button
+            class="restart"
+            onclick="restartGame()">
+
+            🔄 دوباره بازی کن
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* ===================================
+   سؤال‌ها
+=================================== */
+
+const questions = [
+
+    {
+        text:"من پارسال به مشهد ...",
+        options:[
+            "می‌روم",
+            "رفتم",
+            "رفته بودم"
+        ],
+        answer:2,
+        type:"گذشته دور"
+    },
+
+    {
+        text:"تو ماه گذشته به کتابخانه ...",
+        options:[
+            "می‌روی",
+            "رفتی",
+            "رفته بودی"
+        ],
+        answer:2,
+        type:"گذشته دور"
+    },
+
+    {
+        text:"آنها دیروز میز ...",
+        options:[
+            "خریدند",
+            "خریده بودند",
+            "می‌خرند"
+        ],
+        answer:0,
+        type:"گذشته نزدیک"
+    },
+
+    {
+        text:"سارا زنگ قبل به حیاط ...",
+        options:[
+            "رفت",
+            "می‌رود",
+            "رفته بود"
+        ],
+        answer:0,
+        type:"گذشته نزدیک"
+    },
+
+    {
+        text:"پدربزرگ ۷ سال قبل در حیاط درخت ...",
+        options:[
+            "می‌کاشت",
+            "کاشته بود",
+            "می‌کارد"
+        ],
+        answer:1,
+        type:"گذشته دور"
+    }
+
+];
+
+
+/* ===================================
+   متغیرها
+=================================== */
+
+let current = 0;
+
+let score = 0;
+
+let lives = 3;
+
+let correct = 0;
+
+let wrong = 0;
+
+let log = [];
+
+let dragging = null;
+
+
+/* ===================================
+   شروع
+=================================== */
+
+function startGame(){
+
+    document
+        .getElementById("start")
+        .style.display="none";
+
+    current=0;
+    score=0;
+    lives=3;
+    correct=0;
+    wrong=0;
+    log=[];
+
+    updateStats();
+
+    showQuestion();
+}
+
+
+/* ===================================
+   نمایش سؤال
+=================================== */
+
+function showQuestion(){
+
+    const q=questions[current];
+
+    document
+        .getElementById("question")
+        .textContent=q.text;
+
+    document
+        .getElementById("qNumber")
+        .textContent=persianNumber(current+1);
+
+    document
+        .getElementById("number")
+        .textContent=current+1;
+
+    document
+        .getElementById("message")
+        .textContent="";
+
+    const cards=
+        document.getElementById("cards");
+
+    cards.innerHTML="";
+
+
+    /*
+      گزینه‌ها را به صورت کارت می‌سازیم
+    */
+
+    q.options.forEach(
+        (text,index)=>{
+
+            const card=
+                document.createElement("div");
+
+            card.className="card";
+
+            card.textContent=text;
+
+            card.dataset.index=index;
+
+            setupDrag(card);
+
+            cards.appendChild(card);
+
+        }
+    );
+
+}
+
+
+/* ===================================
+   Drag & Drop
+   مخصوص موبایل و کامپیوتر
+=================================== */
+
+function setupDrag(card){
+
+    card.addEventListener(
+        "pointerdown",
+        startDrag
+    );
+
+}
+
+
+function startDrag(e){
+
+    if(dragging) return;
+
+    dragging=this;
+
+    const rect=
+        dragging.getBoundingClientRect();
+
+    dragging.dataset.offsetX=
+        e.clientX-
+        (rect.left+rect.width/2);
+
+    dragging.dataset.offsetY=
+        e.clientY-
+        (rect.top+rect.height/2);
+
+    dragging.classList.add("dragging");
+
+    /*
+      کارت از گرید خارج می‌شود
+    */
+
+    dragging.style.width=
+        rect.width+"px";
+
+    dragging.style.height=
+        rect.height+"px";
+
+    moveCard(e);
+
+    document.addEventListener(
+        "pointermove",
+        moveCard,
+        {passive:false}
+    );
+
+    document.addEventListener(
+        "pointerup",
+        endDrag,
+        {once:true}
+    );
+
+}
+
+
+function moveCard(e){
+
+    if(!dragging) return;
+
+    e.preventDefault();
+
+    dragging.style.left=
+        (e.clientX-
+        parseFloat(dragging.dataset.offsetX))
+        +"px";
+
+    dragging.style.top=
+        (e.clientY-
+        parseFloat(dragging.dataset.offsetY))
+        +"px";
+
+    /*
+      بررسی نزدیک شدن به دهان
+    */
+
+    const mouth=
+        document.getElementById("mouth");
+
+    const rect=
+        mouth.getBoundingClientRect();
+
+    const cx=
+        e.clientX;
+
+    const cy=
+        e.clientY;
+
+    const inside=
+        cx>rect.left-35 &&
+        cx<rect.right+35 &&
+        cy>rect.top-35 &&
+        cy<rect.bottom+35;
+
+    mouth.classList.toggle(
+        "active",
+        inside
+    );
+
+}
+
+
+function endDrag(e){
+
+    document.removeEventListener(
+        "pointermove",
+        moveCard
+    );
+
+    if(!dragging) return;
+
+    const mouth=
+        document.getElementById("mouth");
+
+    const rect=
+        mouth.getBoundingClientRect();
+
+    const inside=
+        e.clientX>rect.left-35 &&
+        e.clientX<rect.right+35 &&
+        e.clientY>rect.top-35 &&
+        e.clientY<rect.bottom+35;
+
+    mouth.classList.remove("active");
+
+    const card=dragging;
+
+    const selected=
+        Number(card.dataset.index);
+
+    dragging=null;
+
+    if(inside){
+
+        checkAnswer(
+            selected,
+            card
+        );
+
+    }else{
+
+        /*
+          کارت به جای اول برمی‌گردد
+        */
+
+        card.classList.remove(
+            "dragging"
+        );
+
+        card.style.position="";
+        card.style.left="";
+        card.style.top="";
+        card.style.width="";
+        card.style.height="";
+
+    }
+
+}
+
+
+/* ===================================
+   بررسی پاسخ
+=================================== */
+
+function checkAnswer(
+    selected,
+    card
+){
+
+    const q=
+        questions[current];
+
+    /*
+      جلوگیری از چند بار پاسخ دادن
+    */
+
+    document
+        .querySelectorAll(".card")
+        .forEach(c=>{
+            c.style.pointerEvents="none";
+        });
+
+
+    if(selected===q.answer){
+
+        correct++;
+
+        score+=20;
+
+        card.classList.add("correct");
+
+        document
+            .getElementById("message")
+            .innerHTML=
+            "🎉 آفرین! اژدها جواب درست را خورد! ✨";
+
+        log.push({
+
+            question:q.text,
+
+            selected:q.options[selected],
+
+            correct:q.options[q.answer],
+
+            status:true
+
+        });
+
+        dragonHappy();
+
+    }else{
+
+        wrong++;
+
+        lives--;
+
+        score=
+            Math.max(0,score-10);
+
+        card.classList.add("wrong");
+
+        /*
+          کارت درست را روشن می‌کنیم
+        */
+
+        const all=
+            document.querySelectorAll(".card");
+
+        if(all[q.answer]){
+            all[q.answer].style.boxShadow=
+                "0 0 25px #ffe066";
+        }
+
+        document
+            .getElementById("message")
+            .innerHTML=
+            "💥 اوه! اشتباه بود!<br>"+
+            "پاسخ درست: <b>"+
+            q.options[q.answer]+
+            "</b>";
+
+        log.push({
+
+            question:q.text,
+
+            selected:q.options[selected],
+
+            correct:q.options[q.answer],
+
+            status:false
+
+        });
+
+        dragonAngry();
+
+    }
+
+
+    updateStats();
+
+
+    /*
+      رفتن به سؤال بعد
+    */
+
+    setTimeout(()=>{
+
+        if(lives<=0){
+
+            showResult();
+
+            return;
+        }
+
+        if(current>=questions.length-1){
+
+            showResult();
+
+            return;
+        }
+
+        current++;
+
+        showQuestion();
+
+    },1500);
+
+}
+
+
+/* ===================================
+   افکت خوشحال
+=================================== */
+
+function dragonHappy(){
+
+    const dragon=
+        document.querySelector(".dragon");
+
+    dragon.animate(
+
+        [
+            {
+                transform:"scale(1)"
+            },
+
+            {
+                transform:
+                    "scale(1.12) rotate(-3deg)"
+            },
+
+            {
+                transform:
+                    "scale(1.05) rotate(3deg)"
+            },
+
+            {
+                transform:"scale(1)"
+            }
+        ],
+
+        {
+            duration:700
+        }
+
+    );
+
+    createParticles(
+        "✨",
+        16
+    );
+
+}
+
+
+/* ===================================
+   افکت عصبانی
+=================================== */
+
+function dragonAngry(){
+
+    const dragon=
+        document.querySelector(".dragon");
+
+    dragon.animate(
+
+        [
+            {
+                transform:"translateX(0)"
+            },
+
+            {
+                transform:"translateX(-15px)"
+            },
+
+            {
+                transform:"translateX(15px)"
+            },
+
+            {
+                transform:"translateX(-10px)"
+            },
+
+            {
+                transform:"translateX(0)"
+            }
+        ],
+
+        {
+            duration:600
+        }
+
+    );
+
+    createParticles(
+        "🔥",
+        10
+    );
+
+}
+
+
+/* ===================================
+   ذرات
+=================================== */
+
+function createParticles(
+    symbol,
+    count
+){
+
+    for(
+        let i=0;
+        i<count;
+        i++
+    ){
+
+        const p=
+            document.createElement("div");
+
+        p.className="particle";
+
+        p.textContent=symbol;
+
+        p.style.left=
+            (40+Math.random()*20)+
+            "vw";
+
+        p.style.top=
+            (35+Math.random()*20)+
+            "vh";
+
+        p.style.setProperty(
+            "--x",
+            ((Math.random()-.5)*220)+"px"
+        );
+
+        p.style.setProperty(
+            "--y",
+            ((Math.random()-.5)*180)+"px"
+        );
+
+        document.body.appendChild(p);
+
+        setTimeout(
+            ()=>p.remove(),
+            1000
+        );
+
+    }
+
+}
+
+
+/* ===================================
+   آمار
+=================================== */
+
+function updateStats(){
+
+    document
+        .getElementById("score")
+        .textContent=score;
+
+    let text="";
+
+    for(
+        let i=0;
+        i<3;
+        i++
+    ){
+
+        text+=
+            i<lives
+            ? "❤️ "
+            : "🖤 ";
+
+    }
+
+    document
+        .getElementById("lives")
+        .textContent=text;
+
+}
+
+
+/* ===================================
+   کارنامه
+=================================== */
+
+function showResult(){
+
+    document
+        .getElementById("result")
+        .style.display="flex";
+
+    const percent=
+        Math.round(
+            correct/
+            questions.length*
+            100
+        );
+
+    document
+        .getElementById("finalScore")
+        .textContent=score;
+
+    document
+        .getElementById("correct")
+        .textContent=correct;
+
+    document
+        .getElementById("wrong")
+        .textContent=wrong;
+
+    document
+        .getElementById("points")
+        .textContent=score;
+
+    document
+        .getElementById("percent")
+        .textContent=
+            percent+"%";
+
+
+    let grade="";
+
+    if(percent===100){
+
+        grade=
+            "🏆 اژدهای طلایی زمان!";
+
+    }
+    else if(percent>=80){
+
+        grade=
+            "🌟 استاد سفر در زمان!";
+
+    }
+    else if(percent>=60){
+
+        grade=
+            "👏 کاشف زمان!";
+
+    }
+    else if(percent>=40){
+
+        grade=
+            "🚀 مسافر شجاع زمان!";
+
+    }
+    else{
+
+        grade=
+            "💪 دوباره تلاش کن قهرمان!";
+
+    }
+
+
+    document
+        .getElementById("grade")
+        .textContent=grade;
+
+
+    /*
+      لیست پاسخ‌ها
+    */
+
+    const list=
+        document.getElementById(
+            "reviewList"
+        );
+
+    list.innerHTML="";
+
+
+    log.forEach(
+        (item,index)=>{
+
+            const row=
+                document.createElement("div");
+
+            row.className=
+                "reviewItem";
+
+
+            row.innerHTML=`
+
+                <span>
+                    ${index+1}. 
+                    ${item.question}
+                    <br>
+                    پاسخ: 
+                    ${item.selected}
+                </span>
+
+                <span class="${
+                    item.status
+                    ? "good"
+                    : "bad"
+                }">
+
+                    ${
+                        item.status
+                        ? "✅ درست"
+                        : "❌ غلط"
+                    }
+
+                </span>
+
+            `;
+
+            list.appendChild(row);
+
+        }
+    );
+
+
+    /*
+      جشن پایان
+    */
+
+    createParticles(
+        "🎉",
+        30
+    );
+
+}
+
+
+/* ===================================
+   شروع دوباره
+=================================== */
+
+function restartGame(){
+
+    document
+        .getElementById("result")
+        .style.display="none";
+
+    startGame();
+
+}
+
+
+/* ===================================
+   عدد فارسی
+=================================== */
+
+function persianNumber(number){
+
+    const digits=
+        "۰۱۲۳۴۵۶۷۸۹";
+
+    return String(number)
+        .replace(
+            /\d/g,
+            d=>digits[d]
+        );
+
+}
+
+</script>
+
+</body>
+</html>
