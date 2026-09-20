@@ -304,6 +304,124 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ---------- Dashboard: tabs, tables, misc ---------- */
+.dashboard-shell {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.dash-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.dash-tab-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dash-tab-btn.active {
+  background: linear-gradient(135deg, var(--accent-coral), var(--accent-coral-deep));
+  color: #fff;
+  border-color: transparent;
+}
+
+.dash-panel { display: none; }
+.dash-panel.active { display: block; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+  font-size: 0.88rem;
+}
+
+.data-table th, .data-table td {
+  padding: 10px 8px;
+  text-align: right;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.data-table th {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.data-table-wrap {
+  overflow-x: auto;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  margin-bottom: 20px;
+}
+
+.btn-small {
+  width: auto;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  border-radius: 10px;
+}
+
+.btn-danger {
+  background: rgba(232, 93, 110, 0.25);
+  color: #FFD9DC;
+  border: 1px solid rgba(232, 93, 110, 0.5);
+}
+
+.field textarea, .field select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-deep);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.field textarea { min-height: 110px; resize: vertical; }
+
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  margin: 26px 0 14px;
+  color: var(--accent-gold);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.status-msg {
+  margin-top: 10px;
+  font-size: 0.88rem;
+  min-height: 1.3em;
+}
+.status-ok { color: var(--accent-mint); }
+.status-err { color: #FFD9DC; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 480px) {
   .glass-card { padding: 26px 20px; }
