@@ -422,6 +422,18 @@ body {
 .status-ok { color: var(--accent-mint); }
 .status-err { color: #FFD9DC; }
 
+.level-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.level-good { background: rgba(111, 207, 151, 0.22); color: var(--accent-mint); }
+.level-mid { background: rgba(255, 200, 87, 0.22); color: var(--accent-gold); }
+.level-low { background: rgba(255, 127, 142, 0.22); color: #FFB3BA; }
+.level-none { color: var(--text-muted); font-size: 0.82rem; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 480px) {
   .glass-card { padding: 26px 20px; }

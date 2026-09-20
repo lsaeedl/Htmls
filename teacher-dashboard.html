@@ -24,6 +24,7 @@
         <button class="dash-tab-btn active" data-tab="games">🎮 بازی‌ها</button>
         <button class="dash-tab-btn" data-tab="questions">❓ سوالات</button>
         <button class="dash-tab-btn" data-tab="teachers" id="teachersTabBtn">👩‍🏫 آموزگاران</button>
+        <button class="dash-tab-btn" data-tab="levels">🏅 نتایج و سطح‌بندی</button>
         <button class="dash-tab-btn" data-tab="ai">✨ استودیوی هوش مصنوعی</button>
         <button class="dash-tab-btn" data-tab="account">🔐 حساب من</button>
       </nav>
@@ -147,6 +148,27 @@
           </div>
           <div id="teacherFormStatus" class="status-msg"></div>
         </form>
+      </section>
+
+      <!-- ===================== تب نتایج و سطح‌بندی ===================== -->
+      <section class="dash-panel" id="panel-levels">
+        <h2 class="section-title">سطح‌بندی خودکار (رایگان، بدون هوش مصنوعی)</h2>
+        <p style="color:var(--text-muted); font-size:0.88rem; max-width:600px;">
+          بر اساس درصد پاسخ درست نوبت‌های رسمی: ۸۰٪ به بالا = عالی، ۵۰٪ تا ۷۹٪ = نیاز به تمرین بیشتر، زیر ۵۰٪ = نیاز به توجه ویژه.
+        </p>
+        <div class="form-grid" style="max-width:600px;">
+          <div class="field"><label>بازی</label><select id="lv_gameSelect"><option value="all">همه‌ی بازی‌ها (میانگین کلی)</option></select></div>
+          <div class="field"><label>محدود به یک کلاس (اختیاری)</label><input type="text" id="lv_classFilter" placeholder="مثلاً ۲الف"></div>
+        </div>
+        <button type="button" id="lv_loadBtn" class="btn btn-primary" style="max-width:200px;">نمایش نتایج</button>
+        <div id="lv_status" class="status-msg"></div>
+
+        <div class="data-table-wrap" style="margin-top:16px;">
+          <table class="data-table">
+            <thead><tr><th>کد دانش‌آموزی</th><th>نام</th><th>کلاس</th><th>درصد پاسخ درست</th><th>سطح</th></tr></thead>
+            <tbody id="levelsTableBody"></tbody>
+          </table>
+        </div>
       </section>
 
       <!-- ===================== تب استودیوی هوش مصنوعی ===================== -->

@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initGamesTab();
   initQuestionsTab();
   initTeachersTab();
+  initLevelsTab();
   initAiTab();
   initAccountTab();
 
@@ -85,15 +86,18 @@ async function refreshGames() {
   populateGameSelect(document.getElementById('ai_gameSelect'));
   populateGameSelect(document.getElementById('an_gameSelect'));
 
+  populateGameSelect(document.getElementById('lv_gameSelect'), true);
+
   if (document.getElementById('q_gameSelect').value) {
     loadQuestionsForSelectedGame();
   }
 }
 
-function populateGameSelect(selectEl) {
+function populateGameSelect(selectEl, keepAllOption) {
   if (!selectEl) return;
   const current = selectEl.value;
-  selectEl.innerHTML = allGames
+  const allOptionHtml = keepAllOption ? '<option value="all">همه‌ی بازی‌ها (میانگین کلی)</option>' : '';
+  selectEl.innerHTML = allOptionHtml + allGames
     .filter(g => isGameAllowed(g.gameId))
     .map(g => `<option value="${g.gameId}">${g.icon || ''} ${g.title} (${g.gameId})</option>`)
     .join('');
@@ -438,6 +442,51 @@ async function deleteTeacherRow(email) {
   const result = await syncDeleteTeacher(email);
   if (result.success) loadTeachers();
   else alert(result.error || 'خطا در حذف');
+}
+
+// ==================================================================
+// نتایج و سطح‌بندی خودکار (رایگان، بدون هوش مصنوعی)
+// ==================================================================
+
+const LEVEL_LABELS = { good: 'عالی', mid: 'نیاز به تمرین بیشتر', low: 'نیاز به توجه ویژه' };
+
+function initLevelsTab() {
+  document.getElementById('lv_loadBtn').addEventListener('click', loadStudentLevels);
+}
+
+async function loadStudentLevels() {
+  const statusEl = document.getElementById('lv_status');
+  const tbody = document.getElementById('levelsTableBody');
+  statusEl.textContent = 'در حال بارگذاری...';
+  statusEl.className = 'status-msg';
+  tbody.innerHTML = '';
+
+  const gameId = document.getElementById('lv_gameSelect').value;
+  const classFilter = document.getElementById('lv_classFilter').value.trim();
+
+  const res = await syncGetStudentLevels(gameId, classFilter);
+  if (!res.success) {
+    statusEl.textContent = res.error || 'خطا در دریافت نتایج';
+    statusEl.className = 'status-msg status-err';
+    return;
+  }
+
+  if (!res.students.length) {
+    statusEl.textContent = 'دانش‌آموزی در این محدوده یافت نشد.';
+    statusEl.className = 'status-msg status-err';
+    return;
+  }
+
+  statusEl.textContent = '';
+  tbody.innerHTML = res.students.map(s => `
+    <tr>
+      <td>${s.studentCode}</td>
+      <td>${s.fullName}</td>
+      <td>${s.className || '—'}</td>
+      <td>${s.hasData ? s.percent + '٪' : '—'}</td>
+      <td>${s.hasData ? `<span class="level-badge level-${s.level}">${LEVEL_LABELS[s.level]}</span>` : '<span class="level-none">بدون داده</span>'}</td>
+    </tr>
+  `).join('');
 }
 
 // ==================================================================

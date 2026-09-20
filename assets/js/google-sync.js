@@ -229,6 +229,14 @@ async function syncGetResultsByStudent(studentCode) {
 }
 
 /**
+ * Free, instant, rule-based level tags per student (no AI). gameId can
+ * be a specific GameID or 'all'. classFilter is optional narrowing.
+ */
+async function syncGetStudentLevels(gameId, classFilter) {
+  return await gsGet('getStudentLevels', { gameId, classFilter: classFilter || '', ...teacherAuthHeader() });
+}
+
+/**
  * params: { scope: 'student'|'class'|'school', scopeValue, timeframe: 'single'|'all',
  *           gameId, compareWith: ''|'classAverage'|'schoolAverage' }
  */
