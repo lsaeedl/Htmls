@@ -164,15 +164,16 @@
         <h2 class="section-title">لیست کلاس‌ها</h2>
         <div class="data-table-wrap" style="max-width:420px;">
           <table class="data-table">
-            <thead><tr><th>نام کلاس</th><th></th></tr></thead>
+            <thead><tr><th>نام کلاس</th><th>آموزگار</th><th></th></tr></thead>
             <tbody id="classesTableBody"></tbody>
           </table>
         </div>
 
-        <h2 class="section-title">افزودن کلاس جدید</h2>
-        <form id="classForm" class="glass-card" style="max-width:360px;">
+        <h2 class="section-title">افزودن / ویرایش آموزگار کلاس</h2>
+        <form id="classForm" class="glass-card" style="max-width:420px;">
           <div class="field"><label>نام کلاس</label><input type="text" id="cl_className" placeholder="مثلاً ۲الف" required></div>
-          <button type="submit" class="btn btn-primary">افزودن کلاس</button>
+          <div class="field"><label>نام آموزگار این کلاس</label><input type="text" id="cl_teacherName" placeholder="مثلاً خانم دهگودی"></div>
+          <button type="submit" class="btn btn-primary">ذخیره</button>
           <div id="classFormStatus" class="status-msg"></div>
         </form>
       </section>
