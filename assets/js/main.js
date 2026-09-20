@@ -19,14 +19,28 @@ const gamesGrid = document.getElementById('gamesGrid');
 const logoutBtn = document.getElementById('logoutBtn');
 
 // ---------- Init ----------
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const existing = getCurrentStudent();
   if (existing) {
     showHub(existing);
   } else {
     showLogin();
+    loadClassOptions();
   }
 });
+
+async function loadClassOptions() {
+  const select = document.getElementById('classSelect');
+  const result = await syncListClasses();
+
+  if (!result.success || !result.classes.length) {
+    select.innerHTML = '<option value="">کلاسی تعریف نشده — با آموزگار خود صحبت کنید</option>';
+    return;
+  }
+
+  select.innerHTML = '<option value="">کلاس خود را انتخاب کنید</option>' +
+    result.classes.map(c => `<option value="${c}">${c}</option>`).join('');
+}
 
 // ---------- Screen switching ----------
 function showLogin() {
@@ -48,18 +62,19 @@ loginForm.addEventListener('submit', async (e) => {
 
   const studentCode = document.getElementById('studentCode').value.trim();
   const fullName = document.getElementById('fullName').value.trim();
+  const className = document.getElementById('classSelect').value;
 
-  if (!studentCode || !fullName) {
-    loginError.textContent = 'لطفاً هر دو فیلد را پر کنید';
+  if (!studentCode || !fullName || !className) {
+    loginError.textContent = 'لطفاً همه‌ی فیلدها را پر کنید';
     return;
   }
 
   setLoginLoading(true);
-  const result = await syncRegisterStudent(studentCode, fullName, '');
+  const result = await syncRegisterStudent(studentCode, fullName, className);
   setLoginLoading(false);
 
   if (result.success) {
-    showHub({ studentCode, fullName });
+    showHub({ studentCode, fullName, className });
   } else {
     loginError.textContent = result.error || 'خطایی رخ داد، دوباره تلاش کنید';
   }

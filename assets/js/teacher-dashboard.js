@@ -22,11 +22,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!hasPerm('canManageTeachers')) {
     document.getElementById('teachersTabBtn').style.display = 'none';
   }
+  if (currentTeacher.role !== 'Admin') {
+    document.getElementById('classesTabBtn').style.display = 'none';
+  }
 
   initTabs();
   initGamesTab();
   initQuestionsTab();
   initTeachersTab();
+  initClassesTab();
   initLevelsTab();
   initAiTab();
   initAccountTab();
@@ -56,6 +60,11 @@ function isGameAllowed(gameId) {
 
 // ---------- Tabs ----------
 
+const TAB_LABELS = {
+  games: 'بازی‌ها', questions: 'سوالات', teachers: 'آموزگاران', classes: 'کلاس‌ها',
+  levels: 'نتایج و سطح‌بندی', ai: 'استودیوی هوش مصنوعی', account: 'حساب من'
+};
+
 function initTabs() {
   document.querySelectorAll('#dashTabs .dash-tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -63,6 +72,9 @@ function initTabs() {
       btn.classList.add('active');
       document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+
+      const breadcrumbEl = document.getElementById('breadcrumbCurrentTab');
+      if (breadcrumbEl) breadcrumbEl.textContent = TAB_LABELS[btn.dataset.tab] || '';
     });
   });
 
@@ -442,6 +454,58 @@ async function deleteTeacherRow(email) {
   const result = await syncDeleteTeacher(email);
   if (result.success) loadTeachers();
   else alert(result.error || 'خطا در حذف');
+}
+
+// ==================================================================
+// کلاس‌ها (فقط Admin)
+// ==================================================================
+
+function initClassesTab() {
+  if (currentTeacher.role !== 'Admin') return;
+
+  loadClasses();
+
+  document.getElementById('classForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('classFormStatus');
+    const className = document.getElementById('cl_className').value.trim();
+
+    const result = await syncAddClass(className);
+    statusEl.textContent = result.success ? 'کلاس اضافه شد.' : (result.error || 'خطا');
+    statusEl.className = 'status-msg ' + (result.success ? 'status-ok' : 'status-err');
+
+    if (result.success) {
+      document.getElementById('classForm').reset();
+      loadClasses();
+    }
+  });
+}
+
+async function loadClasses() {
+  const tbody = document.getElementById('classesTableBody');
+  tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">در حال بارگذاری...</td></tr>';
+
+  const result = await syncListClasses();
+  if (!result.success) {
+    tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;">${result.error}</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = result.classes.map(c => `
+    <tr>
+      <td>${c}</td>
+      <td><button class="btn btn-small btn-danger" data-del-class="${c}">حذف</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="2" style="text-align:center; color:var(--text-muted);">کلاسی ثبت نشده است.</td></tr>';
+
+  tbody.querySelectorAll('[data-del-class]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      if (!confirm(`کلاس «${btn.dataset.delClass}» حذف شود؟`)) return;
+      const result = await syncDeleteClass(btn.dataset.delClass);
+      if (result.success) loadClasses();
+      else alert(result.error || 'خطا در حذف');
+    });
+  });
 }
 
 // ==================================================================

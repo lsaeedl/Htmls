@@ -32,6 +32,13 @@
         <input type="text" id="fullName" name="fullName" autocomplete="off" required>
       </div>
 
+      <div class="field">
+        <label for="classSelect">کلاس</label>
+        <select id="classSelect" name="classSelect" required>
+          <option value="">در حال بارگذاری...</option>
+        </select>
+      </div>
+
       <div id="loginError" class="field-error" role="alert"></div>
 
       <button type="submit" id="loginBtn" class="btn btn-primary">
@@ -44,7 +51,7 @@
   <main id="hubScreen" class="page hidden">
     <div class="hub-header">
       <div class="welcome">سلام <strong id="studentNameDisplay"></strong> عزیز 🌸</div>
-      <div class="teacher-credit hub-teacher-credit" aria-label="آموزگار بازی‌ها">آموزگار: خانم دهگودی</div>
+      <div class="teacher-credit hub-teacher-credit">آموزگار: خانم دهگودی</div>
       <button id="logoutBtn" class="btn btn-ghost" style="width:auto; padding:10px 18px;">خروج</button>
     </div>
 

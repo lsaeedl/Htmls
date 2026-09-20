@@ -177,6 +177,29 @@ async function syncSaveGameSettings(settingsData) {
   return await gsPost('saveGameSettings', { ...settingsData, ...teacherAuthHeader() });
 }
 
+// ---------- Classes ----------
+
+function classesCacheKey() { return 'classes_list'; }
+
+async function syncListClasses() {
+  const result = await gsGet('listClasses');
+  if (result.success) {
+    localStorage.setItem(classesCacheKey(), JSON.stringify(result.classes));
+    return { success: true, classes: result.classes };
+  }
+  const cached = localStorage.getItem(classesCacheKey());
+  if (cached) return { success: true, classes: JSON.parse(cached) };
+  return { success: false, error: 'لیست کلاس‌ها در دسترس نیست' };
+}
+
+async function syncAddClass(className) {
+  return await gsPost('addClass', { className, ...teacherAuthHeader() });
+}
+
+async function syncDeleteClass(className) {
+  return await gsPost('deleteClass', { className, ...teacherAuthHeader() });
+}
+
 // ---------- Games (hub metadata) ----------
 
 function gamesCacheKey() {

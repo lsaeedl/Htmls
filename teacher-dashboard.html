@@ -32,6 +32,7 @@
         <button class="dash-tab-btn active" data-tab="games">🎮 بازی‌ها</button>
         <button class="dash-tab-btn" data-tab="questions">❓ سوالات</button>
         <button class="dash-tab-btn" data-tab="teachers" id="teachersTabBtn">👩‍🏫 آموزگاران</button>
+        <button class="dash-tab-btn" data-tab="classes" id="classesTabBtn">🏫 کلاس‌ها</button>
         <button class="dash-tab-btn" data-tab="levels">🏅 نتایج و سطح‌بندی</button>
         <button class="dash-tab-btn" data-tab="ai">✨ استودیوی هوش مصنوعی</button>
         <button class="dash-tab-btn" data-tab="account">🔐 حساب من</button>
@@ -155,6 +156,24 @@
             <button type="button" id="teacherFormReset" class="btn btn-ghost" style="max-width:160px;">فرم جدید</button>
           </div>
           <div id="teacherFormStatus" class="status-msg"></div>
+        </form>
+      </section>
+
+      <!-- ===================== تب کلاس‌ها (فقط Admin) ===================== -->
+      <section class="dash-panel" id="panel-classes">
+        <h2 class="section-title">لیست کلاس‌ها</h2>
+        <div class="data-table-wrap" style="max-width:420px;">
+          <table class="data-table">
+            <thead><tr><th>نام کلاس</th><th></th></tr></thead>
+            <tbody id="classesTableBody"></tbody>
+          </table>
+        </div>
+
+        <h2 class="section-title">افزودن کلاس جدید</h2>
+        <form id="classForm" class="glass-card" style="max-width:360px;">
+          <div class="field"><label>نام کلاس</label><input type="text" id="cl_className" placeholder="مثلاً ۲الف" required></div>
+          <button type="submit" class="btn btn-primary">افزودن کلاس</button>
+          <div id="classFormStatus" class="status-msg"></div>
         </form>
       </section>
 
