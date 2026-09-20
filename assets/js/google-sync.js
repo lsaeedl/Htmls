@@ -60,7 +60,8 @@ async function syncRegisterStudent(studentCode, fullName, className) {
     sessionStorage.setItem('student', JSON.stringify({
       studentCode: studentCode,
       fullName: fullName,
-      className: className || ''
+      className: result.className || className || '',
+      teacherName: result.teacherName || ''
     }));
   }
   return result;
@@ -192,8 +193,12 @@ async function syncListClasses() {
   return { success: false, error: 'لیست کلاس‌ها در دسترس نیست' };
 }
 
-async function syncAddClass(className) {
-  return await gsPost('addClass', { className, ...teacherAuthHeader() });
+async function syncAddClass(className, teacherName) {
+  return await gsPost('addClass', { className, teacherName, ...teacherAuthHeader() });
+}
+
+async function syncUpdateClassTeacher(className, teacherName) {
+  return await gsPost('updateClassTeacher', { className, teacherName, ...teacherAuthHeader() });
 }
 
 async function syncDeleteClass(className) {

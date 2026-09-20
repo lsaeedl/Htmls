@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+let cachedClasses = [];
+
 async function loadClassOptions() {
   const select = document.getElementById('classSelect');
   const result = await syncListClasses();
@@ -38,8 +40,19 @@ async function loadClassOptions() {
     return;
   }
 
+  cachedClasses = result.classes;
   select.innerHTML = '<option value="">کلاس خود را انتخاب کنید</option>' +
-    result.classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    result.classes.map(c => `<option value="${c.className}">${c.className}</option>`).join('');
+
+  select.addEventListener('change', () => {
+    const picked = cachedClasses.find(c => c.className === select.value);
+    const teacherCreditEl = document.querySelector('#loginScreen .teacher-credit');
+    if (teacherCreditEl) {
+      teacherCreditEl.textContent = picked && picked.teacherName
+        ? `زیر نظر آموزگار: ${picked.teacherName}`
+        : 'زیر نظر آموزگار: خانم دهگودی';
+    }
+  });
 }
 
 // ---------- Screen switching ----------
@@ -52,6 +65,12 @@ function showHub(student) {
   loginScreen.classList.add('hidden');
   hubScreen.classList.remove('hidden');
   studentNameDisplay.textContent = student.fullName;
+
+  const hubTeacherCreditEl = document.querySelector('#hubScreen .teacher-credit');
+  if (hubTeacherCreditEl) {
+    hubTeacherCreditEl.textContent = 'آموزگار: ' + (student.teacherName || 'خانم دهگودی');
+  }
+
   loadAndRenderGames();
 }
 

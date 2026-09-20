@@ -469,9 +469,14 @@ function initClassesTab() {
     e.preventDefault();
     const statusEl = document.getElementById('classFormStatus');
     const className = document.getElementById('cl_className').value.trim();
+    const teacherName = document.getElementById('cl_teacherName').value.trim();
 
-    const result = await syncAddClass(className);
-    statusEl.textContent = result.success ? 'کلاس اضافه شد.' : (result.error || 'خطا');
+    const exists = currentClasses.some(c => c.className === className);
+    const result = exists
+      ? await syncUpdateClassTeacher(className, teacherName)
+      : await syncAddClass(className, teacherName);
+
+    statusEl.textContent = result.success ? 'ذخیره شد.' : (result.error || 'خطا');
     statusEl.className = 'status-msg ' + (result.success ? 'status-ok' : 'status-err');
 
     if (result.success) {
@@ -481,22 +486,39 @@ function initClassesTab() {
   });
 }
 
+let currentClasses = [];
+
 async function loadClasses() {
   const tbody = document.getElementById('classesTableBody');
-  tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">در حال بارگذاری...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">در حال بارگذاری...</td></tr>';
 
   const result = await syncListClasses();
   if (!result.success) {
-    tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;">${result.error}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">${result.error}</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = result.classes.map(c => `
+  currentClasses = result.classes;
+
+  tbody.innerHTML = currentClasses.map(c => `
     <tr>
-      <td>${c}</td>
-      <td><button class="btn btn-small btn-danger" data-del-class="${c}">حذف</button></td>
+      <td>${c.className}</td>
+      <td>${c.teacherName || '—'}</td>
+      <td>
+        <button class="btn btn-small btn-ghost" data-edit-class="${c.className}">ویرایش</button>
+        <button class="btn btn-small btn-danger" data-del-class="${c.className}">حذف</button>
+      </td>
     </tr>
-  `).join('') || '<tr><td colspan="2" style="text-align:center; color:var(--text-muted);">کلاسی ثبت نشده است.</td></tr>';
+  `).join('') || '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">کلاسی ثبت نشده است.</td></tr>';
+
+  tbody.querySelectorAll('[data-edit-class]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const c = currentClasses.find(x => x.className === btn.dataset.editClass);
+      document.getElementById('cl_className').value = c.className;
+      document.getElementById('cl_teacherName').value = c.teacherName || '';
+      document.getElementById('classForm').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
 
   tbody.querySelectorAll('[data-del-class]').forEach((btn) => {
     btn.addEventListener('click', async () => {
