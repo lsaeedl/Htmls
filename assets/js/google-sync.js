@@ -81,14 +81,45 @@ function getCurrentStudent() {
 async function syncVerifyTeacherToken(idToken) {
   const result = await gsPost('verifyTeacherToken', { idToken });
   if (result.success) {
-    sessionStorage.setItem('teacher', JSON.stringify(result.teacher));
+    saveTeacherSession(result.teacher);
   }
   return result;
 }
 
+/**
+ * Secondary login method: email + password (checked server-side against
+ * a salted hash — see loginWithPassword in GoogleAppsScript.js).
+ */
+async function syncLoginWithPassword(email, password) {
+  const result = await gsPost('loginWithPassword', { email, password });
+  if (result.success) {
+    saveTeacherSession(result.teacher);
+  }
+  return result;
+}
+
+async function syncSetPassword(email, newPassword) {
+  const teacher = getCurrentTeacher();
+  return await gsPost('setPassword', { email, newPassword, actorEmail: teacher ? teacher.email : '' });
+}
+
+/**
+ * Teacher sessions are kept in localStorage (not sessionStorage) so a
+ * teacher on their own device/browser doesn't have to sign in again
+ * every time they close the tab. Identity was already verified once by
+ * Google or by the password check — only the storage location differs.
+ */
+function saveTeacherSession(teacher) {
+  localStorage.setItem('teacher', JSON.stringify(teacher));
+}
+
 function getCurrentTeacher() {
-  const raw = sessionStorage.getItem('teacher');
+  const raw = localStorage.getItem('teacher');
   return raw ? JSON.parse(raw) : null;
+}
+
+function clearTeacherSession() {
+  localStorage.removeItem('teacher');
 }
 
 function teacherAuthHeader() {
@@ -165,6 +196,18 @@ async function syncUpdateGame(gameData) {
 
 async function syncDeleteGame(gameId) {
   return await gsPost('deleteGame', { gameId, ...teacherAuthHeader() });
+}
+
+// ---------- Reporting ----------
+
+async function syncGetResultsByGame(gameId) {
+  const teacher = getCurrentTeacher();
+  return await gsGet('getResultsByGame', { gameId, actorEmail: teacher ? teacher.email : '' });
+}
+
+async function syncGetResultsByStudent(studentCode) {
+  const teacher = getCurrentTeacher();
+  return await gsGet('getResultsByStudent', { studentCode, actorEmail: teacher ? teacher.email : '' });
 }
 
 // ---------- Attempts ----------

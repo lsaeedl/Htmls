@@ -28,12 +28,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   initQuestionsTab();
   initTeachersTab();
   initAiTab();
+  initAccountTab();
 
   await refreshGames();
 });
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  sessionStorage.removeItem('teacher');
+  clearTeacherSession();
   window.location.href = 'login.html';
 });
 
@@ -382,8 +383,10 @@ async function loadTeachers() {
       <td style="font-size:0.78rem;">
         ${t.canEditQuestions ? '📝سوال ' : ''}${t.canManageGames ? '🎮بازی ' : ''}${t.canManageTeachers ? '👩‍🏫آموزگار' : ''}
       </td>
+      <td>${t.hasPassword ? '✅ تنظیم شده' : '—'}</td>
       <td>
         <button class="btn btn-small btn-ghost" data-edit-t="${t.email}">ویرایش</button>
+        <button class="btn btn-small btn-ghost" data-reset-pw="${t.email}">ریست رمز</button>
         <button class="btn btn-small btn-danger" data-del-t="${t.email}">حذف</button>
       </td>
     </tr>
@@ -396,6 +399,23 @@ async function loadTeachers() {
   tbody.querySelectorAll('[data-del-t]').forEach((btn) => {
     btn.addEventListener('click', () => deleteTeacherRow(btn.dataset.delT));
   });
+  tbody.querySelectorAll('[data-reset-pw]').forEach((btn) => {
+    btn.addEventListener('click', () => adminResetPassword(btn.dataset.resetPw));
+  });
+}
+
+async function adminResetPassword(email) {
+  const newPassword = prompt('رمز عبور جدید برای ' + email + ' را وارد کنید (حداقل ۸ کاراکتر):');
+  if (!newPassword) return;
+  if (newPassword.length < 8) { alert('رمز باید حداقل ۸ کاراکتر باشد'); return; }
+
+  const result = await syncSetPassword(email, newPassword);
+  if (result.success) {
+    alert('رمز عبور با موفقیت تنظیم شد.');
+    loadTeachers();
+  } else {
+    alert(result.error || 'خطا در تنظیم رمز');
+  }
 }
 
 function editTeacher(t) {
@@ -415,6 +435,30 @@ async function deleteTeacherRow(email) {
   const result = await syncDeleteTeacher(email);
   if (result.success) loadTeachers();
   else alert(result.error || 'خطا در حذف');
+}
+
+// ==================================================================
+// حساب من — تنظیم رمز عبور شخصی
+// ==================================================================
+
+function initAccountTab() {
+  document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('accountStatus');
+    const p1 = document.getElementById('acc_newPassword').value;
+    const p2 = document.getElementById('acc_confirmPassword').value;
+
+    if (p1 !== p2) {
+      statusEl.textContent = 'رمز عبور و تکرار آن یکسان نیستند';
+      statusEl.className = 'status-msg status-err';
+      return;
+    }
+
+    const result = await syncSetPassword(currentTeacher.email, p1);
+    statusEl.textContent = result.success ? 'رمز عبور با موفقیت ذخیره شد.' : (result.error || 'خطا');
+    statusEl.className = 'status-msg ' + (result.success ? 'status-ok' : 'status-err');
+    if (result.success) document.getElementById('passwordForm').reset();
+  });
 }
 
 // ==================================================================
