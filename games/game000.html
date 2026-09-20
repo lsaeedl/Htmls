@@ -453,7 +453,7 @@
 <body>
 <script src="../assets/js/google-sync.js"></script>
 <script>
-//INTEGRATION: Ø§ØªØµØ§Ù„ Ø¨Ø§Ø²ÛŒ 0 Ø¨Ù‡ Ù†Ø´Ø³Øª Ø¯Ø§Ù†Ø´â€ŒØ¢Ù…ÙˆØ²ØŒ Ù†ÙˆØ¨Øª Ù…Ø¬Ø§Ø² Ùˆ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ù¾Ù„ØªÙØ±Ù….
+//INTEGRATION: اتصال بازی 0 به نشست دانش‌آموز، نوبت مجاز و تنظیمات پلتفرم.
 const GAME_ID = 0;
 const platformStudent = getCurrentStudent();
 const platformStartedAt = Date.now();
@@ -468,7 +468,7 @@ let platformSaved = false;
     const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
     if (!attemptCheck.success) {
         document.documentElement.style.visibility = 'visible';
-        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'Ø§Ù…Ú©Ø§Ù† Ø´Ø±Ú©Øª Ø¯Ø± Ø§ÛŒÙ† Ø¨Ø§Ø²ÛŒ ÙˆØ¬ÙˆØ¯ Ù†Ø¯Ø§Ø±Ø¯.') + '</h2></main>';
+        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
         return;
     }
     const settings = await syncGetGameSettings(GAME_ID);
@@ -481,30 +481,37 @@ let platformSaved = false;
     });
 })();
 
-//INTEGRATION: Ù†Ù…Ø§ÛŒØ´ Ø«Ø§Ø¨Øª Ø¢Ù…ÙˆØ²Ú¯Ø§Ø± Ùˆ ÙÙˆØªØ± Ù¾Ù„ØªÙØ±Ù….
+//INTEGRATION: نمایش ثابت آموزگار و فوتر پلتفرم.
 window.addEventListener('DOMContentLoaded', function () {
     if (!document.querySelector('.platform-teacher')) {
         const teacher = document.createElement('div');
         teacher.className = 'platform-teacher';
-        teacher.textContent = 'Ø¢Ù…ÙˆØ²Ú¯Ø§Ø±: Ø®Ø§Ù†Ù… Ø¯Ù‡Ú¯ÙˆØ¯ÛŒ';
-        teacher.style.cssText = 'text-align:center;font-weight:700;margin:8px auto;';
-        const heading = document.querySelector('h1,h2,.title,.game-title') || document.body.firstElementChild;
-        if (heading && heading.parentNode) heading.parentNode.insertBefore(teacher, heading.nextSibling);
+        teacher.textContent = 'آموزگار: خانم دهگودی';
+        teacher.style.cssText = 'position:fixed;top:34px;left:0;right:0;text-align:center;font-weight:700;font-size:0.85rem;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);z-index:9998;pointer-events:none;';
+        document.body.appendChild(teacher);
+    }
+    if (!document.querySelector('.platform-back')) {
+        const back = document.createElement('a');
+        back.className = 'platform-back';
+        back.href = '../index.html';
+        back.textContent = '→ بازگشت به هاب بازی‌ها';
+        back.style.cssText = 'position:fixed;top:6px;right:10px;z-index:9999;background:rgba(0,0,0,0.35);color:#fff;text-decoration:none;font-weight:700;font-size:0.85rem;padding:6px 14px;border-radius:999px;';
+        document.body.appendChild(back);
     }
     if (!document.querySelector('.platform-footer')) {
         const footer = document.createElement('footer');
         footer.className = 'platform-footer';
-        footer.textContent = 'Ø·Ø±Ø§Ø­ÛŒ Ùˆ Ù¾ÛŒØ§Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ: Ø³Ø¹ÛŒØ¯ Ø³Ø±Ø§ÙˆØ§Ù†ÛŒ';
-        footer.style.cssText = 'text-align:center;font-weight:700;padding:16px;';
+        footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
+        footer.style.cssText = 'position:fixed;bottom:0;left:0;right:0;text-align:center;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);padding:8px;background:rgba(0,0,0,0.25);z-index:9999;pointer-events:none;';
         document.body.appendChild(footer);
     }
 });
 
-//INTEGRATION: Ø«Ø¨Øª Ù†ØªÛŒØ¬Ù‡ ÙÙ‚Ø· Ø¨Ø§ ØªØ¹Ø¯Ø§Ø¯ Ù¾Ø§Ø³Ø® Ø¯Ø±Ø³Øª Ùˆ ØºÙ„Ø·.
+//INTEGRATION: ثبت نتیجه فقط با تعداد پاسخ درست و غلط.
 function platformNumber(selectors) {
     for (const selector of selectors) {
         const element = document.querySelector(selector);
-        if (element && /^\s*[0-9Û°-Û¹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9Û°-Û¹]/g, '');
+        if (element && /^\s*[0-9۰-۹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9۰-۹]/g, '');
     }
     return null;
 }
@@ -514,7 +521,7 @@ async function platformSaveResult() {
     const wrongText = platformNumber(['#wrongCount','#wrongFinal','#finalWrong','#end-wrong','#rWrong','#wrong-score','#wrongScore']);
     if (correctText === null || wrongText === null) return;
     platformSaved = true;
-    const toNumber = value => Number(String(value).replace(/[Û°-Û¹]/g, digit => 'Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹'.indexOf(digit)));
+    const toNumber = value => Number(String(value).replace(/[۰-۹]/g, digit => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)));
     const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
     await syncSaveResult(platformStudent.studentCode, GAME_ID, toNumber(correctText), toNumber(wrongText), durationSeconds);
 }
@@ -691,7 +698,7 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
 
         // شروع بازی پس از ورود نام
         function startGame() {
-            document.getElementById('signboard-name').innerText = student.fullName;
+            document.getElementById('signboard-name').innerText = platformStudent.fullName;
             document.getElementById('gameHud').style.display = 'flex';
             
             currentLevelIndex = 0;
@@ -810,13 +817,13 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             document.getElementById('gameHud').style.display = 'none';
             if (isVictory) {
                 document.getElementById('treasureChest').querySelector('.chest').classList.add('open');
-                document.getElementById('victory-title').innerText = `آفرین ${student.fullName}! 🎉`;
+                document.getElementById('victory-title').innerText = `آفرین ${platformStudent.fullName}! 🎉`;
                 document.getElementById('victory-msg').innerText = `تو به گنج واژه‌ها رسیدی و تمام کلمات را با موفقیت یاد گرفتی.`;
                 document.getElementById('final-correct').innerText = toFarsiNumber(correctCount);
                 document.getElementById('final-wrong').innerText = toFarsiNumber(errorsCount);
                 if (!resultSaved) {
                     resultSaved = true;
-                    syncSaveResult(student.studentCode, GAME_ID, correctCount, errorsCount, Math.round((Date.now() - platformStartedAt) / 1000));
+                    syncSaveResult(platformStudent.studentCode, GAME_ID, correctCount, errorsCount, Math.round((Date.now() - platformStartedAt) / 1000));
                 }
                 
                 // رگبار عظیم سکه به مناسبت برد نهایی
