@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل آموزگار | دبستان دخترانه بشری</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div>
+
+  <main class="page" id="dashScreen" style="align-items:flex-start; padding-top:30px;">
+    <div class="hub-header dashboard-shell">
+      <div class="welcome">پنل مدیریت — <strong id="teacherNameDisplay"></strong></div>
+      <div class="teacher-credit hub-teacher-credit">دبستان دخترانه بشری</div>
+      <button id="logoutBtn" class="btn btn-ghost" style="width:auto; padding:10px 18px;">خروج</button>
+    </div>
+
+    <div class="dashboard-shell">
+      <nav class="dash-tabs" id="dashTabs">
+        <button class="dash-tab-btn active" data-tab="games">🎮 بازی‌ها</button>
+        <button class="dash-tab-btn" data-tab="questions">❓ سوالات</button>
+        <button class="dash-tab-btn" data-tab="teachers" id="teachersTabBtn">👩‍🏫 آموزگاران</button>
+        <button class="dash-tab-btn" data-tab="ai">✨ استودیوی هوش مصنوعی</button>
+      </nav>
+
+      <!-- ===================== تب بازی‌ها ===================== -->
+      <section class="dash-panel active" id="panel-games">
+        <h2 class="section-title">لیست بازی‌ها</h2>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>شناسه</th><th>عنوان</th><th>موضوع</th><th>نوع</th><th>وضعیت</th><th></th></tr>
+            </thead>
+            <tbody id="gamesTableBody"></tbody>
+          </table>
+        </div>
+
+        <h2 class="section-title">افزودن / ویرایش بازی</h2>
+        <form id="gameForm" class="glass-card" style="max-width:none;">
+          <div class="form-grid">
+            <div class="field"><label>شناسه بازی (GameID)</label><input type="text" id="g_gameId" required></div>
+            <div class="field"><label>عنوان</label><input type="text" id="g_title" required></div>
+            <div class="field"><label>موضوع / درس</label><input type="text" id="g_subject"></div>
+            <div class="field"><label>آیکون (ایموجی)</label><input type="text" id="g_icon" placeholder="🎈"></div>
+            <div class="field"><label>لینک تصویر (اختیاری)</label><input type="text" id="g_imageUrl"></div>
+            <div class="field"><label>رنگ لهجه</label><input type="color" id="g_accentColor" value="#FF7F8E" style="height:48px; padding:4px;"></div>
+            <div class="field">
+              <label>نوع بازی</label>
+              <select id="g_type">
+                <option value="template">پوسته‌ی آماده (حباب + کارت حافظه)</option>
+                <option value="custom">فایل سفارشی</option>
+              </select>
+            </div>
+            <div class="field" id="g_customFileWrap" style="display:none;">
+              <label>مسیر فایل سفارشی</label>
+              <input type="text" id="g_customFile" placeholder="games/game02.html">
+            </div>
+          </div>
+
+          <h2 class="section-title" style="font-size:1rem;">تنظیمات آزمون</h2>
+          <div class="form-grid">
+            <div class="field"><label>مدت تایمر (ثانیه)</label><input type="number" id="g_timerSeconds" value="180"></div>
+            <div class="field"><label>تعداد سوالات فعال</label><input type="number" id="g_questionCount" value="10"></div>
+            <div class="field"><label>حداکثر تعداد نوبت</label><input type="number" id="g_maxAttempts" value="3"></div>
+            <div class="checkbox-row" style="align-self:end; padding-bottom:12px;">
+              <input type="checkbox" id="g_isOpen" checked><label for="g_isOpen">آزمون باز است</label>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; margin-top:18px;">
+            <button type="submit" class="btn btn-primary" style="max-width:220px;">ذخیره بازی</button>
+            <button type="button" id="gameFormReset" class="btn btn-ghost" style="max-width:160px;">فرم جدید</button>
+          </div>
+          <div id="gameFormStatus" class="status-msg"></div>
+        </form>
+      </section>
+
+      <!-- ===================== تب سوالات ===================== -->
+      <section class="dash-panel" id="panel-questions">
+        <h2 class="section-title">انتخاب بازی</h2>
+        <div class="field" style="max-width:340px;">
+          <select id="q_gameSelect"></select>
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>متن سوال</th><th>پاسخ درست</th><th>فعال</th><th></th></tr></thead>
+            <tbody id="questionsTableBody"></tbody>
+          </table>
+        </div>
+
+        <h2 class="section-title">افزودن / ویرایش سوال</h2>
+        <form id="questionForm" class="glass-card" style="max-width:none;">
+          <input type="hidden" id="qu_questionId">
+          <div class="field"><label>متن سوال</label><input type="text" id="qu_questionText" required></div>
+          <div class="form-grid">
+            <div class="field"><label>گزینه ۱</label><input type="text" id="qu_option1" required></div>
+            <div class="field"><label>گزینه ۲</label><input type="text" id="qu_option2" required></div>
+            <div class="field"><label>گزینه ۳</label><input type="text" id="qu_option3" required></div>
+            <div class="field"><label>گزینه ۴</label><input type="text" id="qu_option4" required></div>
+          </div>
+          <div class="field"><label>پاسخ درست (دقیقاً مثل یکی از گزینه‌ها)</label><input type="text" id="qu_correctAnswer" required></div>
+          <div class="checkbox-row"><input type="checkbox" id="qu_active" checked><label for="qu_active">فعال باشد</label></div>
+          <div style="display:flex; gap:10px; margin-top:14px;">
+            <button type="submit" class="btn btn-primary" style="max-width:200px;">ذخیره سوال</button>
+            <button type="button" id="questionFormReset" class="btn btn-ghost" style="max-width:160px;">فرم جدید</button>
+          </div>
+          <div id="questionFormStatus" class="status-msg"></div>
+        </form>
+      </section>
+
+      <!-- ===================== تب آموزگاران ===================== -->
+      <section class="dash-panel" id="panel-teachers">
+        <h2 class="section-title">لیست آموزگاران</h2>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>ایمیل</th><th>نام</th><th>نقش</th><th>بازی‌های مجاز</th><th>دسترسی‌ها</th><th></th></tr></thead>
+            <tbody id="teachersTableBody"></tbody>
+          </table>
+        </div>
+
+        <h2 class="section-title">افزودن / ویرایش آموزگار</h2>
+        <form id="teacherForm" class="glass-card" style="max-width:none;">
+          <div class="form-grid">
+            <div class="field"><label>ایمیل گوگل</label><input type="email" id="t_email" required></div>
+            <div class="field"><label>نام</label><input type="text" id="t_name"></div>
+            <div class="field">
+              <label>نقش</label>
+              <select id="t_role"><option value="Teacher">Teacher</option><option value="Admin">Admin</option></select>
+            </div>
+            <div class="field"><label>بازی‌های مجاز (ALL یا مثلاً 1,2,5)</label><input type="text" id="t_allowedGames" value="ALL"></div>
+          </div>
+          <div class="form-grid" style="margin-top:10px;">
+            <div class="checkbox-row"><input type="checkbox" id="t_canEditQuestions"><label for="t_canEditQuestions">ویرایش سوالات</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="t_canManageGames"><label for="t_canManageGames">مدیریت بازی‌ها</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="t_canManageTeachers"><label for="t_canManageTeachers">مدیریت آموزگاران</label></div>
+          </div>
+          <div style="display:flex; gap:10px; margin-top:14px;">
+            <button type="submit" class="btn btn-primary" style="max-width:200px;">ذخیره آموزگار</button>
+            <button type="button" id="teacherFormReset" class="btn btn-ghost" style="max-width:160px;">فرم جدید</button>
+          </div>
+          <div id="teacherFormStatus" class="status-msg"></div>
+        </form>
+      </section>
+
+      <!-- ===================== تب استودیوی هوش مصنوعی ===================== -->
+      <section class="dash-panel" id="panel-ai">
+        <div class="dash-tabs">
+          <button class="dash-tab-btn active" data-aitab="gen">📝 تولید سوال</button>
+          <button class="dash-tab-btn" data-aitab="analysis">📊 تحلیل عملکرد</button>
+        </div>
+
+        <!-- تولید سوال -->
+        <div class="ai-panel active" id="ai-gen">
+          <div class="glass-card" style="max-width:none;">
+            <div class="form-grid">
+              <div class="field"><label>بازی مقصد</label><select id="ai_gameSelect"></select></div>
+              <div class="field"><label>تعداد سوال</label><input type="number" id="ai_count" value="10"></div>
+            </div>
+            <div class="field"><label>موضوع / خلاصه‌ی محتوای درس</label><textarea id="ai_topic" placeholder="مثلاً: کلمات با پیشوند «با»، شامل باادب، بانظم، باسواد..."></textarea></div>
+            <button type="button" id="ai_buildPromptBtn" class="btn btn-primary" style="max-width:240px;">ساخت پرامپت</button>
+
+            <div class="field" style="margin-top:16px;">
+              <label>پرامپت آماده (کپی کنید و در ChatGPT یا Gemini پیست کنید)</label>
+              <textarea id="ai_generatedPrompt" readonly style="min-height:160px;"></textarea>
+            </div>
+            <button type="button" id="ai_copyPromptBtn" class="btn btn-ghost" style="max-width:160px;">کپی پرامپت</button>
+
+            <div class="field" style="margin-top:20px;">
+              <label>پاسخ JSON هوش مصنوعی را اینجا پیست کنید</label>
+              <textarea id="ai_pasteResponse" placeholder='[{"questionText":"...","option1":"...","option2":"...","option3":"...","option4":"...","correctAnswer":"..."}]'></textarea>
+            </div>
+            <button type="button" id="ai_parseBtn" class="btn btn-primary" style="max-width:240px;">پیش‌نمایش و افزودن به بانک سوالات</button>
+            <div id="ai_genStatus" class="status-msg"></div>
+            <div id="ai_previewList" style="margin-top:12px;"></div>
+          </div>
+        </div>
+
+        <!-- تحلیل عملکرد -->
+        <div class="ai-panel" id="ai-analysis" style="display:none;">
+          <div class="glass-card" style="max-width:none;">
+            <div class="form-grid">
+              <div class="field">
+                <label>نوع گزارش</label>
+                <select id="an_mode">
+                  <option value="game">بر اساس یک بازی (کل کلاس)</option>
+                  <option value="student">بر اساس یک دانش‌آموز</option>
+                </select>
+              </div>
+              <div class="field" id="an_gameWrap"><label>بازی</label><select id="an_gameSelect"></select></div>
+              <div class="field" id="an_studentWrap" style="display:none;"><label>کد دانش‌آموزی</label><input type="text" id="an_studentCode"></div>
+            </div>
+            <button type="button" id="an_buildBtn" class="btn btn-primary" style="max-width:240px;">ساخت پرامپت تحلیل</button>
+
+            <div class="field" style="margin-top:16px;">
+              <label>پرامپت آماده (کپی کنید و در ChatGPT یا Gemini پیست کنید)</label>
+              <textarea id="an_generatedPrompt" readonly style="min-height:200px;"></textarea>
+            </div>
+            <button type="button" id="an_copyPromptBtn" class="btn btn-ghost" style="max-width:160px;">کپی پرامپت</button>
+            <div id="an_status" class="status-msg"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    طراحی و پیاده‌سازی: سعید سراوانی
+  </footer>
+
+  <script src="assets/js/google-sync.js"></script>
+  <script src="assets/js/teacher-dashboard.js"></script>
+</body>
+</html>
