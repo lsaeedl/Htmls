@@ -50,6 +50,22 @@
 
       // Look up this game's title/icon/accent color from the Games list
       // (falls back to defaults if the sheet lookup fails).
+      // Show the student's class teacher (falls back gracefully for
+      // sessions created before class/teacher tracking existed).
+      const student = getCurrentStudent();
+      const teacherCreditEl = document.querySelector('.teacher-credit');
+      if (teacherCreditEl) {
+        if (student && student.teacherName) {
+          teacherCreditEl.textContent = 'آموزگار: ' + student.teacherName;
+        } else if (student && student.className) {
+          const classesResult = await syncListClasses();
+          const match = classesResult.success
+            ? classesResult.classes.find(c => c.className === student.className)
+            : null;
+          teacherCreditEl.textContent = 'آموزگار: ' + (match && match.teacherName ? match.teacherName : 'خانم دهگودی');
+        }
+      }
+
       const gamesResult = await syncListGames();
       const meta = gamesResult.success
         ? gamesResult.games.find(g => String(g.gameId) === String(gameId))
