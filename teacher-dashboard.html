@@ -25,6 +25,7 @@
         <button class="dash-tab-btn" data-tab="questions">❓ سوالات</button>
         <button class="dash-tab-btn" data-tab="teachers" id="teachersTabBtn">👩‍🏫 آموزگاران</button>
         <button class="dash-tab-btn" data-tab="ai">✨ استودیوی هوش مصنوعی</button>
+        <button class="dash-tab-btn" data-tab="account">🔐 حساب من</button>
       </nav>
 
       <!-- ===================== تب بازی‌ها ===================== -->
@@ -118,7 +119,7 @@
         <h2 class="section-title">لیست آموزگاران</h2>
         <div class="data-table-wrap">
           <table class="data-table">
-            <thead><tr><th>ایمیل</th><th>نام</th><th>نقش</th><th>بازی‌های مجاز</th><th>دسترسی‌ها</th><th></th></tr></thead>
+            <thead><tr><th>ایمیل</th><th>نام</th><th>نقش</th><th>بازی‌های مجاز</th><th>دسترسی‌ها</th><th>رمز عبور</th><th></th></tr></thead>
             <tbody id="teachersTableBody"></tbody>
           </table>
         </div>
@@ -204,6 +205,19 @@
             <div id="an_status" class="status-msg"></div>
           </div>
         </div>
+      </section>
+      <!-- ===================== تب حساب من ===================== -->
+      <section class="dash-panel" id="panel-account">
+        <h2 class="section-title">تنظیم / تغییر رمز عبور</h2>
+        <p style="color:var(--text-muted); font-size:0.9rem; max-width:520px;">
+          با این رمز می‌توانید، علاوه بر ورود با گوگل، از تب «ورود با رمز عبور» در صفحه‌ی ورود هم استفاده کنید.
+        </p>
+        <form id="passwordForm" class="glass-card" style="max-width:420px;">
+          <div class="field"><label>رمز عبور جدید (حداقل ۸ کاراکتر)</label><input type="password" id="acc_newPassword" required minlength="8"></div>
+          <div class="field"><label>تکرار رمز عبور</label><input type="password" id="acc_confirmPassword" required minlength="8"></div>
+          <button type="submit" class="btn btn-primary">ذخیره رمز عبور</button>
+          <div id="accountStatus" class="status-msg"></div>
+        </form>
       </section>
     </div>
   </main>

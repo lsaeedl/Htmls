@@ -21,12 +21,32 @@
       <p class="teacher-credit">زیر نظر آموزگار: خانم دهگودی</p>
     </div>
 
-    <div class="glass-card" style="text-align:center;">
-      <p style="margin-top:0; color:var(--text-muted);">
-        برای ورود به پنل مدیریت، با حساب گوگل مجاز خود وارد شوید.
-      </p>
+    <div class="glass-card">
+      <div class="dash-tabs" style="justify-content:center;">
+        <button type="button" class="dash-tab-btn active" id="tabGoogleBtn">ورود با گوگل</button>
+        <button type="button" class="dash-tab-btn" id="tabPasswordBtn">ورود با رمز عبور</button>
+      </div>
 
-      <div id="googleSignInBtn" style="display:flex; justify-content:center; margin:20px 0;"></div>
+      <!-- ورود با گوگل -->
+      <div id="googleLoginPanel" style="text-align:center;">
+        <p style="margin-top:0; color:var(--text-muted); font-size:0.9rem;">
+          با حساب گوگل مجاز خود وارد شوید.
+        </p>
+        <div id="googleSignInBtn" style="display:flex; justify-content:center; margin:16px 0;"></div>
+      </div>
+
+      <!-- ورود با رمز عبور -->
+      <form id="passwordLoginForm" class="hidden">
+        <div class="field">
+          <label for="pw_email">ایمیل</label>
+          <input type="email" id="pw_email" required autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="pw_password">رمز عبور</label>
+          <input type="password" id="pw_password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary">ورود</button>
+      </form>
 
       <div id="authStatus" class="field-error" role="status"></div>
     </div>
@@ -41,20 +61,47 @@
     const GOOGLE_CLIENT_ID = '18649671309-jc4aklg9vf59poldsq5g6lr6uf4aelm8.apps.googleusercontent.com';
     const statusEl = document.getElementById('authStatus');
 
-    // If already signed in this session, skip straight to the dashboard.
+    // Already signed in on this device? Skip straight to the dashboard.
     if (getCurrentTeacher()) {
       window.location.href = 'teacher-dashboard.html';
     }
 
+    // ---------- Tab switching ----------
+    const tabGoogleBtn = document.getElementById('tabGoogleBtn');
+    const tabPasswordBtn = document.getElementById('tabPasswordBtn');
+    const googleLoginPanel = document.getElementById('googleLoginPanel');
+    const passwordLoginForm = document.getElementById('passwordLoginForm');
+
+    tabGoogleBtn.addEventListener('click', () => {
+      tabGoogleBtn.classList.add('active');
+      tabPasswordBtn.classList.remove('active');
+      googleLoginPanel.classList.remove('hidden');
+      passwordLoginForm.classList.add('hidden');
+      statusEl.textContent = '';
+    });
+
+    tabPasswordBtn.addEventListener('click', () => {
+      tabPasswordBtn.classList.add('active');
+      tabGoogleBtn.classList.remove('active');
+      passwordLoginForm.classList.remove('hidden');
+      googleLoginPanel.classList.add('hidden');
+      statusEl.textContent = '';
+    });
+
+    // ---------- Google Sign-In (button + One Tap) ----------
     window.onload = function () {
       google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse
+        callback: handleCredentialResponse,
+        auto_select: true
       });
       google.accounts.id.renderButton(
         document.getElementById('googleSignInBtn'),
         { theme: 'filled_black', size: 'large', shape: 'pill', text: 'signin_with', locale: 'fa' }
       );
+      // One Tap: shows an automatic prompt if the browser has an active,
+      // previously-consented Google session — no click needed.
+      google.accounts.id.prompt();
     };
 
     async function handleCredentialResponse(response) {
@@ -70,6 +117,25 @@
         statusEl.style.color = '#FFD9DC';
       }
     }
+
+    // ---------- Password login ----------
+    passwordLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = 'در حال بررسی...';
+      statusEl.style.color = 'var(--text-muted)';
+
+      const email = document.getElementById('pw_email').value.trim();
+      const password = document.getElementById('pw_password').value;
+
+      const result = await syncLoginWithPassword(email, password);
+
+      if (result.success) {
+        window.location.href = 'teacher-dashboard.html';
+      } else {
+        statusEl.textContent = result.error || 'ورود ناموفق بود.';
+        statusEl.style.color = '#FFD9DC';
+      }
+    });
   </script>
 </body>
 </html>
