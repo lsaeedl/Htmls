@@ -12,7 +12,16 @@
   <div class="bg-blob b2"></div>
   <div class="bg-blob b3"></div>
 
+  <nav class="breadcrumb">
+    <a href="../index.html">🏠 خانه</a>
+    <span class="crumb-sep">/</span>
+    <a href="../index.html">بازی‌ها</a>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current" id="breadcrumbGameTitle">در حال بارگذاری...</span>
+  </nav>
+
   <main class="page">
+    <a href="../index.html" class="back-btn" style="align-self:flex-start; margin-bottom:12px;">→ بازگشت به هاب بازی‌ها</a>
     <div class="brand">
       <div class="brand-emblem" id="gameEmoji">🎮</div>
       <h1 id="gameTitle">در حال بارگذاری...</h1>
@@ -46,15 +55,16 @@
         ? gamesResult.games.find(g => String(g.gameId) === String(gameId))
         : null;
 
+      const titleText = meta ? (meta.title || ('بازی ' + gameId)) : ('بازی ' + gameId);
+      document.getElementById('gameTitle').textContent = titleText;
+      document.getElementById('breadcrumbGameTitle').textContent = titleText;
+
       if (meta) {
-        document.getElementById('gameTitle').textContent = meta.title || ('بازی ' + gameId);
         document.getElementById('gameEmoji').textContent = meta.icon || '🎮';
         if (meta.accentColor) {
           document.documentElement.style.setProperty('--accent-coral', meta.accentColor);
           document.documentElement.style.setProperty('--accent-coral-deep', meta.accentColor);
         }
-      } else {
-        document.getElementById('gameTitle').textContent = 'بازی ' + gameId;
       }
 
       GameEngine.start(gameId);
