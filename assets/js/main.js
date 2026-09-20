@@ -7,16 +7,6 @@
  * first (defines syncRegisterStudent / getCurrentStudent).
  */
 
-// Lesson titles for the 26 games — replace with real lesson names.
-const LESSON_NAMES = [
-  'درس ۱', 'درس ۲', 'درس ۳', 'درس ۴', 'درس ۵', 'درس ۶', 'درس ۷', 'درس ۸',
-  'درس ۹', 'درس ۱۰', 'درس ۱۱', 'درس ۱۲', 'درس ۱۳', 'درس ۱۴', 'درس ۱۵', 'درس ۱۶',
-  'درس ۱۷', 'درس ۱۸', 'درس ۱۹', 'درس ۲۰', 'درس ۲۱', 'درس ۲۲', 'درس ۲۳', 'درس ۲۴',
-  'درس ۲۵', 'درس ۲۶'
-];
-
-const TOTAL_GAMES = 26;
-
 // ---------- Elements ----------
 const loginScreen = document.getElementById('loginScreen');
 const hubScreen = document.getElementById('hubScreen');
@@ -48,7 +38,7 @@ function showHub(student) {
   loginScreen.classList.add('hidden');
   hubScreen.classList.remove('hidden');
   studentNameDisplay.textContent = student.fullName;
-  renderGamesGrid();
+  loadAndRenderGames();
 }
 
 // ---------- Login ----------
@@ -88,19 +78,41 @@ logoutBtn.addEventListener('click', () => {
 });
 
 // ---------- Games grid ----------
-function renderGamesGrid() {
-  gamesGrid.innerHTML = '';
 
-  for (let i = 1; i <= TOTAL_GAMES; i++) {
+/**
+ * Games are defined entirely in the "Games" sheet tab now — no hardcoded
+ * list here. type "template" games are played via games/play.html?gameId=N
+ * (game-engine.js); type "custom" games link straight to their own file.
+ */
+async function loadAndRenderGames() {
+  gamesGrid.innerHTML = `<div class="center-message" style="grid-column:1/-1;"><div class="loader"></div></div>`;
+
+  const result = await syncListGames();
+
+  if (!result.success || !result.games.length) {
+    gamesGrid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">بازی‌ای هنوز اضافه نشده است.</p>`;
+    return;
+  }
+
+  gamesGrid.innerHTML = '';
+  result.games.forEach((game) => {
     const tile = document.createElement('a');
-    tile.href = `games/game${String(i).padStart(2, '0')}.html`;
+    tile.href = game.type === 'custom' && game.customFile
+      ? game.customFile
+      : `games/play.html?gameId=${encodeURIComponent(game.gameId)}`;
     tile.className = 'game-tile';
+
+    const thumb = game.imageUrl
+      ? `<img src="${game.imageUrl}" alt="" style="width:100%; height:72px; object-fit:cover; border-radius:12px; margin-bottom:6px;">`
+      : '';
+
     tile.innerHTML = `
-      <span class="tile-number">${toPersianDigits(i)}</span>
-      <span class="tile-name">${LESSON_NAMES[i - 1] || 'درس ' + i}</span>
+      ${thumb}
+      <span class="tile-number" style="color:${game.accentColor || 'var(--accent-gold)'}">${game.icon || '🎮'}</span>
+      <span class="tile-name">${game.title || ('درس ' + game.gameId)}</span>
     `;
     gamesGrid.appendChild(tile);
-  }
+  });
 }
 
 // ---------- Helpers ----------

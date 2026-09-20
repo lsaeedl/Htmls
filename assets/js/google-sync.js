@@ -130,6 +130,43 @@ async function syncSaveGameSettings(settingsData) {
   return await gsPost('saveGameSettings', { ...settingsData, ...teacherAuthHeader() });
 }
 
+// ---------- Games (hub metadata) ----------
+
+function gamesCacheKey() {
+  return 'games_list';
+}
+
+/**
+ * List of all games for the hub grid, with localStorage fallback
+ * (same offline-safety pattern as syncGetQuestions).
+ */
+async function syncListGames() {
+  const result = await gsGet('listGames');
+
+  if (result.success && result.games) {
+    localStorage.setItem(gamesCacheKey(), JSON.stringify(result.games));
+    return { success: true, games: result.games, fromCache: false };
+  }
+
+  const cached = localStorage.getItem(gamesCacheKey());
+  if (cached) {
+    return { success: true, games: JSON.parse(cached), fromCache: true };
+  }
+  return { success: false, error: 'لیست بازی‌ها در دسترس نیست' };
+}
+
+async function syncAddGame(gameData) {
+  return await gsPost('addGame', { ...gameData, ...teacherAuthHeader() });
+}
+
+async function syncUpdateGame(gameData) {
+  return await gsPost('updateGame', { ...gameData, ...teacherAuthHeader() });
+}
+
+async function syncDeleteGame(gameId) {
+  return await gsPost('deleteGame', { gameId, ...teacherAuthHeader() });
+}
+
 // ---------- Attempts ----------
 
 async function syncCheckAttempts(studentCode, gameId) {
