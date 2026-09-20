@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ورود آموزگار | دبستان دخترانه بشری</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div>
+
+  <main class="page">
+    <div class="brand">
+      <div class="brand-emblem">🔑</div>
+      <h1>ورود آموزگار</h1>
+      <p>پنل مدیریت پرتال — دبستان دخترانه بشری</p>
+      <p class="teacher-credit">زیر نظر آموزگار: خانم دهگودی</p>
+    </div>
+
+    <div class="glass-card" style="text-align:center;">
+      <p style="margin-top:0; color:var(--text-muted);">
+        برای ورود به پنل مدیریت، با حساب گوگل مجاز خود وارد شوید.
+      </p>
+
+      <div id="googleSignInBtn" style="display:flex; justify-content:center; margin:20px 0;"></div>
+
+      <div id="authStatus" class="field-error" role="status"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    طراحی و پیاده‌سازی: سعید سراوانی
+  </footer>
+
+  <script src="assets/js/google-sync.js"></script>
+  <script>
+    const GOOGLE_CLIENT_ID = '18649671309-jc4aklg9vf59poldsq5g6lr6uf4aelm8.apps.googleusercontent.com';
+    const statusEl = document.getElementById('authStatus');
+
+    // If already signed in this session, skip straight to the dashboard.
+    if (getCurrentTeacher()) {
+      window.location.href = 'teacher-dashboard.html';
+    }
+
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse
+      });
+      google.accounts.id.renderButton(
+        document.getElementById('googleSignInBtn'),
+        { theme: 'filled_black', size: 'large', shape: 'pill', text: 'signin_with', locale: 'fa' }
+      );
+    };
+
+    async function handleCredentialResponse(response) {
+      statusEl.textContent = 'در حال بررسی هویت...';
+      statusEl.style.color = 'var(--text-muted)';
+
+      const result = await syncVerifyTeacherToken(response.credential);
+
+      if (result.success) {
+        window.location.href = 'teacher-dashboard.html';
+      } else {
+        statusEl.textContent = result.error || 'دسترسی مجاز نیست. با مدیر سامانه تماس بگیرید.';
+        statusEl.style.color = '#FFD9DC';
+      }
+    }
+  </script>
+</body>
+</html>
