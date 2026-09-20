@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>خرگوش جمع ساز</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;width:100%;height:100%;}
+body{font-family:"Vazirmatn",Tahoma,sans-serif;overflow:hidden;color:#5b4967;}
+#gameContainer{position:relative;width:100%;height:100vh;overflow:hidden;background-image:linear-gradient(rgba(255,245,250,.12),rgba(220,235,250,.10)),url("../assets/img/game021-media-01.jpeg");background-size:cover;background-position:center;background-repeat:no-repeat;}
+#gameContainer:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 15%,rgba(255,255,255,.35),transparent 28%);pointer-events:none;}
+.platform-teacher{text-align:center;font-weight:700;margin:6px auto;color:#73567d;font-size:15px;position:relative;z-index:60;}
+.platform-footer{text-align:center;font-weight:700;padding:12px;color:#73567d;font-size:13px;position:relative;z-index:60;}
+.start-screen{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:18px;background-image:linear-gradient(rgba(235,225,246,.48),rgba(215,230,247,.48)),url("../assets/img/game021-media-01.jpeg");background-size:cover;background-position:center;}
+.start-card{width:min(92%,470px);padding:28px 24px 30px;border-radius:40px;background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(249,241,252,.85));border:4px solid white;box-shadow:0 30px 70px rgba(70,50,100,.28),inset 0 4px 10px white;text-align:center;animation:startAppear .7s ease;}
+@keyframes startAppear{
+    from{opacity:0;transform:translateY(30px) scale(.9);}
+    to{opacity:1;transform:translateY(0) scale(1);}
+}
+.start-rabbit{width:150px;height:150px;object-fit:contain;margin:0 auto 5px;filter:drop-shadow(0 12px 12px rgba(60,45,80,.18));animation:startRabbit 2.5s ease-in-out infinite;}
+@keyframes startRabbit{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-9px) rotate(2deg);}
+}
+.start-title{margin:4px 0;color:#73567d;font-size:clamp(30px,8vw,44px);font-weight:900;}
+.start-subtitle{color:#927c9b;font-size:17px;font-weight:800;margin-bottom:15px;}
+.student-greeting{font-size:20px;font-weight:900;color:#73567d;margin-bottom:15px;}
+.start-button{width:100%;height:60px;margin-top:10px;border:0;border-radius:22px;cursor:pointer;font-family:inherit;font-size:21px;font-weight:900;color:#67465e;background:linear-gradient(145deg,#ffe0a8,#ffc9dc,#ded5ff);box-shadow:0 8px 0 #d09aa8,0 14px 25px rgba(80,55,100,.18);}
+.start-button:active{transform:translateY(5px);box-shadow:0 3px 0 #d09aa8;}
+.hourglass-screen{position:fixed;inset:0;z-index:6000;display:none;align-items:center;justify-content:center;background:rgba(225,216,239,.75);backdrop-filter:blur(10px);}
+.hourglass-box{width:min(90%,390px);padding:28px;border-radius:35px;text-align:center;background:rgba(255,255,255,.88);border:3px solid white;box-shadow:0 25px 60px rgba(70,50,100,.25);}
+.hourglass-title{font-size:26px;font-weight:900;color:#73567d;}
+.hourglass{position:relative;width:130px;height:175px;margin:18px auto;}
+.glass{position:absolute;left:15px;width:100px;height:75px;border:5px solid rgba(160,140,180,.7);background:rgba(255,255,255,.28);}
+.glass.top{top:0;clip-path:polygon(0 0,100% 0,65% 100%,35% 100%);}
+.glass.bottom{bottom:0;clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);}
+.sand-top{position:absolute;top:18px;left:45px;width:40px;height:45px;background:#f2c9a5;clip-path:polygon(0 0,100% 0,62% 100%,38% 100%);}
+.sand-bottom{position:absolute;bottom:17px;left:43px;width:44px;height:40px;border-radius:50%;background:#f2c9a5;}
+.sand-line{position:absolute;top:55px;left:63px;width:5px;height:75px;background:#f2c9a5;border-radius:5px;animation:sandMove 1s linear infinite;}
+@keyframes sandMove{
+    from{transform:scaleY(.1);transform-origin:top;}
+    to{transform:scaleY(1);transform-origin:top;}
+}
+.header{position:relative;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:10px;}
+.title{padding:8px 16px;border-radius:22px;background:rgba(255,255,255,.78);border:2px solid white;box-shadow:0 7px 18px rgba(70,55,100,.14);color:#705579;font-size:clamp(17px,4vw,26px);font-weight:900;}
+.stats{display:flex;gap:6px;}
+.stat{min-width:65px;padding:8px 9px;border-radius:16px;background:rgba(255,255,255,.8);border:2px solid white;box-shadow:0 6px 15px rgba(70,55,100,.12);text-align:center;font-weight:900;}
+.question-card{position:relative;z-index:60;width:min(94%,760px);margin:4px auto;padding:12px;border-radius:27px;background:rgba(255,255,255,.87);border:3px solid white;box-shadow:0 12px 28px rgba(70,55,100,.15);text-align:center;}
+.question-word{display:inline-block;padding:5px 20px;margin:0 5px;border-radius:16px;background:linear-gradient(145deg,#eee0ff,#ffe0ec);color:#5e456d;font-size:clamp(28px,7vw,43px);font-weight:900;box-shadow:inset 0 3px 6px white,0 5px 10px rgba(70,55,90,.12);}
+.plus,.equals{font-size:30px;font-weight:900;color:#806681;}
+.an{display:inline-block;padding:3px 12px;border-radius:13px;background:#ffe0ed;color:#ad5c87;font-size:28px;font-weight:900;}
+.scene{position:relative;width:min(96%,850px);height:calc(100vh - 255px);min-height:400px;margin:auto;display:flex;justify-content:center;align-items:flex-start;z-index:10;}
+.rabbit-image{position:absolute;top:0;left:50%;transform:translateX(-50%);width:clamp(210px,42vw,310px);height:clamp(230px,46vw,335px);object-fit:contain;z-index:20;filter:drop-shadow(0 18px 18px rgba(70,50,85,.23));animation:rabbitIdle 3s ease-in-out infinite;}
+@keyframes rabbitIdle{
+    0%,100%{transform:translateX(-50%) translateY(0);}
+    50%{transform:translateX(-50%) translateY(-7px);}
+}
+.rabbit-image.happy{animation:rabbitHappy .7s ease;}
+@keyframes rabbitHappy{
+    0%{transform:translateX(-50%) scale(1);}
+    35%{transform:translateX(-50%) scale(1.12) rotate(3deg);}
+    70%{transform:translateX(-50%) scale(.96) rotate(-2deg);}
+    100%{transform:translateX(-50%) scale(1);}
+}
+.belly-label{position:absolute;z-index:30;top:clamp(175px,29vw,205px);left:50%;transform:translateX(-50%);width:clamp(80px,17vw,100px);height:clamp(55px,12vw,70px);display:flex;align-items:center;justify-content:center;border-radius:20px;background:linear-gradient(145deg,#ffdbe9,#ded5ff);border:3px solid white;box-shadow:0 8px 16px rgba(80,60,100,.16),inset 0 3px 6px white;color:#75547d;font-size:clamp(25px,6vw,33px);font-weight:900;}
+.answer-panel{position:absolute;z-index:100;bottom:5px;left:50%;transform:translateX(-50%);width:min(94%,680px);padding:11px;border-radius:27px;background:rgba(255,255,255,.9);border:3px solid white;box-shadow:0 15px 30px rgba(70,55,90,.18);text-align:center;}
+.answer-row{display:flex;gap:9px;align-items:center;}
+.answer-input{flex:1;min-width:0;height:56px;border:3px solid #ddcde7;border-radius:19px;background:white;outline:none;color:#584666;font-family:inherit;font-size:23px;font-weight:900;text-align:center;}
+.answer-input:focus{border-color:#bba1d0;box-shadow:0 0 0 4px rgba(190,160,215,.18);}
+.check-button{height:56px;padding:0 20px;border:none;border-radius:19px;cursor:pointer;font-family:inherit;font-size:18px;font-weight:900;color:#66465e;background:linear-gradient(145deg,#ffe0aa,#ffc9dc);box-shadow:0 6px 0 #d19ba7;}
+.check-button:active{transform:translateY(4px);box-shadow:0 2px 0 #d19ba7;}
+.feedback{min-height:26px;padding-top:5px;font-size:17px;font-weight:900;}
+.good{color:#45966b;}
+.bad{color:#d45974;}
+.firework{position:fixed;z-index:900;left:50%;top:45%;transform:translate(-50%,-50%);pointer-events:none;font-size:55px;opacity:0;}
+.firework.show{animation:firework .9s ease forwards;}
+@keyframes firework{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.2);}
+    35%{opacity:1;transform:translate(-50%,-50%) scale(1.5);}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(2.4);}
+}
+.burst{position:fixed;z-index:899;pointer-events:none;font-size:30px;opacity:0;}
+.burst.show{animation:burst .9s ease forwards;}
+@keyframes burst{
+    0%{opacity:0;transform:translate(0,0) scale(.3);}
+    40%{opacity:1;}
+    100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.4);}
+}
+.bomb{position:fixed;z-index:950;left:50%;top:45%;transform:translate(-50%,-50%) scale(.2);font-size:85px;opacity:0;pointer-events:none;}
+.bomb.explode{animation:bombExplode .8s ease forwards;}
+@keyframes bombExplode{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0);}
+    35%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(-8deg);}
+    65%{opacity:1;transform:translate(-50%,-50%) scale(1.45) rotate(8deg);}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(2.5) rotate(15deg);}
+}
+.result{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:15px;background:rgba(70,55,95,.7);backdrop-filter:blur(12px);}
+.report{width:min(94%,600px);max-height:94vh;overflow:auto;padding:27px;border-radius:38px;background:linear-gradient(145deg,#fffdfc,#f1ebfa);border:4px solid white;box-shadow:0 30px 80px rgba(40,25,60,.35);text-align:center;color:#584667;}
+.report-icon{font-size:65px;}
+.report h1{margin:5px 0;font-size:clamp(27px,7vw,42px);font-weight:900;}
+.final-name{font-size:19px;font-weight:900;color:#8a7191;}
+.report-message{margin:10px;font-size:20px;font-weight:900;}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0;}
+.report-item{padding:16px;border-radius:20px;background:#eee8f8;font-weight:900;}
+.report-number{font-size:32px;display:block;margin-top:6px;color:#73567d;}
+.restart{border:none;padding:14px 30px;border-radius:22px;cursor:pointer;font-family:inherit;font-size:20px;font-weight:900;color:#66465e;background:linear-gradient(145deg,#ffe0aa,#ffc8db);box-shadow:0 7px 0 #d19ba6;}
+@media(max-width:600px){
+    .header{flex-direction:column;padding:6px 9px;gap:5px;}
+    .title{width:100%;text-align:center;padding:6px;}
+    .stats{width:100%;justify-content:center;}
+    .stat{min-width:63px;padding:6px;}
+    .question-card{margin-top:2px;padding:8px;}
+    .question-word{font-size:28px;}
+    .plus,.equals,.an{font-size:23px;}
+    .scene{height:calc(100vh - 245px);min-height:390px;}
+    .rabbit-image{width:245px;height:275px;top:-5px;}
+    .belly-label{top:160px;}
+    .answer-panel{bottom:3px;}
+    .answer-row{flex-direction:column;}
+    .answer-input,.check-button{width:100%;}
+}
+</style>
+<style id="platform-local-font">
+@font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+</style>
+</head>
+<body>
+<script src="../assets/js/google-sync.js"></script>
+
+<div class="start-screen" id="startScreen">
+    <div class="start-card">
+        <img class="start-rabbit" src="../assets/img/game021-media-02.png" alt="خرگوش">
+        <div class="start-title">🐰 خرگوش جمع‌ساز</div>
+        <div class="start-subtitle">بازی جمع بستن با «ان» ✨</div>
+        <div class="student-greeting">
+            دانش‌آموز عزیز: <span id="startStudentName">...</span> 🌸
+        </div>
+        <button class="start-button" id="startButton">🚀 شروع بازی</button>
+    </div>
+</div>
+
+<div class="hourglass-screen" id="hourglassScreen">
+    <div class="hourglass-box">
+        <div class="hourglass-title">✨ آماده‌ای؟</div>
+        <div class="hourglass">
+            <div class="glass top"></div>
+            <div class="sand-top"></div>
+            <div class="sand-line"></div>
+            <div class="sand-bottom"></div>
+            <div class="glass bottom"></div>
+        </div>
+        <div>خرگوش دارد بازی را آماده می‌کند... 🐰</div>
+    </div>
+</div>
+
+<div id="gameContainer" style="display:none;">
+    <div class="platform-teacher">آموزگار: خانم دهگودی</div>
+    <header class="header">
+        <div class="title">🐰 خرگوش جمع‌ساز</div>
+        <div class="stats">
+            <div class="stat">⏱️ <span id="timerDisplay">--:--</span></div>
+            <div class="stat">✅ <span id="correctDisplay">0</span></div>
+            <div class="stat">❌ <span id="wrongDisplay">0</span></div>
+            <div class="stat">🎯 <span id="progress">1</span>/9</div>
+        </div>
+    </header>
+
+    <section class="question-card">
+        <span id="word" class="question-word">پرنده</span>
+        <span class="plus">+</span>
+        <span class="an">«ان»</span>
+        <span class="equals">=</span>
+        <span class="equals">؟</span>
+    </section>
+
+    <main class="scene">
+        <img id="rabbitImage" class="rabbit-image" src="../assets/img/game021-media-02.png" alt="خرگوش">
+        <div class="belly-label">«ان»</div>
+        <section class="answer-panel">
+            <form id="answerForm" class="answer-row">
+                <input id="answer" class="answer-input" type="text" autocomplete="off" spellcheck="false" placeholder="شکل جمع را بنویس...">
+                <button class="check-button" type="submit">✅ بررسی</button>
+            </form>
+            <div id="feedback" class="feedback"></div>
+        </section>
+    </main>
+
+    <div id="firework" class="firework">🎆</div>
+    <div id="bomb" class="bomb">💣</div>
+
+    <div class="result" id="result">
+        <div class="report">
+            <div class="report-icon">🏆🐰🌸</div>
+            <h1>کارنامه‌ی خرگوش جمع‌ساز</h1>
+            <div class="final-name" id="finalName"></div>
+            <div class="report-grid">
+                <div class="report-item">✅ پاسخ‌های درست<br><span id="correctCount" class="report-number">0</span></div>
+                <div class="report-item">❌ پاسخ‌های غلط<br><span id="wrongCount" class="report-number">0</span></div>
+            </div>
+            <div class="report-message" id="reportMessage"></div>
+            <button class="restart" id="restart">🔄 دوباره بازی کن</button>
+        </div>
+    </div>
+    <footer class="platform-footer">طراحی و پیاده‌سازی: سعید سراوانی</footer>
+</div>
+
+<script>
+const GAME_ID = "021";
+let student = null;
+let startedAt = 0;
+let timerSeconds = 180;
+let timerInterval = null;
+let gameFinished = false;
+let gamePaused = false;
+
+const questions = [
+    {word:"پرنده", answer:"پرندگان"},
+    {word:"گوسفند", answer:"گوسفندان"},
+    {word:"نماینده", answer:"نمایندگان"},
+    {word:"گوینده", answer:"گویندگان"},
+    {word:"فرستاده", answer:"فرستادگان"},
+    {word:"خزنده", answer:"خزندگان"},
+    {word:"همسایه", answer:"همسایگان"},
+    {word:"درخت", answer:"درختان"},
+    {word:"مرد", answer:"مردان"}
+];
+
+let current = 0;
+let correct = 0;
+let wrong = 0;
+let locked = false;
+
+const startScreen = document.getElementById("startScreen");
+const hourglassScreen = document.getElementById("hourglassScreen");
+const gameContainer = document.getElementById("gameContainer");
+const word = document.getElementById("word");
+const answer = document.getElementById("answer");
+const form = document.getElementById("answerForm");
+const feedback = document.getElementById("feedback");
+const rabbit = document.getElementById("rabbitImage");
+const firework = document.getElementById("firework");
+const bomb = document.getElementById("bomb");
+
+function normalize(text){
+    return text.trim().replace(/ي/g,"ی").replace(/ك/g,"ک").replace(/\u200c/g,"").replace(/\s+/g,"");
+}
+
+function formatTime(sec){
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+(async function initPlatform(){
+    student = getCurrentStudent();
+    if (!student) {
+        window.location.href = '../index.html';
+        return;
+    }
+    document.getElementById("startStudentName").textContent = student.fullName;
+})();
+
+function startTimer(){
+    clearInterval(timerInterval);
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        if (gameFinished || gamePaused) return;
+        timerSeconds--;
+        updateTimerDisplay();
+        if (timerSeconds <= 0) {
+            clearInterval(timerInterval);
+            stopGameOnTimeout();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay(){
+    const el = document.getElementById("timerDisplay");
+    if (el) el.textContent = formatTime(Math.max(0, timerSeconds));
+}
+
+function stopGameOnTimeout(){
+    gamePaused = true;
+    locked = true;
+    feedback.textContent = "⏱️ زمان بازی تمام شد!";
+    feedback.className = "feedback bad";
+}
+
+document.getElementById("startButton").addEventListener("click", async () => {
+    document.getElementById("startButton").disabled = true;
+    const attemptCheck = await syncCheckAttempts(student.studentCode, GAME_ID);
+    if (!attemptCheck.success) {
+        alert(attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.');
+        document.getElementById("startButton").disabled = false;
+        return;
+    }
+    const settings = await syncGetGameSettings(GAME_ID);
+    timerSeconds = settings.timerSeconds || 180;
+    startedAt = Date.now();
+
+    startScreen.style.display = "none";
+    hourglassScreen.style.display = "flex";
+
+    setTimeout(() => {
+        hourglassScreen.style.display = "none";
+        gameContainer.style.display = "block";
+        startTimer();
+        resetGame();
+        showQuestion();
+    }, 1800);
+});
+
+function resetGame(){
+    current = 0;
+    correct = 0;
+    wrong = 0;
+    locked = false;
+    gameFinished = false;
+    gamePaused = false;
+    updateStats();
+}
+
+function showQuestion(){
+    if(current >= questions.length){
+        finish();
+        return;
+    }
+    const q = questions[current];
+    word.textContent = q.word;
+    answer.value = "";
+    feedback.textContent = "";
+    feedback.className = "feedback";
+    answer.style.borderColor = "";
+    locked = false;
+    document.getElementById("progress").textContent = current + 1;
+    setTimeout(() => answer.focus(), 100);
+}
+
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(locked || gamePaused) return;
+
+    const q = questions[current];
+    const user = normalize(answer.value);
+    const expected = normalize(q.answer);
+
+    if(!user){
+        feedback.textContent = "✏️ اول جوابت را بنویس.";
+        feedback.className = "feedback bad";
+        return;
+    }
+    locked = true;
+
+    if(user === expected){
+        correct++;
+        feedback.innerHTML = "🎉 آفرین! درست نوشتی!";
+        feedback.className = "feedback good";
+        answer.style.borderColor = "#8dc6a5";
+        rabbit.classList.remove("happy");
+        void rabbit.offsetWidth;
+        rabbit.classList.add("happy");
+        playFirework();
+        updateStats();
+        setTimeout(() => {
+            current++;
+            showQuestion();
+        }, 1100);
+    } else {
+        wrong++;
+        feedback.innerHTML = `💥 اشتباه! پاسخ درست: <b>${q.answer}</b>`;
+        feedback.className = "feedback bad";
+        answer.style.borderColor = "#e18b9c";
+        playBomb();
+        updateStats();
+        setTimeout(() => {
+            current++;
+            showQuestion();
+        }, 1200);
+    }
+});
+
+function playFirework(){
+    firework.classList.remove("show");
+    void firework.offsetWidth;
+    firework.classList.add("show");
+    createBursts();
+}
+
+function createBursts(){
+    const positions = [[-120,-80],[120,-80],[-150,30],[150,30],[-90,100],[90,100]];
+    positions.forEach(position => {
+        const star = document.createElement("div");
+        star.className = "burst";
+        star.textContent = "✨";
+        star.style.left = "50%";
+        star.style.top = "45%";
+        star.style.setProperty("--x", position[0]+"px");
+        star.style.setProperty("--y", position[1]+"px");
+        document.body.appendChild(star);
+        requestAnimationFrame(() => star.classList.add("show"));
+        setTimeout(() => star.remove(), 1000);
+    });
+}
+
+function playBomb(){
+    bomb.classList.remove("explode");
+    void bomb.offsetWidth;
+    bomb.classList.add("explode");
+}
+
+function updateStats(){
+    document.getElementById("correctDisplay").textContent = correct;
+    document.getElementById("wrongDisplay").textContent = wrong;
+}
+
+async function finish(){
+    if (gameFinished) return;
+    gameFinished = true;
+    locked = true;
+    clearInterval(timerInterval);
+
+    document.getElementById("finalName").textContent = "🌸 نام دانش‌آموز: " + student.fullName;
+    document.getElementById("correctCount").textContent = correct;
+    document.getElementById("wrongCount").textContent = wrong;
+
+    let message = "";
+    if(wrong === 0){
+        message = "🏆 فوق‌العاده! بدون حتی یک اشتباه قهرمان «ان» شدی! 🎆";
+    } else if(wrong <= 2){
+        message = "🌟 عالی بود! خرگوش بهت افتخار می‌کند!";
+    } else {
+        message = "💪 آفرین بر تلاش و پشتکارت! با تمرین بیشتر عالی‌تر می‌شوی.";
+    }
+    document.getElementById("reportMessage").textContent = message;
+    document.getElementById("result").style.display = "flex";
+
+    await syncSaveResult(
+        student.studentCode,
+        GAME_ID,
+        correct,
+        wrong,
+        Math.round((Date.now() - startedAt) / 1000)
+    );
+}
+
+document.getElementById("restart").addEventListener("click", function(){
+    document.getElementById("result").style.display = "none";
+    document.getElementById("startButton").disabled = false;
+    gameContainer.style.display = "none";
+    startScreen.style.display = "flex";
+});
+</script>
+</body>
+</html>

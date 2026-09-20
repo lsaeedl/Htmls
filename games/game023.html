@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ماجراجویی نام‌آواها</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;}
+body{font-family:'Vazirmatn',Tahoma,Arial,sans-serif;background:#cfeff4;}
+button,input{font-family:'Vazirmatn',Tahoma,Arial,sans-serif;}
+.scene{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 15%,#ffffff 0%,#e8faff 20%,#d9e8ff 48%,#c7e7ec 100%);}
+.platform-teacher{position:absolute;top:70px;left:0;right:0;text-align:center;font-weight:700;color:#506f80;font-size:15px;z-index:35;}
+.platform-footer{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-weight:700;color:#506f80;font-size:13px;z-index:35;}
+.light{position:absolute;border-radius:50%;pointer-events:none;filter:blur(3px);opacity:.55;}
+.light.one{width:220px;height:220px;background:#fff5bb;top:-100px;left:-70px;}
+.light.two{width:260px;height:260px;background:#e7caff;right:-120px;top:80px;}
+.light.three{width:220px;height:220px;background:#b9f3ed;bottom:-90px;left:15%;}
+.decor{position:absolute;width:125px;height:125px;border-radius:34px;overflow:hidden;border:6px solid rgba(255,255,255,.9);box-shadow:0 15px 35px rgba(48,77,100,.22),inset 0 0 0 2px rgba(255,255,255,.6);transform:rotate(var(--r));opacity:.88;animation:decorFloat 5s ease-in-out infinite;}
+.decor img{width:100%;height:100%;object-fit:cover;}
+.d1{top:3%;left:2%;--r:-8deg;}.d2{top:4%;right:2%;--r:8deg;animation-delay:.7s;}
+.d3{top:39%;left:-35px;--r:-10deg;animation-delay:1.2s;}.d4{top:39%;right:-35px;--r:10deg;animation-delay:1.8s;}
+.d5{bottom:3%;left:2%;--r:7deg;animation-delay:2.2s;}.d6{bottom:3%;right:2%;--r:-7deg;animation-delay:2.8s;}
+.d7{bottom:23%;left:22%;width:90px;height:90px;--r:-8deg;animation-delay:3.2s;}.d8{bottom:23%;right:22%;width:90px;height:90px;--r:8deg;animation-delay:3.7s;}
+@keyframes decorFloat{0%,100%{margin-top:0;}50%{margin-top:-8px;}}
+#start{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;}
+.startCard{width:min(92vw,470px);padding:30px 24px;border-radius:42px;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(245,252,255,.94));border:5px solid white;box-shadow:0 30px 70px rgba(39,71,91,.28),inset 0 2px 0 white;text-align:center;}
+.startLogo{font-size:72px;filter:drop-shadow(0 12px 7px rgba(70,80,90,.2));animation:logo 2s ease-in-out infinite;}
+@keyframes logo{50%{transform:translateY(-8px) rotate(4deg);}}
+.startTitle{font-size:32px;font-weight:900;color:#506f80;margin:5px 0;}
+.startSub{font-size:14px;color:#91a3ad;font-weight:800;margin-bottom:18px;}
+.student-greeting{font-size:20px;font-weight:900;color:#506f80;margin-bottom:18px;}
+#startBtn{width:100%;height:60px;margin-top:10px;border:0;border-radius:21px;color:#604f69;font-size:19px;font-weight:900;background:linear-gradient(135deg,#ffe3a9,#ffc9df 50%,#d9d0ff);box-shadow:0 7px 0 #d09daf,0 15px 25px rgba(80,70,90,.18);cursor:pointer;}
+#game{display:none;position:fixed;inset:0;z-index:20;}
+.hud{position:absolute;top:10px;left:10px;right:10px;height:58px;display:flex;align-items:center;justify-content:space-between;z-index:30;}
+.badge{height:48px;display:flex;align-items:center;padding:0 14px;border-radius:19px;background:rgba(255,255,255,.92);border:3px solid white;box-shadow:0 10px 25px rgba(45,70,90,.15);color:#577180;font-weight:900;backdrop-filter:blur(10px);}
+.stats{display:flex;gap:6px;}
+.stat{min-width:58px;height:48px;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:17px;background:rgba(255,255,255,.94);border:3px solid white;box-shadow:0 10px 25px rgba(45,70,90,.15);font-size:13px;font-weight:900;color:#5b7480;}
+.instruction{position:absolute;top:98px;left:50%;transform:translateX(-50%);width:min(90vw,560px);padding:10px 18px;border-radius:22px;background:rgba(255,255,255,.91);border:3px solid white;box-shadow:0 12px 30px rgba(45,70,90,.13);text-align:center;color:#526f7c;font-size:15px;font-weight:900;z-index:30;}
+.main{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:135px 15px 30px;}
+.emojiStage{position:relative;width:min(45vw,300px);height:min(45vw,300px);border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 25%,white,#f2fbff 42%,#d5edf5 75%,#c0dfe8 100%);border:7px solid white;box-shadow:0 28px 55px rgba(38,69,87,.27),inset 0 5px 12px white,inset 0 -10px 20px rgba(95,150,170,.15);}
+.emoji{position:relative;z-index:2;font-size:clamp(105px,20vw,165px);filter:drop-shadow(0 16px 8px rgba(35,55,65,.22));animation:character 2.2s ease-in-out infinite;}
+@keyframes character{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-11px) rotate(2deg);}}
+.options{width:min(92vw,600px);display:grid;grid-template-columns:repeat(2,1fr);gap:10px;z-index:30;}
+.option{min-height:58px;border:3px solid white;border-radius:21px;background:linear-gradient(145deg,#fff9df,#ffe4ed 52%,#e4deff);box-shadow:0 7px 0 #c4aeb9,0 14px 25px rgba(45,70,90,.16);color:#536873;font-size:clamp(14px,3.7vw,20px);font-weight:900;cursor:pointer;transition:transform .12s,filter .15s;}
+.option:active{transform:translateY(5px);}
+.option.correct{animation:correct .6s ease;}
+.option.wrong{animation:wrong .5s ease;}
+@keyframes correct{0%{transform:scale(1);}35%{transform:scale(1.1) rotate(-2deg);}70%{transform:scale(1.04) rotate(2deg);}100%{transform:scale(1);}}
+@keyframes wrong{0%,100%{transform:translateX(0);}20%{transform:translateX(-10px);}40%{transform:translateX(10px);}60%{transform:translateX(-8px);}80%{transform:translateX(8px);}}
+#message{position:fixed;left:50%;top:48%;z-index:500;padding:13px 22px;border-radius:24px;background:white;border:3px solid white;box-shadow:0 20px 45px rgba(35,60,75,.25);font-size:18px;font-weight:900;white-space:nowrap;opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.7);}
+#message.show{animation:message .9s ease forwards;}
+@keyframes message{0%{opacity:0;transform:translate(-50%,-50%) scale(.7);}20%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}70%{opacity:1;}100%{opacity:0;transform:translate(-50%,-75%) scale(.9);}}
+#explosion{position:fixed;left:50%;top:45%;z-index:450;display:none;font-size:95px;pointer-events:none;}
+#explosion.show{display:block;animation:explosion .7s ease forwards;}
+@keyframes explosion{0%{opacity:0;transform:translate(-50%,-50%) scale(.1);}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2);}60%{transform:translate(-50%,-50%) scale(1.8);}100%{opacity:0;transform:translate(-50%,-50%) scale(3.2);}}
+#particles{position:fixed;inset:0;z-index:440;pointer-events:none;}
+.starParticle{position:absolute;font-size:24px;animation:particle 1s ease-out forwards;}
+@keyframes particle{0%{opacity:1;transform:translate(0,0) scale(.5);}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.4) rotate(180deg);}}
+#finish{display:none;position:fixed;inset:0;z-index:900;align-items:center;justify-content:center;padding:15px;background:rgba(42,68,82,.72);backdrop-filter:blur(12px);}
+.finishCard{width:min(94vw,540px);padding:27px 20px;text-align:center;border-radius:38px;background:linear-gradient(145deg,#ffffff,#edfaff);border:5px solid white;box-shadow:0 35px 80px rgba(20,45,60,.35);}
+.trophy{font-size:65px;}
+.finishTitle{font-size:30px;font-weight:900;color:#557789;}
+.finishName{color:#8498a2;font-weight:900;margin:6px;font-size:18px;}
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.result{padding:15px;border-radius:18px;background:#edf7fa;color:#59717d;font-weight:900;}
+.result-number{font-size:32px;display:block;margin-top:6px;color:#557789;}
+#restart{width:100%;height:55px;border:0;border-radius:20px;background:linear-gradient(135deg,#ffe0a5,#ffc9db,#ddd3ff);color:#624f69;font-size:18px;font-weight:900;box-shadow:0 7px 0 #d09ca9;cursor:pointer;}
+@media(max-width:600px){
+    .decor{width:82px;height:82px;border-width:4px;border-radius:24px;opacity:.72;}
+    .d7,.d8{width:65px;height:65px;}
+    .hud{top:6px;left:6px;right:6px;}
+    .badge{height:43px;padding:0 10px;font-size:12px;}
+    .stat{min-width:44px;height:43px;font-size:10px;}
+    .instruction{top:88px;width:90%;padding:7px 10px;font-size:11px;}
+    .main{padding:115px 10px 20px;gap:9px;}
+    .emojiStage{width:min(50vw,245px);height:min(50vw,245px);}
+    .emoji{font-size:clamp(85px,21vw,135px);}
+    .options{width:94vw;gap:7px;}
+    .option{min-height:48px;border-radius:16px;border-width:2px;font-size:13px;}
+}
+</style>
+<style id="platform-local-font">
+@font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+</style>
+</head>
+<body>
+<script src="../assets/js/google-sync.js"></script>
+
+<div class="scene">
+    <div class="light one"></div>
+    <div class="light two"></div>
+    <div class="light three"></div>
+    <div class="decor d1"><img src="../assets/img/game023-media-01.png"></div>
+    <div class="decor d2"><img src="../assets/img/game023-media-02.png"></div>
+    <div class="decor d3"><img src="../assets/img/game023-media-03.png"></div>
+    <div class="decor d4"><img src="../assets/img/game023-media-04.png"></div>
+    <div class="decor d5"><img src="../assets/img/game023-media-05.png"></div>
+    <div class="decor d6"><img src="../assets/img/game023-media-06.png"></div>
+    <div class="decor d7"><img src="../assets/img/game023-media-07.png"></div>
+    <div class="decor d8"><img src="../assets/img/game023-media-08.png"></div>
+</div>
+
+<div id="start">
+    <div class="startCard">
+        <div class="startLogo">🎧✨</div>
+        <div class="startTitle">ماجراجویی نام‌آواها</div>
+        <div class="startSub">تصویر را ببین و نام‌آوای درست را پیدا کن!</div>
+        <div class="student-greeting">
+            دانش‌آموز عزیز: <span id="startStudentName">...</span> 🌸
+        </div>
+        <button id="startBtn">🚀 شروع ماجراجویی</button>
+    </div>
+</div>
+
+<div id="game">
+    <div class="platform-teacher">آموزگار: خانم دهگودی</div>
+    <div class="hud">
+        <div class="badge">🎵 نام‌آواها</div>
+        <div class="stats">
+            <div class="stat">⏱️ <span id="timerDisplay">--:--</span></div>
+            <div class="stat">✅ <span id="correctDisplay">0</span></div>
+            <div class="stat">❌ <span id="mistakes">0</span></div>
+            <div class="stat">🎯 <span id="question">1</span>/7</div>
+        </div>
+    </div>
+    <div class="instruction">هر تصویر چه آوایی دارد؟ نام‌آوای درست را انتخاب کن.</div>
+    <div class="main">
+        <div class="emojiStage"><div id="emoji" class="emoji">🍂</div></div>
+        <div id="options" class="options"></div>
+    </div>
+    <footer class="platform-footer">طراحی و پیاده‌سازی: سعید سراوانی</footer>
+</div>
+
+<div id="message"></div>
+<div id="explosion">💥</div>
+<div id="particles"></div>
+
+<div id="finish">
+    <div class="finishCard">
+        <div class="trophy">🏆🎉</div>
+        <div class="finishTitle">کارنامه‌ی نام‌آواها</div>
+        <div id="finishName" class="finishName"></div>
+        <div class="resultGrid">
+            <div class="result">🎯 پاسخ درست<br><span id="correctCount" class="result-number">0</span>/7</div>
+            <div class="result">❌ اشتباه<br><span id="wrongCount" class="result-number">0</span></div>
+        </div>
+        <div id="finalText" style="font-weight:900;color:#536d7a;margin:12px;"></div>
+        <button id="restart">🔄 دوباره بازی کن</button>
+    </div>
+</div>
+
+<script>
+const GAME_ID = "023";
+let student = null;
+let startedAt = 0;
+let timerSeconds = 180;
+let timerInterval = null;
+let gameFinished = false;
+let gamePaused = false;
+
+const QUESTIONS = [
+    {emoji:"🍂", answer:"خش خش"},
+    {emoji:"🐱", answer:"میو میو"},
+    {emoji:"🌬️", answer:"هوهو"},
+    {emoji:"🐶", answer:"واق واق"},
+    {emoji:"🚰", answer:"شرشر"},
+    {emoji:"🐦‍⬛", answer:"قار قار"},
+    {emoji:"🐸", answer:"قور قور"}
+];
+
+const SOUNDS = ["خش خش", "میو میو", "هوهو", "واق واق", "شرشر", "قار قار", "قور قور"];
+
+let current = 0;
+let correctCount = 0;
+let mistakes = 0;
+let locked = false;
+
+function formatTime(sec){
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+(async function initPlatform(){
+    student = getCurrentStudent();
+    if (!student) {
+        window.location.href = '../index.html';
+        return;
+    }
+    document.getElementById("startStudentName").textContent = student.fullName;
+})();
+
+function startTimer(){
+    clearInterval(timerInterval);
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        if (gameFinished || gamePaused) return;
+        timerSeconds--;
+        updateTimerDisplay();
+        if (timerSeconds <= 0) {
+            clearInterval(timerInterval);
+            stopGameOnTimeout();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay(){
+    const el = document.getElementById("timerDisplay");
+    if (el) el.textContent = formatTime(Math.max(0, timerSeconds));
+}
+
+function stopGameOnTimeout(){
+    gamePaused = true;
+    locked = true;
+    showMessage("⏱️ زمان بازی تمام شد!", false);
+}
+
+document.getElementById("startBtn").addEventListener("click", async () => {
+    document.getElementById("startBtn").disabled = true;
+    const attemptCheck = await syncCheckAttempts(student.studentCode, GAME_ID);
+    if (!attemptCheck.success) {
+        alert(attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.');
+        document.getElementById("startBtn").disabled = false;
+        return;
+    }
+    const settings = await syncGetGameSettings(GAME_ID);
+    timerSeconds = settings.timerSeconds || 180;
+    startedAt = Date.now();
+
+    current = 0;
+    correctCount = 0;
+    mistakes = 0;
+    gameFinished = false;
+    gamePaused = false;
+
+    document.getElementById("start").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    startTimer();
+    showQuestion();
+});
+
+function showQuestion(){
+    locked = false;
+    const question = QUESTIONS[current];
+    document.getElementById("emoji").textContent = question.emoji;
+    document.getElementById("question").textContent = current + 1;
+    const options = document.getElementById("options");
+    options.innerHTML = "";
+
+    let wrongOptions = shuffle(SOUNDS.filter(s => s !== question.answer)).slice(0,3);
+    let finalOptions = shuffle([question.answer, ...wrongOptions]);
+
+    finalOptions.forEach(sound => {
+        const button = document.createElement("button");
+        button.className = "option";
+        button.textContent = "🔊 " + sound;
+        button.addEventListener("click", () => checkAnswer(button, sound, question.answer));
+        options.appendChild(button);
+    });
+    updateStats();
+}
+
+function checkAnswer(button, selected, correct){
+    if(locked || gamePaused) return;
+    if(selected === correct){
+        correctAnswer(button);
+    } else {
+        wrongAnswer(button);
+    }
+}
+
+function correctAnswer(button){
+    locked = true;
+    correctCount++;
+    button.classList.add("correct");
+    playCorrect();
+    showMessage("🎉 آفرین! درست بود!", true);
+    createParticles();
+    updateStats();
+    setTimeout(() => {
+        current++;
+        if(current >= QUESTIONS.length){
+            showFinish();
+        } else {
+            showQuestion();
+        }
+    }, 800);
+}
+
+function wrongAnswer(button){
+    mistakes++;
+    button.classList.remove("wrong");
+    void button.offsetWidth;
+    button.classList.add("wrong");
+    playWrong();
+    showExplosion();
+    showMessage("💥 اشتباه! دوباره تلاش کن.", false);
+    updateStats();
+}
+
+function shuffle(array){
+    const result = [...array];
+    for(let i = result.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+}
+
+function updateStats(){
+    document.getElementById("correctDisplay").textContent = correctCount;
+    document.getElementById("mistakes").textContent = mistakes;
+}
+
+function showMessage(text, good){
+    const message = document.getElementById("message");
+    message.textContent = text;
+    message.style.color = good ? "#45916c" : "#d25770";
+    message.classList.remove("show");
+    void message.offsetWidth;
+    message.classList.add("show");
+}
+
+function showExplosion(){
+    const explosion = document.getElementById("explosion");
+    explosion.classList.remove("show");
+    void explosion.offsetWidth;
+    explosion.classList.add("show");
+}
+
+function createParticles(){
+    const container = document.getElementById("particles");
+    container.innerHTML = "";
+    const symbols = ["⭐","✨","🌟","💫","🎉"];
+    for(let i = 0; i < 14; i++){
+        const particle = document.createElement("div");
+        particle.className = "starParticle";
+        particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        particle.style.left = "50%";
+        particle.style.top = "43%";
+        particle.style.setProperty("--x", (Math.random() * 280 - 140) + "px");
+        particle.style.setProperty("--y", (Math.random() * 220 - 110) + "px");
+        particle.style.animationDelay = (Math.random() * .12) + "s";
+        container.appendChild(particle);
+    }
+    setTimeout(() => { container.innerHTML = ""; }, 1100);
+}
+
+let audio = null;
+function getAudio(){
+    if(!audio){
+        audio = new(window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audio.state === "suspended") audio.resume();
+    return audio;
+}
+
+function tone(frequency, duration, type, volume){
+    try{
+        const ctx = getAudio();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        oscillator.type = type;
+        oscillator.frequency.value = frequency;
+        gain.gain.setValueAtTime(.001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + .02);
+        gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + duration);
+        oscillator.connect(gain); gain.connect(ctx.destination);
+        oscillator.start(); oscillator.stop(ctx.currentTime + duration);
+    }catch(e){}
+}
+
+function playCorrect(){
+    tone(620, .12, "sine", .13);
+    setTimeout(() => tone(800, .13, "sine", .14), 110);
+    setTimeout(() => tone(1050, .20, "sine", .16), 230);
+}
+
+function playWrong(){
+    tone(180, .18, "sawtooth", .28);
+    setTimeout(() => tone(100, .30, "square", .30), 150);
+    setTimeout(() => tone(70, .22, "sawtooth", .25), 330);
+}
+
+async function showFinish(){
+    if (gameFinished) return;
+    gameFinished = true;
+    clearInterval(timerInterval);
+
+    document.getElementById("finishName").textContent = "🌸 " + student.fullName;
+    document.getElementById("correctCount").textContent = QUESTIONS.length;
+    document.getElementById("wrongCount").textContent = mistakes;
+
+    let msg = "";
+    if(mistakes === 0){
+        msg = "🏆 فوق‌العاده! همه را بدون اشتباه پیدا کردی!";
+    } else {
+        msg = "🌟 آفرین! همه‌ی نام‌آواها را با موفقیت کامل کردی.";
+    }
+    document.getElementById("finalText").textContent = msg;
+    document.getElementById("finish").style.display = "flex";
+    createParticles();
+
+    await syncSaveResult(
+        student.studentCode,
+        GAME_ID,
+        correctCount,
+        mistakes,
+        Math.round((Date.now() - startedAt) / 1000)
+    );
+}
+
+document.getElementById("restart").addEventListener("click", () => {
+    location.reload();
+});
+</script>
+</body>
+</html>

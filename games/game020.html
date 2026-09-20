@@ -1,0 +1,2034 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+<title>باغ واژه‌ها 🌸</title>
+
+<style>
+
+700;800;900&display=swap');
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:"Vazirmatn",Tahoma,sans-serif;
+    background:#83dff0;
+}
+
+/* =========================
+   GAME
+========================= */
+
+.game{
+
+    position:relative;
+
+    width:100%;
+    height:100vh;
+
+    overflow:hidden;
+
+    background:
+
+    radial-gradient(
+        circle at 50% 15%,
+        rgba(255,255,255,.75),
+        transparent 22%
+    ),
+
+    linear-gradient(
+        180deg,
+        #83e6f5 0%,
+        #b4eff0 40%,
+        #82d887 70%,
+        #49a955 100%
+    );
+}
+
+
+/* نورهای جادویی */
+
+.game::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:500px;
+    height:500px;
+
+    left:-200px;
+    top:-200px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.65),
+            transparent 65%
+        );
+
+    filter:blur(20px);
+
+    pointer-events:none;
+}
+
+
+/* =========================
+   ابرها
+========================= */
+
+.cloud{
+
+    position:absolute;
+
+    width:150px;
+    height:50px;
+
+    background:white;
+
+    border-radius:50px;
+
+    opacity:.65;
+
+    filter:blur(1px);
+
+    animation:cloudMove 30s linear infinite;
+}
+
+.cloud::before,
+.cloud::after{
+
+    content:"";
+
+    position:absolute;
+
+    background:white;
+
+    border-radius:50%;
+}
+
+.cloud::before{
+
+    width:70px;
+    height:70px;
+
+    left:25px;
+    top:-30px;
+}
+
+.cloud::after{
+
+    width:55px;
+    height:55px;
+
+    right:25px;
+    top:-20px;
+}
+
+.cloud1{
+    top:15%;
+    left:-150px;
+}
+
+.cloud2{
+
+    top:30%;
+    left:-300px;
+
+    transform:scale(.7);
+
+    animation-delay:8s;
+}
+
+@keyframes cloudMove{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(130vw);
+    }
+
+}
+
+
+/* =========================
+   هدر
+========================= */
+
+.header{
+
+    position:absolute;
+
+    top:10px;
+    left:10px;
+    right:10px;
+
+    z-index:20;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+.title{
+
+    padding:10px 18px;
+
+    border-radius:25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.9),
+            rgba(255,255,255,.6)
+        );
+
+    border:3px solid rgba(255,255,255,.8);
+
+    box-shadow:
+
+        0 8px 0 rgba(49,139,103,.3),
+
+        0 15px 30px rgba(0,0,0,.18);
+
+    color:#23634e;
+
+    font-size:clamp(19px,4vw,30px);
+
+    font-weight:900;
+
+}
+
+.stats{
+
+    display:flex;
+
+    gap:7px;
+
+}
+
+.stat{
+
+    padding:8px 12px;
+
+    border-radius:18px;
+
+    background:
+        rgba(255,255,255,.72);
+
+    border:2px solid rgba(255,255,255,.8);
+
+    color:#245f52;
+
+    font-weight:900;
+
+    box-shadow:
+        0 6px 15px rgba(0,0,0,.15);
+
+}
+
+
+/* =========================
+   دستور
+========================= */
+
+.instruction{
+
+    position:absolute;
+
+    z-index:20;
+
+    top:72px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:min(94%,700px);
+
+    padding:10px 16px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    background:
+        rgba(39,105,90,.78);
+
+    color:white;
+
+    border:2px solid rgba(255,255,255,.65);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.2);
+
+    font-size:clamp(14px,3.5vw,20px);
+
+    font-weight:900;
+
+}
+
+
+/* =========================
+   زنبور
+========================= */
+
+.bee{
+
+    position:absolute;
+
+    z-index:3;
+
+    font-size:45px;
+
+    animation:
+        flyBee 5s ease-in-out infinite;
+}
+
+.bee1{
+    top:27%;
+    left:8%;
+}
+
+.bee2{
+    top:38%;
+    right:8%;
+
+    animation-delay:1.5s;
+}
+
+@keyframes flyBee{
+
+    0%,100%{
+        transform:translate(0,0) rotate(-5deg);
+    }
+
+    50%{
+        transform:translate(30px,-20px) rotate(8deg);
+    }
+
+}
+
+
+/* =========================
+   منطقه بازی
+========================= */
+
+.play-area{
+
+    position:absolute;
+
+    top:145px;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+}
+
+
+/* =========================
+   عنوان بخش ها
+========================= */
+
+.section-title{
+
+    position:absolute;
+
+    z-index:10;
+
+    top:0;
+
+    padding:7px 16px;
+
+    border-radius:20px;
+
+    background:
+        rgba(255,255,255,.8);
+
+    color:#28725b;
+
+    font-weight:900;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.12);
+
+}
+
+.word-title{
+    left:7%;
+}
+
+.meaning-title{
+    right:7%;
+}
+
+
+/* =========================
+   گل ها
+========================= */
+
+.flower{
+
+    position:absolute;
+
+    width:clamp(105px,18vw,145px);
+
+    aspect-ratio:1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    cursor:grab;
+
+    touch-action:none;
+
+    user-select:none;
+
+    z-index:10;
+
+    transition:.2s;
+
+}
+
+
+/* گلبرگ ها */
+
+.flower::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 12%,
+            #fff,
+            #ff9fc8 35%,
+            #f064a3 70%,
+            #d53d80
+        );
+
+    clip-path:
+
+        polygon(
+            50% 0%,
+            61% 28%,
+            88% 10%,
+            75% 40%,
+            100% 50%,
+            75% 60%,
+            88% 90%,
+            61% 72%,
+            50% 100%,
+            39% 72%,
+            12% 90%,
+            25% 60%,
+            0% 50%,
+            25% 40%,
+            12% 10%,
+            39% 28%
+        );
+
+    filter:
+        drop-shadow(0 8px 7px rgba(0,0,0,.25));
+
+}
+
+
+/* مرکز گل */
+
+.flower::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:42%;
+
+    aspect-ratio:1;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(
+            circle at 35% 30%,
+            #fff8a5,
+            #ffd447 45%,
+            #e99a00
+        );
+
+    box-shadow:
+
+        inset 0 3px 5px rgba(255,255,255,.7),
+
+        0 4px 8px rgba(0,0,0,.25);
+
+}
+
+
+/* متن */
+
+.flower span{
+
+    position:relative;
+
+    z-index:5;
+
+    width:62%;
+
+    color:#5b1745;
+
+    font-size:clamp(13px,2.7vw,19px);
+
+    font-weight:900;
+
+    line-height:1.4;
+
+    text-shadow:
+        0 1px 1px white;
+
+}
+
+
+/* =========================
+   جای گل ها
+========================= */
+
+.flower:nth-child(1){
+    left:4%;
+    top:9%;
+}
+
+.flower:nth-child(2){
+    left:23%;
+    top:31%;
+}
+
+.flower:nth-child(3){
+    left:3%;
+    top:57%;
+}
+
+.flower:nth-child(4){
+    left:25%;
+    top:70%;
+}
+
+.flower:nth-child(5){
+    left:43%;
+    top:13%;
+}
+
+.flower:nth-child(6){
+    left:44%;
+    top:53%;
+}
+
+.flower:nth-child(7){
+    left:63%;
+    top:29%;
+}
+
+.flower:nth-child(8){
+    left:67%;
+    top:67%;
+}
+
+
+/* =========================
+   حالت کشیدن
+========================= */
+
+.flower.dragging{
+
+    z-index:100;
+
+    transform:
+        scale(1.18)
+        rotate(8deg);
+
+    filter:
+        drop-shadow(0 0 15px #fff)
+        drop-shadow(0 0 30px #ff7ed0);
+
+}
+
+
+/* =========================
+   کندوهای معنی
+========================= */
+
+.hives{
+
+    position:absolute;
+
+    right:4%;
+
+    top:10%;
+
+    width:30%;
+
+    height:80%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-around;
+
+    gap:8px;
+
+    z-index:5;
+
+}
+
+
+.hive{
+
+    min-height:70px;
+
+    padding:9px 15px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    position:relative;
+
+    border-radius:22px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #ffe68a,
+            #eeb62c
+        );
+
+    border:3px solid #fff3ad;
+
+    box-shadow:
+
+        0 7px 0 #b77c17,
+
+        0 12px 20px rgba(0,0,0,.18),
+
+        inset 0 3px 5px rgba(255,255,255,.65);
+
+    color:#633d00;
+
+    font-size:clamp(12px,2.3vw,17px);
+
+    font-weight:900;
+
+    transition:.25s;
+
+}
+
+
+.hive::before{
+
+    content:"🐝";
+
+    position:absolute;
+
+    right:-18px;
+
+    top:-16px;
+
+    font-size:27px;
+
+}
+
+
+.hive.target{
+
+    transform:scale(1.06);
+
+    box-shadow:
+
+        0 0 20px #fff,
+
+        0 0 40px #ffd83d,
+
+        0 7px 0 #b77c17;
+
+}
+
+
+/* =========================
+   گل موفق
+========================= */
+
+.flower.success{
+
+    animation:
+        successFlower .8s ease forwards;
+
+}
+
+@keyframes successFlower{
+
+    0%{
+        transform:scale(1);
+    }
+
+    40%{
+        transform:scale(1.35) rotate(12deg);
+    }
+
+    100%{
+        transform:scale(.2) translateY(-200px);
+
+        opacity:0;
+    }
+
+}
+
+
+/* =========================
+   گل اشتباه
+========================= */
+
+.flower.wrong{
+
+    animation:
+        shake .55s ease;
+
+}
+
+
+@keyframes shake{
+
+    0%,100%{
+        transform:translateX(0);
+    }
+
+    20%{
+        transform:translateX(-13px) rotate(-6deg);
+    }
+
+    40%{
+        transform:translateX(13px) rotate(6deg);
+    }
+
+    60%{
+        transform:translateX(-9px);
+    }
+
+    80%{
+        transform:translateX(9px);
+    }
+
+}
+
+
+/* =========================
+   پیام
+========================= */
+
+.feedback{
+
+    position:fixed;
+
+    z-index:200;
+
+    top:50%;
+
+    left:50%;
+
+    transform:
+        translate(-50%,-50%)
+        scale(.7);
+
+    padding:16px 25px;
+
+    border-radius:25px;
+
+    background:
+        rgba(25,74,63,.94);
+
+    border:3px solid white;
+
+    color:white;
+
+    font-size:clamp(19px,5vw,29px);
+
+    font-weight:900;
+
+    text-align:center;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.3s;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.35);
+
+}
+
+
+.feedback.show{
+
+    opacity:1;
+
+    transform:
+        translate(-50%,-50%)
+        scale(1);
+
+}
+
+
+/* =========================
+   کارنامه
+========================= */
+
+.result{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:500;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:15px;
+
+    background:
+        rgba(15,52,46,.75);
+
+    backdrop-filter:blur(12px);
+
+}
+
+
+.result-box{
+
+    width:min(94%,600px);
+
+    max-height:94vh;
+
+    overflow:auto;
+
+    padding:25px;
+
+    text-align:center;
+
+    border-radius:35px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.96),
+            rgba(232,255,246,.92)
+        );
+
+    border:4px solid white;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.4);
+
+    color:#255d4f;
+
+}
+
+
+.result-box h1{
+
+    margin:5px 0;
+
+    font-size:clamp(28px,7vw,44px);
+
+    font-weight:900;
+
+}
+
+
+.final-score{
+
+    font-size:58px;
+
+    font-weight:900;
+
+    color:#e09b12;
+
+}
+
+
+.result-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:10px;
+
+    margin:15px 0;
+
+}
+
+
+.result-item{
+
+    padding:13px;
+
+    border-radius:20px;
+
+    background:#e3f8ed;
+
+    font-weight:900;
+
+}
+
+
+.final-message{
+
+    font-size:20px;
+
+    font-weight:900;
+
+    margin:12px;
+
+}
+
+
+.restart{
+
+    border:0;
+
+    padding:14px 30px;
+
+    border-radius:23px;
+
+    font-family:inherit;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #ffd95c,
+            #ff9e3d
+        );
+
+    color:#553200;
+
+    box-shadow:
+        0 7px 0 #bd741e;
+
+}
+
+
+/* =========================
+   موبایل
+========================= */
+
+@media(max-width:600px){
+
+    .header{
+
+        flex-direction:column;
+
+    }
+
+    .title{
+
+        width:100%;
+
+        text-align:center;
+
+    }
+
+    .stats{
+
+        width:100%;
+
+        justify-content:center;
+
+    }
+
+    .instruction{
+
+        top:110px;
+
+    }
+
+    .play-area{
+
+        top:185px;
+
+    }
+
+    .section-title{
+
+        font-size:13px;
+
+    }
+
+    .meaning-title{
+
+        right:4%;
+
+    }
+
+    .word-title{
+
+        left:4%;
+
+    }
+
+    .hives{
+
+        right:2%;
+
+        width:42%;
+
+        top:8%;
+
+        height:83%;
+
+    }
+
+    .hive{
+
+        min-height:58px;
+
+        padding:7px 9px;
+
+        font-size:11px;
+
+    }
+
+    .flower{
+
+        width:92px;
+
+    }
+
+    .flower:nth-child(1){
+        left:2%;
+        top:8%;
+    }
+
+    .flower:nth-child(2){
+        left:17%;
+        top:30%;
+    }
+
+    .flower:nth-child(3){
+        left:2%;
+        top:53%;
+    }
+
+    .flower:nth-child(4){
+        left:17%;
+        top:72%;
+    }
+
+    .flower:nth-child(5){
+        left:34%;
+        top:12%;
+    }
+
+    .flower:nth-child(6){
+        left:35%;
+        top:48%;
+    }
+
+    .flower:nth-child(7){
+        left:48%;
+        top:27%;
+    }
+
+    .flower:nth-child(8){
+        left:49%;
+        top:68%;
+    }
+
+}
+
+</style>
+<style id="platform-local-font">
+@font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+</style>
+</head>
+
+
+<body>
+<script src="../assets/js/google-sync.js"></script>
+<script>
+//INTEGRATION: Ø§ØªØµØ§Ù„ Ø¨Ø§Ø²ÛŒ 20 Ø¨Ù‡ Ù†Ø´Ø³Øª Ø¯Ø§Ù†Ø´â€ŒØ¢Ù…ÙˆØ²ØŒ Ù†ÙˆØ¨Øª Ù…Ø¬Ø§Ø² Ùˆ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ù¾Ù„ØªÙØ±Ù….
+const GAME_ID = 20;
+const platformStudent = getCurrentStudent();
+const platformStartedAt = Date.now();
+let platformSaved = false;
+
+(async function initializeGamePlatform() {
+    if (!platformStudent) {
+        window.location.href = '../index.html';
+        return;
+    }
+    document.documentElement.style.visibility = 'hidden';
+    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
+    if (!attemptCheck.success) {
+        document.documentElement.style.visibility = 'visible';
+        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'Ø§Ù…Ú©Ø§Ù† Ø´Ø±Ú©Øª Ø¯Ø± Ø§ÛŒÙ† Ø¨Ø§Ø²ÛŒ ÙˆØ¬ÙˆØ¯ Ù†Ø¯Ø§Ø±Ø¯.') + '</h2></main>';
+        return;
+    }
+    const settings = await syncGetGameSettings(GAME_ID);
+    const timerSeconds = settings.timerSeconds || 180;
+    window.timerSeconds = timerSeconds;
+    window.platformStudent = platformStudent;
+    document.documentElement.style.visibility = 'visible';
+    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(function (element) {
+        if (!element.matches('input,textarea')) element.textContent = platformStudent.fullName;
+    });
+})();
+
+//INTEGRATION: Ù†Ù…Ø§ÛŒØ´ Ø«Ø§Ø¨Øª Ø¢Ù…ÙˆØ²Ú¯Ø§Ø± Ùˆ ÙÙˆØªØ± Ù¾Ù„ØªÙØ±Ù….
+window.addEventListener('DOMContentLoaded', function () {
+    if (!document.querySelector('.platform-teacher')) {
+        const teacher = document.createElement('div');
+        teacher.className = 'platform-teacher';
+        teacher.textContent = 'Ø¢Ù…ÙˆØ²Ú¯Ø§Ø±: Ø®Ø§Ù†Ù… Ø¯Ù‡Ú¯ÙˆØ¯ÛŒ';
+        teacher.style.cssText = 'text-align:center;font-weight:700;margin:8px auto;';
+        const heading = document.querySelector('h1,h2,.title,.game-title') || document.body.firstElementChild;
+        if (heading && heading.parentNode) heading.parentNode.insertBefore(teacher, heading.nextSibling);
+    }
+    if (!document.querySelector('.platform-footer')) {
+        const footer = document.createElement('footer');
+        footer.className = 'platform-footer';
+        footer.textContent = 'Ø·Ø±Ø§Ø­ÛŒ Ùˆ Ù¾ÛŒØ§Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ: Ø³Ø¹ÛŒØ¯ Ø³Ø±Ø§ÙˆØ§Ù†ÛŒ';
+        footer.style.cssText = 'text-align:center;font-weight:700;padding:16px;';
+        document.body.appendChild(footer);
+    }
+});
+
+//INTEGRATION: Ø«Ø¨Øª Ù†ØªÛŒØ¬Ù‡ ÙÙ‚Ø· Ø¨Ø§ ØªØ¹Ø¯Ø§Ø¯ Ù¾Ø§Ø³Ø® Ø¯Ø±Ø³Øª Ùˆ ØºÙ„Ø·.
+function platformNumber(selectors) {
+    for (const selector of selectors) {
+        const element = document.querySelector(selector);
+        if (element && /^\s*[0-9Û°-Û¹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9Û°-Û¹]/g, '');
+    }
+    return null;
+}
+async function platformSaveResult() {
+    if (platformSaved || !window.platformStudent) return;
+    const correctText = platformNumber(['#correctCount','#correctFinal','#finalCorrect','#end-correct','#rCorrect','#correct-score','#correctScore']);
+    const wrongText = platformNumber(['#wrongCount','#wrongFinal','#finalWrong','#end-wrong','#rWrong','#wrong-score','#wrongScore']);
+    if (correctText === null || wrongText === null) return;
+    platformSaved = true;
+    const toNumber = value => Number(String(value).replace(/[Û°-Û¹]/g, digit => 'Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹'.indexOf(digit)));
+    const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
+    await syncSaveResult(platformStudent.studentCode, GAME_ID, toNumber(correctText), toNumber(wrongText), durationSeconds);
+}
+new MutationObserver(platformSaveResult).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+</script>
+
+
+<div class="game">
+
+    <!-- ابرها -->
+
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+
+
+    <!-- هدر -->
+
+    <div class="header">
+
+        <div class="title">
+            🌸 باغ واژه‌ها
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                ✅ درست: <span id="found">۰</span>
+            </div>
+
+            <div class="stat">
+                ❌ غلط: <span id="wrong">۰</span>
+            </div>
+
+            <div class="stat">
+                ⏱ <span id="timer">۰:۰۰</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- دستور -->
+
+    <div class="instruction">
+
+        🌸 کلمه را بکش و روی معنی درست قرار بده! 🐝
+
+    </div>
+
+
+    <!-- زنبورها -->
+
+    <div class="bee bee1">🐝</div>
+    <div class="bee bee2">🐝</div>
+
+
+    <div class="play-area">
+
+        <div class="section-title word-title">
+            🌸 واژه‌ها
+        </div>
+
+        <div class="section-title meaning-title">
+            🍯 معنی‌ها
+        </div>
+
+
+        <!-- گل ها -->
+
+        <div class="flower" data-answer="شیرازی">
+
+            <span>شیرازی</span>
+
+        </div>
+
+
+        <div class="flower" data-answer="گچی">
+
+            <span>گچی</span>
+
+        </div>
+
+
+        <div class="flower" data-answer="فلزی">
+
+            <span>فلزی</span>
+
+        </div>
+
+
+        <div class="flower" data-answer="چوبی">
+
+            <span>چوبی</span>
+
+        </div>
+
+
+        <div class="flower" data-answer="شیشه‌ای">
+
+            <span>شیشه‌ای</span>
+
+        </div>
+
+
+        <div class="flower" data-answer="پلاستیکی">
+
+            <span>پلاستیکی</span>
+
+        </div>
+
+
+        <div class="flower" data-answer="سنگی">
+
+            <span>سنگی</span>
+
+        </div>
+
+
+        <div class="flower" data-answer="چرمی">
+
+            <span>چرمی</span>
+
+        </div>
+
+
+        <!-- کندوهای معنی -->
+
+        <div class="hives">
+
+            <div
+                class="hive"
+                data-answer="شیرازی">
+
+                کسی که اهل شیراز است
+
+            </div>
+
+
+            <div
+                class="hive"
+                data-answer="گچی">
+
+                چیزی که با گچ ساخته شده است
+
+            </div>
+
+
+            <div
+                class="hive"
+                data-answer="فلزی">
+
+                چیزی که با فلز ساخته شده است
+
+            </div>
+
+
+            <div
+                class="hive"
+                data-answer="چوبی">
+
+                چیزی که با چوب ساخته شده است
+
+            </div>
+
+
+            <div
+                class="hive"
+                data-answer="شیشه‌ای">
+
+                چیزی که از شیشه ساخته شده است
+
+            </div>
+
+
+            <div
+                class="hive"
+                data-answer="پلاستیکی">
+
+                چیزی که از پلاستیک ساخته شده است
+
+            </div>
+
+
+            <div
+                class="hive"
+                data-answer="سنگی">
+
+                چیزی که از سنگ ساخته شده است
+
+            </div>
+
+
+            <div
+                class="hive"
+                data-answer="چرمی">
+
+                چیزی که از چرم ساخته شده است
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- پیام -->
+
+    <div
+        class="feedback"
+        id="feedback">
+    </div>
+
+
+</div>
+
+
+<!-- =========================
+     RESULT
+========================= -->
+
+<div
+    class="result"
+    id="result">
+
+    <div class="result-box">
+
+        <div style="font-size:65px">
+            🏆🌸🐝
+        </div>
+
+        <h1>
+            کارنامه‌ی باغ واژه‌ها
+        </h1>
+
+        <div
+            class="final-message"
+            id="finalMessage">
+
+        </div>
+
+
+        <div class="result-grid">
+
+            <div class="result-item">
+
+                🌸 جفت‌های درست
+
+                <br>
+
+                <span id="finalCorrect">
+                    0
+                </span>
+
+                از ۸
+
+            </div>
+
+
+        </div>
+
+
+        <button
+            class="restart"
+            onclick="restartGame()">
+
+            🔄 دوباره بازی کن
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =================================
+   VARIABLES
+================================= */
+
+let found=0;
+
+let wrong=0;
+
+let finished=false;
+let timerInterval=null;
+let timeLeft=0;
+let resultSaved=false;
+
+
+/* =================================
+   ELEMENTS
+================================= */
+
+const flowers=
+document.querySelectorAll(".flower");
+
+const hives=
+document.querySelectorAll(".hive");
+
+const feedback=
+document.getElementById("feedback");
+
+
+/* =================================
+   AUDIO
+================================= */
+
+let audioContext=null;
+
+
+function sound(
+    frequency,
+    duration,
+    type="sine"
+){
+
+    try{
+
+        if(!audioContext){
+
+            audioContext=
+            new(
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        }
+
+        const oscillator=
+            audioContext.createOscillator();
+
+        const gain=
+            audioContext.createGain();
+
+        oscillator.type=type;
+
+        oscillator.frequency.value=
+            frequency;
+
+        gain.gain.setValueAtTime(
+            .001,
+            audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .2,
+            audioContext.currentTime+.02
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            audioContext.currentTime+duration
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(audioContext.destination);
+
+        oscillator.start();
+
+        oscillator.stop(
+            audioContext.currentTime+duration
+        );
+
+    }catch(e){}
+
+}
+
+
+function correctSound(){
+
+    sound(600,.12);
+
+    setTimeout(
+        ()=>sound(800,.15),
+        120
+    );
+
+}
+
+
+function wrongSound(){
+
+    sound(150,.35,"sawtooth");
+
+}
+
+
+/* =================================
+   STATS
+================================= */
+
+function updateStats(){
+    document.getElementById(
+        "found"
+    ).textContent=found;
+
+    document.getElementById("wrong").textContent=wrong;
+
+}
+
+
+/* =================================
+   FEEDBACK
+================================= */
+
+function showFeedback(text){
+
+    feedback.textContent=text;
+
+    feedback.classList.add("show");
+
+    setTimeout(
+        ()=>{
+            feedback.classList.remove("show");
+        },
+        900
+    );
+
+}
+
+
+/* =================================
+   DRAG & DROP
+================================= */
+
+flowers.forEach(
+    flower=>{
+
+        let dragging=false;
+
+        let startX=0;
+
+        let startY=0;
+
+
+        flower.addEventListener(
+            "pointerdown",
+            e=>{
+
+                if(finished)
+                    return;
+
+                dragging=true;
+
+                startX=e.clientX;
+
+                startY=e.clientY;
+
+                flower.classList.add(
+                    "dragging"
+                );
+
+                flower.setPointerCapture(
+                    e.pointerId
+                );
+
+            }
+        );
+
+
+        flower.addEventListener(
+            "pointermove",
+            e=>{
+
+                if(!dragging)
+                    return;
+
+                const dx=
+                    e.clientX-startX;
+
+                const dy=
+                    e.clientY-startY;
+
+                flower.style.transform=
+                    `
+                    translate(${dx}px,${dy}px)
+                    scale(1.15)
+                    rotate(7deg)
+                    `;
+
+
+                /* تشخیص نزدیک شدن به کندو */
+
+                hives.forEach(
+                    hive=>{
+
+                        const rect=
+                            hive.getBoundingClientRect();
+
+                        if(
+
+                            e.clientX >
+                            rect.left &&
+
+                            e.clientX <
+                            rect.right &&
+
+                            e.clientY >
+                            rect.top &&
+
+                            e.clientY <
+                            rect.bottom
+
+                        ){
+
+                            hive.classList.add(
+                                "target"
+                            );
+
+                        }else{
+
+                            hive.classList.remove(
+                                "target"
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+        flower.addEventListener(
+            "pointerup",
+            e=>{
+
+                if(!dragging)
+                    return;
+
+                dragging=false;
+
+                flower.classList.remove(
+                    "dragging"
+                );
+
+                flower.style.transform="";
+
+
+                let selectedHive=null;
+
+
+                hives.forEach(
+                    hive=>{
+
+                        hive.classList.remove(
+                            "target"
+                        );
+
+                        const rect=
+                            hive.getBoundingClientRect();
+
+                        if(
+
+                            e.clientX >
+                            rect.left &&
+
+                            e.clientX <
+                            rect.right &&
+
+                            e.clientY >
+                            rect.top &&
+
+                            e.clientY <
+                            rect.bottom
+
+                        ){
+
+                            selectedHive=hive;
+
+                        }
+
+                    }
+                );
+
+
+                if(!selectedHive)
+                    return;
+
+
+                const word=
+                    flower.dataset.answer;
+
+                const target=
+                    selectedHive.dataset.answer;
+
+
+                if(word===target){
+
+                    handleCorrect(
+                        flower,
+                        selectedHive
+                    );
+
+                }else{
+
+                    handleWrong(
+                        flower
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =================================
+   CORRECT
+================================= */
+
+function handleCorrect(
+    flower,
+    hive
+){
+
+    found++;
+
+    correctSound();
+
+    showFeedback(
+        "🎉 آفرین! جفت درست پیدا شد!"
+    );
+
+
+    hive.style.transform=
+        "scale(1.08)";
+
+    hive.style.boxShadow=
+        `
+        0 0 20px #fff,
+        0 0 45px #ffd83d,
+        0 7px 0 #b77c17
+        `;
+
+
+    flower.classList.add(
+        "success"
+    );
+
+
+    setTimeout(
+        ()=>{
+
+            flower.style.display="none";
+
+            hive.style.opacity=".45";
+
+            hive.style.transform="";
+
+            hive.style.boxShadow="";
+
+            if(
+                found===8
+            ){
+
+                finishGame();
+
+            }
+
+        },
+        800
+    );
+
+
+    function startTimer(){
+        clearInterval(timerInterval);
+        timeLeft=window.timerSeconds||180;
+        updateTimer();
+        timerInterval=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInterval);finished=true;}},1000);
+    }
+
+    function updateTimer(){document.getElementById("timer").textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;}
+
+    startTimer();
+    updateStats();
+
+}
+
+
+/* =================================
+   WRONG
+================================= */
+
+function handleWrong(flower){
+
+    wrong++;
+
+
+    flower.classList.add(
+        "wrong"
+    );
+
+
+    wrongSound();
+
+
+    showFeedback(
+        "❌ این جفت درست نیست!"
+    );
+
+
+    setTimeout(
+        ()=>{
+            flower.classList.remove(
+                "wrong"
+            );
+        },
+        600
+    );
+
+
+    updateStats();
+
+
+}
+
+
+/* =================================
+   FINISH
+================================= */
+
+function finishGame(){
+
+    if(finished)
+        return;
+
+    finished=true;
+
+
+    setTimeout(
+        ()=>{
+
+            document.getElementById(
+                "result"
+            ).style.display="flex";
+
+
+            document.getElementById(
+                "finalCorrect"
+            ).textContent=found;
+
+
+            document.getElementById(
+                "finalWrong"
+            ).textContent=wrong;
+
+
+            clearInterval(timerInterval);
+            if(!resultSaved){resultSaved=true;platformSaved=true;syncSaveResult(student.studentCode,GAME_ID,found,wrong,Math.round((Date.now()-platformStartedAt)/1000));}
+
+
+            let message="";
+
+
+            if(found===8){
+
+                message=
+                    "🏆 فوق‌العاده! قهرمان باغ واژه‌ها شدی! 🌸";
+
+            }
+
+            else if(found>=6){
+
+                message=
+                    "🌟 آفرین! خیلی خوب جفت‌ها را پیدا کردی!";
+
+            }
+
+            else if(found>=4){
+
+                message=
+                    "👏 خوب بود! کمی بیشتر تمرین کن.";
+
+            }
+
+            else{
+
+                message=
+                    "💪 دوباره تلاش کن؛ تو می‌توانی!";
+
+            }
+
+
+            document.getElementById(
+                "finalMessage"
+            ).textContent=message;
+
+        },
+        700
+    );
+
+}
+
+
+/* =================================
+   RESTART
+================================= */
+
+function restartGame(){
+
+    found=0;
+
+    wrong=0;
+
+    resultSaved=false;
+
+    finished=false;
+
+
+    document.getElementById(
+        "result"
+    ).style.display="none";
+
+
+    flowers.forEach(
+        flower=>{
+
+            flower.style.display="flex";
+
+            flower.classList.remove(
+                "success",
+                "wrong",
+                "dragging"
+            );
+
+            flower.style.transform="";
+
+        }
+    );
+
+
+    hives.forEach(
+        hive=>{
+
+            hive.style.opacity="1";
+
+            hive.style.transform="";
+
+            hive.style.boxShadow="";
+
+        }
+    );
+
+
+    updateStats();
+
+}
+
+
+/* =================================
+   START
+================================= */
+
+updateStats();
+
+</script>
+
+</body>
+</html>

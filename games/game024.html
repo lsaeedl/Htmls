@@ -1,0 +1,647 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شهربازی کلمات متضاد</title>
+
+
+<style>
+  :root{
+    --magenta:#EC3F8E;
+    --teal:#22C3B6;
+    --gold:#FFC93C;
+    --purple:#6C3EDB;
+    --cream:#FFF9F0;
+    --ink:#3A1E5C;
+    --red:#FF5A5F;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:'Vazirmatn', sans-serif;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.25) 0, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(255,255,255,0.2) 0, transparent 45%),
+      linear-gradient(135deg, #6C3EDB 0%, #EC3F8E 55%, #FF8A5B 100%);
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:0 14px 60px;
+    overflow-x:hidden;
+  }
+
+  /* circus tent stripe banner */
+  .tent{
+    width:100%;
+    height:70px;
+    background:repeating-linear-gradient(
+      90deg,
+      var(--gold) 0px, var(--gold) 34px,
+      var(--cream) 34px, var(--cream) 68px
+    );
+    clip-path:polygon(0 0,100% 0,100% 55%,0 100%);
+    margin-bottom:-4px;
+  }
+
+  .balloon{
+    position:fixed;
+    border-radius:50%;
+    opacity:0.55;
+    animation:bob 6s ease-in-out infinite;
+    z-index:0;
+    pointer-events:none;
+  }
+  .balloon::after{
+    content:"";
+    position:absolute;
+    bottom:-14px;
+    left:50%;
+    width:2px;
+    height:14px;
+    background:rgba(255,255,255,0.5);
+  }
+  @keyframes bob{
+    0%,100%{transform:translateY(0) rotate(-4deg);}
+    50%{transform:translateY(-20px) rotate(4deg);}
+  }
+
+  header{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    margin-top:18px;
+    margin-bottom:12px;
+  }
+  .eyebrow{
+    display:inline-block;
+    background:var(--cream);
+    color:var(--magenta);
+    font-weight:700;
+    font-size:14px;
+    padding:6px 18px;
+    border-radius:999px;
+    box-shadow:0 4px 0 rgba(0,0,0,0.1);
+    margin-bottom:10px;
+  }
+  h1{
+    font-size:clamp(26px, 6vw, 42px);
+    font-weight:900;
+    margin:0;
+    color:#fff;
+    text-shadow:2px 2px 0 rgba(108,62,219,0.6);
+  }
+  .subtitle{
+    font-size:15px;
+    font-weight:600;
+    color:#FFF3D6;
+    margin-top:8px;
+  }
+
+  .progress-wrap{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:420px;
+    margin:10px 0 4px;
+  }
+  .progress-track{
+    background:rgba(255,255,255,0.35);
+    border-radius:999px;
+    height:14px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--gold), var(--teal));
+    border-radius:999px;
+    transition:width 0.4s ease;
+  }
+  .progress-label{
+    text-align:center;
+    color:#fff;
+    font-weight:700;
+    font-size:13px;
+    margin-top:6px;
+  }
+
+  .stats{
+    position:relative;
+    z-index:1;
+    display:flex;
+    gap:10px;
+    margin:14px 0 6px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .stat-pill{
+    background:rgba(255,255,255,0.9);
+    padding:8px 18px;
+    border-radius:16px;
+    font-weight:700;
+    font-size:14px;
+    box-shadow:0 4px 10px rgba(58,30,92,0.2);
+  }
+  .stat-pill .num{color:var(--magenta);}
+
+  .quiz-card{
+    position:relative;
+    z-index:1;
+    background:var(--cream);
+    border-radius:26px;
+    padding:28px 22px;
+    width:100%;
+    max-width:420px;
+    margin-top:16px;
+    box-shadow:0 16px 34px rgba(58,30,92,0.35);
+    text-align:center;
+  }
+  .quiz-card .label{
+    font-size:14px;
+    font-weight:700;
+    color:var(--teal);
+    margin-bottom:8px;
+  }
+  .word-display{
+    font-size:clamp(30px, 9vw, 44px);
+    font-weight:900;
+    color:var(--purple);
+    margin:6px 0 22px;
+  }
+  .options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .opt-btn{
+    font-family:'Vazirmatn', sans-serif;
+    font-weight:700;
+    font-size:clamp(15px, 4.5vw, 18px);
+    padding:16px 10px;
+    border:none;
+    border-radius:18px;
+    background:linear-gradient(145deg, var(--teal), #17A398);
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 6px 0 #0F7A70;
+    transition:transform 0.08s;
+  }
+  .opt-btn:nth-child(2){
+    background:linear-gradient(145deg, var(--magenta), #C42A73);
+    box-shadow:0 6px 0 #9C1E5B;
+  }
+  .opt-btn:nth-child(3){
+    background:linear-gradient(145deg, var(--gold), #E0A800);
+    box-shadow:0 6px 0 #B08600;
+    color:#4B3600;
+  }
+  .opt-btn:nth-child(4){
+    background:linear-gradient(145deg, var(--purple), #4E2AA8);
+    box-shadow:0 6px 0 #371E7A;
+  }
+  .opt-btn:active{
+    transform:translateY(4px);
+  }
+  .opt-btn.correct{
+    animation:pulseGreen 0.6s ease;
+    background:linear-gradient(145deg, #4CD37B, #2FAE5E) !important;
+    box-shadow:0 6px 0 #1F8A47 !important;
+    color:#fff !important;
+  }
+  .opt-btn.wrong{
+    animation:shakeX 0.5s;
+    opacity:0.55;
+  }
+  .opt-btn:disabled{
+    cursor:default;
+  }
+  @keyframes pulseGreen{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+  }
+  @keyframes shakeX{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-6px);}
+    75%{transform:translateX(6px);}
+  }
+
+  .feedback{
+    min-height:24px;
+    margin-top:16px;
+    font-weight:700;
+    font-size:15px;
+    color:var(--magenta);
+  }
+
+  .controls{
+    position:relative;
+    z-index:1;
+    margin-top:22px;
+    display:flex;
+    gap:12px;
+  }
+  button.action{
+    font-family:'Vazirmatn', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    padding:12px 26px;
+    border:none;
+    border-radius:16px;
+    background:#fff;
+    color:var(--magenta);
+    cursor:pointer;
+    box-shadow:0 5px 0 #C9A9C9;
+  }
+  button.action:active{
+    transform:translateY(4px);
+    box-shadow:0 1px 0 #C9A9C9;
+  }
+
+  /* end screen */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(58,30,92,0.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+    padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .win-card{
+    background:var(--cream);
+    border-radius:26px;
+    padding:34px 28px;
+    text-align:center;
+    max-width:360px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.35);
+    animation:popin 0.5s cubic-bezier(.68,-0.4,.27,1.4);
+  }
+  @keyframes popin{
+    0%{transform:scale(0.6); opacity:0;}
+    100%{transform:scale(1); opacity:1;}
+  }
+  .win-card .big-emoji{font-size:56px; margin-bottom:6px;}
+  .win-card h2{margin:6px 0; color:var(--purple); font-size:24px;}
+  .win-card p{color:#5C3D8F; font-weight:600; margin:4px 0 20px;}
+  .stars{font-size:30px; letter-spacing:6px; margin-bottom:10px;}
+
+  .confetti{
+    position:fixed;
+    top:-20px;
+    font-size:20px;
+    z-index:20;
+    pointer-events:none;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{transform:translateY(110vh) rotate(360deg); opacity:0.2;}
+  }
+</style>
+<style id="platform-local-font">
+@font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+</style>
+</head>
+<body>
+<script src="../assets/js/google-sync.js"></script>
+<script src="../assets/js/google-sync.js"></script>
+<script>
+//INTEGRATION: Ø§ØªØµØ§Ù„ Ø¨Ø§Ø²ÛŒ 24 Ø¨Ù‡ Ù†Ø´Ø³Øª Ø¯Ø§Ù†Ø´â€ŒØ¢Ù…ÙˆØ²ØŒ Ù†ÙˆØ¨Øª Ù…Ø¬Ø§Ø² Ùˆ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ù¾Ù„ØªÙØ±Ù….
+const GAME_ID = 24;
+const platformStudent = getCurrentStudent();
+const platformStartedAt = Date.now();
+let platformSaved = false;
+
+(async function initializeGamePlatform() {
+    if (!platformStudent) {
+        window.location.href = '../index.html';
+        return;
+    }
+    document.documentElement.style.visibility = 'hidden';
+    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
+    if (!attemptCheck.success) {
+        document.documentElement.style.visibility = 'visible';
+        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'Ø§Ù…Ú©Ø§Ù† Ø´Ø±Ú©Øª Ø¯Ø± Ø§ÛŒÙ† Ø¨Ø§Ø²ÛŒ ÙˆØ¬ÙˆØ¯ Ù†Ø¯Ø§Ø±Ø¯.') + '</h2></main>';
+        return;
+    }
+    const settings = await syncGetGameSettings(GAME_ID);
+    const timerSeconds = settings.timerSeconds || 180;
+    window.timerSeconds = timerSeconds;
+    window.platformStudent = platformStudent;
+    document.documentElement.style.visibility = 'visible';
+    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(function (element) {
+        if (!element.matches('input,textarea')) element.textContent = platformStudent.fullName;
+    });
+})();
+
+//INTEGRATION: Ù†Ù…Ø§ÛŒØ´ Ø«Ø§Ø¨Øª Ø¢Ù…ÙˆØ²Ú¯Ø§Ø± Ùˆ ÙÙˆØªØ± Ù¾Ù„ØªÙØ±Ù….
+window.addEventListener('DOMContentLoaded', function () {
+    if (!document.querySelector('.platform-teacher')) {
+        const teacher = document.createElement('div');
+        teacher.className = 'platform-teacher';
+        teacher.textContent = 'Ø¢Ù…ÙˆØ²Ú¯Ø§Ø±: Ø®Ø§Ù†Ù… Ø¯Ù‡Ú¯ÙˆØ¯ÛŒ';
+        teacher.style.cssText = 'text-align:center;font-weight:700;margin:8px auto;';
+        const heading = document.querySelector('h1,h2,.title,.game-title') || document.body.firstElementChild;
+        if (heading && heading.parentNode) heading.parentNode.insertBefore(teacher, heading.nextSibling);
+    }
+    if (!document.querySelector('.platform-footer')) {
+        const footer = document.createElement('footer');
+        footer.className = 'platform-footer';
+        footer.textContent = 'Ø·Ø±Ø§Ø­ÛŒ Ùˆ Ù¾ÛŒØ§Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ: Ø³Ø¹ÛŒØ¯ Ø³Ø±Ø§ÙˆØ§Ù†ÛŒ';
+        footer.style.cssText = 'text-align:center;font-weight:700;padding:16px;';
+        document.body.appendChild(footer);
+    }
+});
+
+//INTEGRATION: Ø«Ø¨Øª Ù†ØªÛŒØ¬Ù‡ ÙÙ‚Ø· Ø¨Ø§ ØªØ¹Ø¯Ø§Ø¯ Ù¾Ø§Ø³Ø® Ø¯Ø±Ø³Øª Ùˆ ØºÙ„Ø·.
+function platformNumber(selectors) {
+    for (const selector of selectors) {
+        const element = document.querySelector(selector);
+        if (element && /^\s*[0-9Û°-Û¹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9Û°-Û¹]/g, '');
+    }
+    return null;
+}
+async function platformSaveResult() {
+    if (platformSaved || !window.platformStudent) return;
+    const correctText = platformNumber(['#correctCount','#correctFinal','#finalCorrect','#end-correct','#rCorrect','#correct-score','#correctScore']);
+    const wrongText = platformNumber(['#wrongCount','#wrongFinal','#finalWrong','#end-wrong','#rWrong','#wrong-score','#wrongScore']);
+    if (correctText === null || wrongText === null) return;
+    platformSaved = true;
+    const toNumber = value => Number(String(value).replace(/[Û°-Û¹]/g, digit => 'Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹'.indexOf(digit)));
+    const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
+    await syncSaveResult(platformStudent.studentCode, GAME_ID, toNumber(correctText), toNumber(wrongText), durationSeconds);
+}
+new MutationObserver(platformSaveResult).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+</script>
+
+<div class="tent"></div>
+
+<div class="balloon" style="width:70px;height:84px;background:var(--red);top:14%;left:6%;animation-delay:0s;"></div>
+<div class="balloon" style="width:50px;height:62px;background:var(--gold);top:60%;left:4%;animation-delay:1.5s;"></div>
+<div class="balloon" style="width:60px;height:74px;background:var(--teal);top:18%;right:6%;animation-delay:0.8s;"></div>
+<div class="balloon" style="width:46px;height:58px;background:var(--purple);top:65%;right:8%;animation-delay:2.3s;"></div>
+
+<header>
+  <div class="eyebrow">فارسی پایه دوم دبستان 🎪</div>
+  <h1>شهربازی کلمات متضاد</h1>
+  <div class="subtitle">کلمه رو بخون و مخالفش رو از بین گزینه‌ها پیدا کن! 🎈</div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">سؤال ۱ از ۸</div>
+</div>
+
+<div class="stats">
+  <div class="stat-pill">✅ درست: <span class="num" id="correctVal">۰</span></div>
+  <div class="stat-pill">❌ غلط: <span class="num" id="wrongVal">۰</span></div>
+  <div class="stat-pill">⏱ زمان: <span class="num" id="timerVal">۰:۰۰</span></div>
+  <div class="stat-pill">🔥 پشت‌سرهم: <span class="num" id="streakVal">۰</span></div>
+</div>
+
+<div class="quiz-card">
+  <div class="label">مخالف این کلمه چیه؟</div>
+  <div class="word-display" id="wordDisplay">بزرگ</div>
+  <div class="options" id="optionsWrap"></div>
+  <div class="feedback" id="feedback">&nbsp;</div>
+</div>
+
+<div class="controls">
+  <button class="action" id="restartBtn">🔁 شروع دوباره</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="win-card">
+    <div class="big-emoji">🎉</div>
+    <h2>آفرین قهرمان کلمات!</h2>
+    <div class="stars" id="starsDisplay">⭐⭐⭐</div>
+    <p id="winSummary">همه‌ی سؤال‌ها رو جواب دادی!</p>
+    <button class="action" id="playAgainBtn" style="background:var(--magenta); color:#fff; box-shadow:0 5px 0 #9C1E5B;">🎪 دوباره بازی کن</button>
+  </div>
+</div>
+
+<script>
+  const pool = [
+    ["بزرگ", "کوچک"],
+    ["روشن", "تاریک"],
+    ["تند", "کند"],
+    ["بالا", "پایین"],
+    ["گرم", "سرد"],
+    ["شاد", "غمگین"],
+    ["زشت", "زیبا"],
+    ["باز", "بسته"],
+    ["پر", "خالی"],
+    ["جلو", "عقب"],
+  ];
+
+  const toPersianDigits = (n) => n.toString().replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+
+  let questions = [];
+  let currentIndex = 0;
+  let correctCount = 0;
+  let wrongCount = 0;
+  let streak = 0;
+  let locked = false;
+  let timerInterval = null;
+  let timeLeft = 0;
+  let resultSaved = false;
+
+  const wordDisplay = document.getElementById('wordDisplay');
+  const optionsWrap = document.getElementById('optionsWrap');
+  const feedback = document.getElementById('feedback');
+  const correctVal = document.getElementById('correctVal');
+  const wrongVal = document.getElementById('wrongVal');
+  const timerVal = document.getElementById('timerVal');
+  const streakVal = document.getElementById('streakVal');
+  const progressFill = document.getElementById('progressFill');
+  const progressLabel = document.getElementById('progressLabel');
+  const overlay = document.getElementById('overlay');
+  const starsDisplay = document.getElementById('starsDisplay');
+  const winSummary = document.getElementById('winSummary');
+
+  function shuffle(arr){
+    const a = [...arr];
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function buildQuestions(){
+    const shuffledPool = shuffle(pool);
+    return shuffledPool.map(([word, answer], idx) => {
+      // gather distractors: other words' answers (or words) not equal to correct answer
+      let distractorSource = [];
+      shuffledPool.forEach(([w, a], i2) => {
+        if(i2 !== idx){
+          distractorSource.push(a);
+          distractorSource.push(w);
+        }
+      });
+      distractorSource = distractorSource.filter(x => x !== word && x !== answer);
+      const distractors = shuffle([...new Set(distractorSource)]).slice(0,3);
+      const options = shuffle([answer, ...distractors]);
+      return { word, answer, options };
+    });
+  }
+
+  // ---- clap sound synthesis (Web Audio API, no external files) ----
+  let audioCtx = null;
+  function getCtx(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+  }
+  function playClap(){
+    const ctx = getCtx();
+    const now = ctx.currentTime;
+    const clapTimes = [0, 0.09, 0.16, 0.24, 0.34];
+    clapTimes.forEach((t, i) => {
+      const bufferSize = ctx.sampleRate * 0.09;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let j=0;j<bufferSize;j++){
+        data[j] = (Math.random()*2-1) * Math.pow(1 - j/bufferSize, 2);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = "bandpass";
+      bandpass.frequency.value = 1500 + Math.random()*800;
+      bandpass.Q.value = 0.8;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.9 - i*0.08, now + t);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.09);
+      noise.connect(bandpass).connect(gain).connect(ctx.destination);
+      noise.start(now + t);
+      noise.stop(now + t + 0.1);
+    });
+  }
+
+  function renderQuestion(){
+    locked = false;
+    feedback.innerHTML = "&nbsp;";
+    const q = questions[currentIndex];
+    wordDisplay.textContent = q.word;
+    optionsWrap.innerHTML = "";
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => onAnswer(btn, opt, q.answer));
+      optionsWrap.appendChild(btn);
+    });
+    progressFill.style.width = ((currentIndex)/questions.length*100) + "%";
+    progressLabel.textContent = `سؤال ${toPersianDigits(currentIndex+1)} از ${toPersianDigits(questions.length)}`;
+  }
+
+  function onAnswer(btn, chosen, correctAnswer){
+    if(locked) return;
+    locked = true;
+    const allBtns = optionsWrap.querySelectorAll('.opt-btn');
+    allBtns.forEach(b => b.disabled = true);
+
+    if(chosen === correctAnswer){
+      btn.classList.add('correct');
+      correctCount++;
+      streak += 1;
+      correctVal.textContent = toPersianDigits(correctCount);
+      streakVal.textContent = toPersianDigits(streak);
+      feedback.textContent = "درسته! آفرین 👏";
+      feedback.style.color = "#2FAE5E";
+      playClap();
+    } else {
+      btn.classList.add('wrong');
+      wrongCount++;
+      wrongVal.textContent = toPersianDigits(wrongCount);
+      streak = 0;
+      streakVal.textContent = "۰";
+      feedback.textContent = `جواب درست «${correctAnswer}» بود، اشکالی نداره!`;
+      feedback.style.color = "var(--magenta)";
+      allBtns.forEach(b => {
+        if(b.textContent === correctAnswer) b.classList.add('correct');
+      });
+    }
+
+    setTimeout(() => {
+      currentIndex++;
+      if(currentIndex >= questions.length){
+        finishGame();
+      } else {
+        renderQuestion();
+      }
+    }, 1100);
+  }
+
+  function finishGame(){
+    if(resultSaved) return;
+    resultSaved = true;
+    clearInterval(timerInterval);
+    progressFill.style.width = "100%";
+    progressLabel.textContent = `سؤال ${toPersianDigits(questions.length)} از ${toPersianDigits(questions.length)}`;
+    winSummary.textContent = `پاسخ درست: ${toPersianDigits(correctCount)} | پاسخ غلط: ${toPersianDigits(wrongCount)}`;
+    syncSaveResult(student.studentCode, GAME_ID, correctCount, wrongCount, Math.round((Date.now() - startedAt) / 1000));
+    setTimeout(() => {
+      overlay.classList.add('show');
+      launchConfetti();
+    }, 300);
+  }
+
+  function launchConfetti(){
+    const emojis = ["🎉","🎈","🎊","🌟","🎪","🥳"];
+    for(let i=0;i<40;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left = Math.random()*100 + "vw";
+      el.style.animationDuration = (2.5 + Math.random()*2) + "s";
+      el.style.fontSize = (16 + Math.random()*14) + "px";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }
+  }
+
+  function newGame(){
+    clearInterval(timerInterval);
+    questions = buildQuestions();
+    currentIndex = 0;
+    correctCount = 0;
+    wrongCount = 0;
+    streak = 0;
+    resultSaved = false;
+    correctVal.textContent = "۰";
+    wrongVal.textContent = "۰";
+    streakVal.textContent = "۰";
+    overlay.classList.remove('show');
+    renderQuestion();
+    startTimer();
+  }
+
+  function startTimer(){
+    timeLeft = window.timerSeconds || 180;
+    updateTimer();
+    timerInterval = setInterval(() => { timeLeft--; updateTimer(); if(timeLeft <= 0) finishGame(); }, 1000);
+  }
+
+  function updateTimer(){
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = String(timeLeft % 60).padStart(2, '0');
+    timerVal.textContent = `${toPersianDigits(minutes)}:${toPersianDigits(seconds)}`;
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', newGame);
+  document.getElementById('playAgainBtn').addEventListener('click', newGame);
+
+  newGame();
+</script>
+
+</body>
+</html>
+

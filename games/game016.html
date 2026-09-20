@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بازی تطبیق ضمایر</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+
+body{
+  margin:0;
+  font-family:Tahoma, Arial, sans-serif;
+  background:#1e1742;
+}
+
+#app{
+  min-height:100vh;
+  padding:14px;
+  position:relative;
+  overflow:hidden;
+  background-image:
+    linear-gradient(rgba(24, 18, 56, 0.35), rgba(24, 18, 56, 0.65)),
+    url("../assets/img/game016-background.png");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+
+.container{
+  width:100%;
+  max-width:760px;
+  margin:auto;
+  position:relative;
+  z-index:5;
+}
+
+/* ================= صفحه شروع ================= */
+
+#start{
+  min-height:90vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.start-card{
+  width:min(94%, 480px);
+  padding:32px 24px;
+  text-align:center;
+  background:#fff;
+  border-radius:30px;
+  border-bottom:7px solid #c7b9e5;
+  box-shadow:0 18px 40px rgba(0,0,0,0.3);
+}
+
+.start-image{
+  width:95px;
+  height:95px;
+  margin:auto;
+  border-radius:26px;
+  background:linear-gradient(135deg, #ffd3b6, #ffaaa5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:42px;
+  box-shadow:inset 0 4px 6px rgba(255,255,255,0.8), 0 6px 0 #e28a84;
+  animation:float 2s infinite ease-in-out;
+}
+
+@keyframes float{
+  50%{ transform:translateY(-6px) rotate(3deg); }
+}
+
+.start-card h1{
+  margin:16px 0 8px;
+  color:#433364;
+  font-size:28px;
+}
+
+.pronouns{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:14px auto 20px;
+}
+
+.pronouns span{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  color:#4a3b68;
+  background:#f0ebfa;
+  font-weight:bold;
+  font-size:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:3px solid #d4c6ee;
+}
+
+.name-label{
+  display:block;
+  color:#675880;
+  margin-bottom:8px;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.name{
+  width:100%;
+  padding:14px;
+  border:3px solid #d9cded;
+  border-radius:18px;
+  background:#faf8ff;
+  text-align:center;
+  font-size:17px;
+  outline:none;
+}
+
+.start-btn{
+  margin-top:18px;
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:20px;
+  color:#fff;
+  font-size:20px;
+  font-weight:bold;
+  background:linear-gradient(145deg, #ff8eb4, #8b6ee3);
+  box-shadow:0 6px 0 #5740a1, 0 12px 20px rgba(0,0,0,.25);
+  cursor:pointer;
+  transition:transform .1s, box-shadow .1s;
+}
+
+.start-btn:active{
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #5740a1;
+}
+
+/* ================= صفحه بازی ================= */
+
+#play{
+  display:none;
+  padding:6px 0 30px;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.badge{
+  padding:8px 14px;
+  border-radius:16px;
+  background:#ffffff;
+  color:#45326b;
+  font-weight:bold;
+  font-size:13px;
+  border-bottom:3px solid #c9bde2;
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+
+.question{
+  background:#ffffff;
+  border-radius:20px;
+  padding:12px 18px;
+  text-align:center;
+  border-bottom:5px solid #cfc2e8;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+.question h2{
+  color:#433068;
+  margin:0;
+  font-size:18px;
+}
+
+.question p{
+  color:#6c5c87;
+  margin:4px 0 0;
+  font-size:13px;
+}
+
+/* ================= گرید کارت‌ها ================= */
+
+.cards{
+  display:grid;
+  /* ستون ضمایر باریک‌تر (دایره‌ای) و ستون جملات کشیده‌تر */
+  grid-template-columns:90px 1fr;
+  gap:12px 20px;
+  margin-top:18px;
+  align-items:center;
+}
+
+.card{
+  border:none;
+  font-family:inherit;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:900;
+  position:relative;
+  transition:transform .12s ease, box-shadow .12s ease, filter .2s;
+}
+
+/* کارت‌های ضمیر (دایره‌های کوچک سه‌بعدی) */
+.card[data-type="pronoun"]{
+  grid-column:1;
+  width:64px;
+  height:64px;
+  margin:auto;
+  border-radius:50%;
+  font-size:20px;
+  color:#3b2d54;
+  padding:0;
+}
+
+.card[data-color="p1"]{
+  background:linear-gradient(180deg, #ffc8dd 0%, #ffafcc 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.8), 0 6px 0 #d9829f, 0 10px 15px rgba(0,0,0,0.18);
+}
+.card[data-color="p2"]{
+  background:linear-gradient(180deg, #ffe5ec 0%, #ffc2d1 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.8), 0 6px 0 #d891a2, 0 10px 15px rgba(0,0,0,0.18);
+}
+.card[data-color="p3"]{
+  background:linear-gradient(180deg, #e8dff5 0%, #ceb9ea 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.8), 0 6px 0 #a98ecb, 0 10px 15px rgba(0,0,0,0.18);
+}
+.card[data-color="p4"]{
+  background:linear-gradient(180deg, #fcf6bd 0%, #f7e179 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.8), 0 6px 0 #ccb648, 0 10px 15px rgba(0,0,0,0.18);
+}
+.card[data-color="p5"]{
+  background:linear-gradient(180deg, #d0f4de 0%, #a9e8c2 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.8), 0 6px 0 #7ec79b, 0 10px 15px rgba(0,0,0,0.18);
+}
+.card[data-color="p6"]{
+  background:linear-gradient(180deg, #c5ebfe 0%, #90dbf4 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.8), 0 6px 0 #68b4d0, 0 10px 15px rgba(0,0,0,0.18);
+}
+
+/* کارت‌های جمله (کپسولی سه‌بعدی و جمع‌وجور) */
+.card[data-type="sentence"]{
+  grid-column:2;
+  width:100%;
+  min-height:56px;
+  border-radius:20px;
+  font-size:16px;
+  line-height:1.5;
+  color:#312649;
+  padding:10px 18px;
+}
+
+.card[data-color="s1"]{
+  background:linear-gradient(180deg, #b9fbc0 0%, #98f5a6 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.7), 0 6px 0 #6bd07b, 0 10px 15px rgba(0,0,0,0.15);
+}
+.card[data-color="s2"]{
+  background:linear-gradient(180deg, #c8e7ff 0%, #a0c4ff 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.7), 0 6px 0 #749be0, 0 10px 15px rgba(0,0,0,0.15);
+}
+.card[data-color="s3"]{
+  background:linear-gradient(180deg, #ffd6a5 0%, #ffbe76 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.7), 0 6px 0 #d99346, 0 10px 15px rgba(0,0,0,0.15);
+}
+.card[data-color="s4"]{
+  background:linear-gradient(180deg, #ffd1dc 0%, #ffafbe 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.7), 0 6px 0 #da7d90, 0 10px 15px rgba(0,0,0,0.15);
+}
+.card[data-color="s5"]{
+  background:linear-gradient(180deg, #e7c6ff 0%, #c895fa 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.7), 0 6px 0 #9f66d8, 0 10px 15px rgba(0,0,0,0.15);
+}
+.card[data-color="s6"]{
+  background:linear-gradient(180deg, #d8bbff 0%, #b388eb 100%);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,0.7), 0 6px 0 #8b5cc9, 0 10px 15px rgba(0,0,0,0.15);
+}
+
+/* وضعیت فشرده شدن و انتخاب */
+.card:active{
+  transform:translateY(4px);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,0.4), 0 2px 0 rgba(0,0,0,0.2) !important;
+}
+
+.card.selected{
+  transform:scale(1.08);
+  outline:3px solid #ffffff;
+  filter:brightness(1.08);
+}
+
+.card.matched{
+  opacity:0.2;
+  transform:scale(0.88);
+  pointer-events:none;
+  box-shadow:none !important;
+}
+
+.card.wrong{
+  animation:shake .45s;
+}
+
+@keyframes shake{
+  0%,100%{ transform:translateX(0); }
+  25%{ transform:translateX(-8px); }
+  50%{ transform:translateX(8px); }
+  75%{ transform:translateX(-5px); }
+}
+
+/* ================= انیمیشن و پیام ================= */
+
+.message{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) scale(.5);
+  opacity:0;
+  z-index:1000;
+  padding:18px 24px;
+  border-radius:22px;
+  background:#ffffff;
+  color:#47346d;
+  font-size:18px;
+  font-weight:bold;
+  text-align:center;
+  border-bottom:5px solid #b7a4db;
+  box-shadow:0 12px 35px rgba(0,0,0,.35);
+  transition:.25s;
+  pointer-events:none;
+}
+
+.message.show{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+}
+
+.explosion{
+  position:fixed;
+  left:50%;
+  top:50%;
+  font-size:90px;
+  display:none;
+  z-index:1100;
+  pointer-events:none;
+}
+
+.explosion.show{
+  display:block;
+  animation:explode .8s ease;
+}
+
+@keyframes explode{
+  0%{ opacity:0; transform:translate(-50%,-50%) scale(.1); }
+  30%{ opacity:1; transform:translate(-50%,-50%) scale(1.3) rotate(-10deg); }
+  70%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  100%{ opacity:0; transform:translate(-50%,-50%) scale(1.7); }
+}
+
+.spark{
+  position:fixed;
+  z-index:1200;
+  font-size:28px;
+  pointer-events:none;
+  animation:spark .9s forwards;
+}
+
+@keyframes spark{
+  0%{ opacity:1; transform:translate(0,0) scale(.2); }
+  100%{ opacity:0; transform:translate(var(--x),var(--y)) scale(1.4) rotate(360deg); }
+}
+
+/* ================= پایان ================= */
+
+.finish{
+  display:none;
+  margin-top:20px;
+  background:#ffffff;
+  border-radius:24px;
+  padding:24px;
+  text-align:center;
+  border-bottom:6px solid #c3b2e5;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+
+.finish-icon{ font-size:50px; }
+.finish h2{ color:#47336d; margin:8px 0; font-size:22px; }
+.finish p{ color:#6c5a89; font-size:16px; margin:4px 0; }
+
+/* ================= موبایل ================= */
+
+@media(max-width:650px){
+  #app{ padding:8px; }
+  .cards{ grid-template-columns:65px 1fr; gap:10px 12px; margin-top:14px; }
+  .card[data-type="pronoun"]{ width:54px; height:54px; font-size:17px; }
+  .card[data-type="sentence"]{ min-height:50px; font-size:13px; padding:8px 12px; border-radius:16px; }
+  .question h2{ font-size:16px; }
+  .question p{ font-size:12px; }
+  .badge{ font-size:11px; padding:6px 10px; }
+}
+</style>
+</head>
+
+<body>
+<script src="../assets/js/google-sync.js"></script>
+<script>
+//INTEGRATION: اتصال بازی 16 به پلتفرم مدرسه.
+const GAME_ID = 16;
+const student = getCurrentStudent();
+const startedAt = Date.now();
+(async function(){
+  if(!student){window.location.href='../index.html';return;}
+  document.documentElement.style.visibility='hidden';
+  const attemptCheck=await syncCheckAttempts(student.studentCode,GAME_ID);
+  if(!attemptCheck.success){document.documentElement.style.visibility='visible';document.body.innerHTML='<h2 style="text-align:center;padding:20vh 10px">'+(attemptCheck.error||'امکان شرکت در این بازی وجود ندارد.')+'</h2>';return;}
+  const settings=await syncGetGameSettings(GAME_ID); const timerSeconds=settings.timerSeconds||180; window.timerSeconds=timerSeconds; window.platformStudent=student; document.documentElement.style.visibility='visible';
+})();
+window.addEventListener('DOMContentLoaded',()=>{const t=document.createElement('div');t.textContent='آموزگار: خانم دهگودی';t.style='text-align:center;font-weight:700;padding:8px';document.body.prepend(t);const f=document.createElement('footer');f.textContent='طراحی و پیاده‌سازی: سعید سراوانی';f.style='text-align:center;font-weight:700;padding:16px';document.body.append(f);});
+</script>
+
+<div id="app">
+  <div class="container">
+
+    <!-- بخش شروع -->
+    <section id="start">
+      <div class="start-card">
+        <div class="start-image">✨</div>
+        <h1>آماده‌ای؟</h1>
+        <div class="pronouns">
+          <span>من</span><span>تو</span><span>او</span><span>ما</span><span>شما</span><span>آن‌ها</span>
+        </div>
+        <button id="startBtn" class="start-btn" type="button">🎮 شروع بازی</button>
+      </div>
+    </section>
+
+    <!-- بخش بازی -->
+    <section id="play">
+      <div class="top">
+        <div class="badge">👋 <span id="childName"></span></div>
+        <div class="badge">⏱ زمان: <span id="timer">۰:۰۰</span></div>
+        <div class="badge">❌ غلط: <span id="wrongCount">۰</span></div>
+        <div class="badge">🎯 <span id="matched">0</span>/6</div>
+      </div>
+
+      <div class="question">
+        <h2>دو کارت مرتبط را پیدا کن! 🧠</h2>
+        <p>هر دایره ضمیر را با کادر جمله‌ی مناسب انتخاب کن.</p>
+      </div>
+
+      <div id="cards" class="cards"></div>
+
+      <!-- پایان -->
+      <div id="finish" class="finish">
+        <div class="finish-icon">🏆🎉</div>
+        <h2>آفرین قهرمان!</h2>
+        <p>تمام جفت‌ها را درست پیدا کردی.</p>
+        <p>پاسخ درست: <strong id="finalCorrect">۰</strong></p>
+        <p>پاسخ غلط: <strong id="finalWrong">۰</strong></p>
+        <button id="restartBtn" class="start-btn" style="max-width:220px; margin:16px auto 0;" type="button">🔄 بازی مجدد</button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div id="message" class="message"></div>
+<div id="explosion" class="explosion">💥</div>
+
+<script>
+const pairs = [
+  { id: 1, pronoun: "من", sentence: "گل زیبا آوردم." },
+  { id: 2, pronoun: "تو", sentence: "با مداد رنگی نقاشی کشیدی." },
+  { id: 3, pronoun: "او", sentence: "برای مادرش یک گل زیبا آورد." },
+  { id: 4, pronoun: "ما", sentence: "با شادی در حیاط بازی کردیم." },
+  { id: 5, pronoun: "شما", sentence: "با پروانه‌ها بازی کردید." },
+  { id: 6, pronoun: "آن‌ها", sentence: "در باغ با پروانه‌ها بازی کردند." }
+];
+
+const pronounColors = ["p1", "p2", "p3", "p4", "p5", "p6"];
+const sentenceColors = ["s1", "s2", "s3", "s4", "s5", "s6"];
+
+let firstCard = null;
+let secondCard = null;
+let locked = false;
+let matched = 0;
+let wrongCount = 0;
+let timerInterval = null;
+let timeLeft = 0;
+let resultSaved = false;
+let audioCtx = null;
+
+const start = document.getElementById("start");
+const play = document.getElementById("play");
+const startBtn = document.getElementById("startBtn");
+const restartBtn = document.getElementById("restartBtn");
+const childName = document.getElementById("childName");
+const cards = document.getElementById("cards");
+const matchedText = document.getElementById("matched");
+const wrongText = document.getElementById("wrongCount");
+const timerText = document.getElementById("timer");
+const finish = document.getElementById("finish");
+const finalCorrect = document.getElementById("finalCorrect");
+const finalWrong = document.getElementById("finalWrong");
+const message = document.getElementById("message");
+const explosion = document.getElementById("explosion");
+
+startBtn.addEventListener("click", function(){
+  initAudio();
+  childName.textContent = student.fullName;
+  start.style.display = "none";
+  play.style.display = "block";
+  createCards();
+  startTimer();
+});
+
+restartBtn.addEventListener("click", () => createCards());
+
+function initAudio(){
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch(e) {}
+}
+
+function createCards(){
+  cards.innerHTML = "";
+  firstCard = null;
+  secondCard = null;
+  locked = false;
+  matched = 0;
+  wrongCount = 0;
+  resultSaved = false;
+
+  matchedText.textContent = "0";
+  wrongText.textContent = "۰";
+  finish.style.display = "none";
+
+  let pList = pairs.map(p => ({ id: p.id, type: "pronoun", text: p.pronoun }));
+  let sList = pairs.map(p => ({ id: p.id, type: "sentence", text: p.sentence }));
+
+  pList.sort(() => Math.random() - .5);
+  sList.sort(() => Math.random() - .5);
+
+  for(let i = 0; i < 6; i++){
+    createCard(pList[i], 1, pronounColors[i]);
+    createCard(sList[i], 2, sentenceColors[i]);
+  }
+}
+
+function createCard(item, column, colorClass){
+  const card = document.createElement("button");
+  card.type = "button";
+  card.className = "card";
+  card.textContent = item.text;
+  card.dataset.id = item.id;
+  card.dataset.type = item.type;
+  card.dataset.color = colorClass;
+  card.style.gridColumn = column;
+
+  card.addEventListener("click", () => selectCard(card));
+  cards.appendChild(card);
+}
+
+function selectCard(card){
+  if(locked || card.classList.contains("matched") || card === firstCard) return;
+
+  if(!firstCard){
+    firstCard = card;
+    card.classList.add("selected");
+    return;
+  }
+
+  secondCard = card;
+  card.classList.add("selected");
+  locked = true;
+
+  setTimeout(checkPair, 350);
+}
+
+function checkPair(){
+  const sameId = firstCard.dataset.id === secondCard.dataset.id;
+  const differentType = firstCard.dataset.type !== secondCard.dataset.type;
+
+  if(sameId && differentType){
+    firstCard.classList.remove("selected");
+    secondCard.classList.remove("selected");
+    firstCard.classList.add("matched");
+    secondCard.classList.add("matched");
+
+    matched++;
+    matchedText.textContent = matched;
+
+    fireworks();
+    showMessage("🎉 آفرین! درست پیدا کردی!");
+
+    if(matched === pairs.length){
+      setTimeout(finishGame, 1000);
+    } else {
+      reset();
+    }
+  } else {
+    firstCard.classList.add("wrong");
+    secondCard.classList.add("wrong");
+    showExplosion();
+    playBeep();
+    wrongCount++;
+    wrongText.textContent = wrongCount.toLocaleString("fa-IR");
+    showMessage("💥 اشتباه بود!");
+
+    setTimeout(() => {
+      firstCard.classList.remove("selected", "wrong");
+      secondCard.classList.remove("selected", "wrong");
+      reset();
+    }, 800);
+  }
+}
+
+function reset(){
+  firstCard = null;
+  secondCard = null;
+  locked = false;
+}
+
+function finishGame(){
+  if(resultSaved) return;
+  clearInterval(timerInterval);
+  resultSaved = true;
+  finish.style.display = "block";
+  finalCorrect.textContent = matched.toLocaleString("fa-IR");
+  finalWrong.textContent = wrongCount.toLocaleString("fa-IR");
+  fireworks();
+  showMessage("🏆 آفرین به شما!");
+  syncSaveResult(
+    student.studentCode,
+    GAME_ID,
+    matched,
+    wrongCount,
+    Math.round((Date.now() - startedAt) / 1000)
+  );
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timeLeft = window.timerSeconds || 180;
+  updateTimer();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+    if(timeLeft <= 0) finishGame();
+  }, 1000);
+}
+
+function updateTimer(){
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = String(timeLeft % 60).padStart(2, "0");
+  timerText.textContent = `${minutes}:${seconds}`;
+}
+
+function showMessage(text){
+  message.textContent = text;
+  message.classList.add("show");
+  clearTimeout(window.msgTimer);
+  window.msgTimer = setTimeout(() => message.classList.remove("show"), 1100);
+}
+
+function showExplosion(){
+  explosion.classList.remove("show");
+  void explosion.offsetWidth;
+  explosion.classList.add("show");
+  setTimeout(() => explosion.classList.remove("show"), 850);
+}
+
+function fireworks(){
+  const icons = ["✨", "⭐", "🌸", "🎉", "💖", "💫"];
+  for(let i = 0; i < 20; i++){
+    const s = document.createElement("div");
+    s.className = "spark";
+    s.textContent = icons[Math.floor(Math.random() * icons.length)];
+    s.style.left = "50%";
+    s.style.top = "45%";
+    s.style.setProperty("--x", (Math.random() * 450 - 225) + "px");
+    s.style.setProperty("--y", (Math.random() * 450 - 225) + "px");
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1000);
+  }
+}
+
+function playBeep(){
+  try{
+    if(!audioCtx) initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "square";
+    osc.frequency.value = 170;
+    gain.gain.value = 0.12;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.25);
+  } catch(e){}
+}
+</script>
+
+</body>
+</html>

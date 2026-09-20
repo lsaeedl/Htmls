@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>بازی جادویی «ای»</title>
+
+<style>
+@font-face{
+    font-family:'Vazirmatn';
+    src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');
+    font-weight:500 900;
+    font-style:normal;
+    font-display:swap;
+}
+
+:root{
+    --purple:#8e4fc7;
+    --pink:#ff67b7;
+    --dark:#43234f;
+}
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    font-family:'Vazirmatn',Tahoma,sans-serif;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    overflow-x:hidden;
+    background:#f5dff1;
+}
+
+.game{
+    position:relative;
+    width:100%;
+    min-height:100vh;
+    padding:18px;
+
+    background-image:url("../assets/img/game04-background.jpeg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+.container{
+    position:relative;
+    z-index:2;
+    width:min(100%,1050px);
+    margin:auto;
+}
+
+.screen{
+    display:none;
+    min-height:calc(100vh - 36px);
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.screen.active{
+    display:flex;
+}
+
+/* =========================
+   صفحه شروع
+========================= */
+
+.start-card{
+    width:min(94%,650px);
+    padding:34px 25px;
+    text-align:center;
+
+    background:rgba(255,255,255,.9);
+    border:4px solid white;
+    border-radius:38px;
+
+    box-shadow:
+        0 22px 50px rgba(65,30,90,.25),
+        0 8px 0 rgba(130,70,160,.22),
+        inset 0 4px 14px rgba(255,255,255,.95);
+
+    backdrop-filter:blur(4px);
+}
+
+.logo{
+    width:105px;
+    height:105px;
+    margin:0 auto 15px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+    border:4px solid white;
+
+    background:linear-gradient(
+        145deg,
+        #fff,
+        #ffd8eb,
+        #d9c4ff
+    );
+
+    font-size:64px;
+
+    box-shadow:
+        0 12px 25px rgba(80,40,110,.22),
+        0 0 30px rgba(255,105,190,.3);
+
+    animation:logoFloat 2.5s ease-in-out infinite;
+}
+
+@keyframes logoFloat{
+    0%,100%{
+        transform:translateY(0) rotate(-2deg);
+    }
+    50%{
+        transform:translateY(-9px) rotate(2deg);
+    }
+}
+
+h1{
+    margin:8px 0 15px;
+    color:#70236f;
+    font-size:clamp(26px,5vw,40px);
+    font-weight:900;
+}
+
+.start-text{
+    color:#51385d;
+    font-size:18px;
+    font-weight:800;
+    line-height:2;
+    margin:0 0 20px;
+}
+
+.name-input{
+    width:min(100%,390px);
+    height:58px;
+    display:block;
+    margin:0 auto 17px;
+
+    border:4px solid #bd71d8;
+    border-radius:22px;
+
+    background:white;
+    color:#38233e;
+
+    text-align:center;
+    font-family:inherit;
+    font-size:19px;
+    font-weight:900;
+    outline:none;
+
+    box-shadow:
+        0 6px 0 rgba(120,55,145,.2);
+}
+
+.name-input:focus{
+    border-color:#ff6dbd;
+}
+
+.main-btn{
+    border:0;
+    padding:15px 35px;
+    border-radius:23px;
+
+    color:white;
+    background:linear-gradient(
+        135deg,
+        #ff69b9,
+        #9b58e8
+    );
+
+    font-family:inherit;
+    font-size:19px;
+    font-weight:900;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 0 #7137a8,
+        0 15px 25px rgba(110,55,150,.3);
+}
+
+.main-btn:active{
+    transform:translateY(5px);
+    box-shadow:0 3px 0 #7137a8;
+}
+
+/* =========================
+   HUD
+========================= */
+
+.hud{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:14px;
+}
+
+.badge{
+    padding:9px 15px;
+    border-radius:19px;
+
+    background:rgba(255,255,255,.94);
+    border:3px solid white;
+
+    color:#4b2d56;
+    font-size:14px;
+    font-weight:900;
+
+    box-shadow:
+        0 5px 0 rgba(90,45,110,.18);
+}
+
+.badge strong{
+    color:#a32b78;
+    font-size:16px;
+}
+
+/* =========================
+   عنوان
+========================= */
+
+.question{
+    width:min(100%,900px);
+    margin:0 auto 17px;
+    padding:14px 18px;
+
+    text-align:center;
+
+    color:#54225e;
+
+    background:rgba(255,255,255,.92);
+    border:3px solid white;
+    border-radius:25px;
+
+    font-size:clamp(20px,4vw,29px);
+    font-weight:900;
+    line-height:1.7;
+
+    box-shadow:
+        0 7px 0 rgba(90,45,120,.17),
+        0 10px 25px rgba(70,35,90,.15);
+}
+
+/* =========================
+   پنل بازی
+========================= */
+
+.game-panel{
+    width:100%;
+    padding:20px;
+
+    background:rgba(255,255,255,.3);
+
+    border:3px solid rgba(255,255,255,.7);
+    border-radius:35px;
+
+    box-shadow:
+        0 18px 40px rgba(70,35,90,.14);
+
+    backdrop-filter:blur(1px);
+}
+
+.instruction{
+    text-align:center;
+
+    color:#4f3158;
+
+    font-size:17px;
+    font-weight:900;
+
+    background:rgba(255,255,255,.91);
+
+    border:2px solid white;
+    border-radius:19px;
+
+    padding:10px 15px;
+    margin-bottom:22px;
+}
+
+/* =========================
+   شبکه کفشدوزک‌ها
+========================= */
+
+.ladybug-grid{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:28px 24px;
+
+    align-items:center;
+}
+
+/* =========================
+   کفشدوزک
+========================= */
+
+.ladybug{
+    position:relative;
+
+    width:100%;
+    aspect-ratio:1 / 1;
+
+    border:0;
+    padding:0;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    display:block;
+
+    transition:
+        transform .2s ease,
+        filter .2s ease;
+}
+
+.ladybug img{
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+    display:block;
+
+    pointer-events:none;
+
+    filter:
+        drop-shadow(0 10px 8px rgba(60,20,50,.25));
+
+    transition:
+        filter .2s ease,
+        transform .2s ease;
+}
+
+/*
+   متن دقیقاً در کادر سفید موجود
+   روی تصویر کفشدوزک قرار می‌گیرد.
+*/
+
+.ladybug-word{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:58%;
+
+    color:#000;
+
+    font-size:clamp(17px,2.7vw,25px);
+    font-weight:900;
+
+    line-height:1.45;
+    text-align:center;
+
+    pointer-events:none;
+
+    text-shadow:
+        0 1px 0 rgba(255,255,255,.8);
+}
+
+/* =========================
+   لمس
+========================= */
+
+.ladybug:hover{
+    transform:translateY(-6px) scale(1.035);
+}
+
+.ladybug:active{
+    transform:scale(.96);
+}
+
+/* =========================
+   درست
+========================= */
+
+.ladybug.correct{
+    pointer-events:none;
+
+    animation:correctBug .7s ease forwards;
+}
+
+.ladybug.correct img{
+    filter:
+        drop-shadow(0 0 10px white)
+        drop-shadow(0 0 25px #55e88a);
+}
+
+@keyframes correctBug{
+
+    0%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+    35%{
+        transform:scale(1.12) rotate(5deg);
+    }
+
+    70%{
+        transform:scale(1.05) rotate(-5deg);
+    }
+
+    100%{
+        transform:scale(.08) rotate(25deg);
+        opacity:0;
+    }
+}
+
+/* =========================
+   غلط = سوختن
+========================= */
+
+.ladybug.wrong{
+    pointer-events:none;
+
+    animation:burnBug .75s ease forwards;
+}
+
+@keyframes burnBug{
+
+    0%{
+        transform:scale(1);
+        opacity:1;
+        filter:brightness(1);
+    }
+
+    20%{
+        transform:scale(1.08) rotate(-5deg);
+        filter:
+            brightness(1.7)
+            saturate(2)
+            drop-shadow(0 0 15px #ff8a00);
+    }
+
+    40%{
+        transform:scale(1.13) rotate(6deg);
+        filter:
+            brightness(2)
+            saturate(3)
+            drop-shadow(0 0 28px #ff3200);
+    }
+
+    65%{
+        transform:scale(.95) rotate(-10deg);
+        filter:
+            grayscale(1)
+            brightness(.35)
+            drop-shadow(0 0 15px red);
+    }
+
+    100%{
+        transform:scale(.06) rotate(35deg);
+        opacity:0;
+        filter:grayscale(1) brightness(.1);
+    }
+}
+
+/* =========================
+   پیام
+========================= */
+
+.game-message{
+    min-height:50px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    margin-top:15px;
+
+    color:#542d60;
+
+    font-size:18px;
+    font-weight:900;
+}
+
+/* =========================
+   نوار پیشرفت
+========================= */
+
+.progress-wrap{
+    width:min(100%,850px);
+
+    height:14px;
+
+    margin:0 auto 18px;
+
+    background:rgba(255,255,255,.72);
+
+    border:2px solid white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.progress{
+    width:0%;
+    height:100%;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+        90deg,
+        #ff6fba,
+        #a75be8,
+        #54dfff,
+        #58dc87
+    );
+
+    transition:width .45s ease;
+}
+
+/* =========================
+   پیام شناور
+========================= */
+
+.toast{
+    position:fixed;
+
+    left:50%;
+    top:50%;
+
+    transform:
+        translate(-50%,-50%)
+        scale(.7);
+
+    width:min(90%,500px);
+
+    padding:18px 22px;
+
+    z-index:2000;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    background:rgba(255,255,255,.97);
+
+    border:4px solid white;
+    border-radius:28px;
+
+    color:#51265c;
+
+    font-size:19px;
+    font-weight:900;
+
+    text-align:center;
+
+    box-shadow:
+        0 20px 40px rgba(60,25,80,.3),
+        0 7px 0 rgba(125,60,155,.2);
+
+    transition:.25s;
+}
+
+.toast.show{
+    opacity:1;
+
+    transform:
+        translate(-50%,-50%)
+        scale(1);
+}
+
+/* =========================
+   جرقه
+========================= */
+
+.spark{
+    position:fixed;
+
+    z-index:2500;
+
+    pointer-events:none;
+
+    font-size:25px;
+
+    animation:sparkFly .9s ease-out forwards;
+}
+
+@keyframes sparkFly{
+
+    0%{
+        opacity:1;
+        transform:translate(0,0) scale(.3);
+    }
+
+    100%{
+        opacity:0;
+
+        transform:
+            translate(var(--x),var(--y))
+            rotate(360deg)
+            scale(1.3);
+    }
+}
+
+/* =========================
+   آتش
+========================= */
+
+.fire{
+    position:fixed;
+
+    z-index:2500;
+
+    pointer-events:none;
+
+    font-size:30px;
+
+    animation:fireFly .8s ease-out forwards;
+}
+
+@keyframes fireFly{
+
+    0%{
+        opacity:1;
+        transform:translate(0,0) scale(.4);
+    }
+
+    100%{
+        opacity:0;
+
+        transform:
+            translate(var(--x),var(--y))
+            rotate(240deg)
+            scale(1.3);
+    }
+}
+
+/* =========================
+   کارنامه
+========================= */
+
+.report{
+    width:min(94%,680px);
+
+    padding:30px 24px;
+
+    text-align:center;
+
+    background:rgba(255,255,255,.94);
+
+    border:4px solid white;
+    border-radius:38px;
+
+    box-shadow:
+        0 22px 50px rgba(65,30,90,.25),
+        0 8px 0 rgba(130,70,160,.2);
+}
+
+.trophy{
+    font-size:78px;
+
+    animation:logoFloat 2s infinite;
+}
+
+.report h2{
+    margin:8px 0 20px;
+
+    color:#8b347d;
+
+    font-size:32px;
+    font-weight:900;
+}
+
+.final-name{
+    color:#6c2870;
+
+    font-size:21px;
+    font-weight:900;
+}
+
+.report-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:12px;
+
+    margin:22px 0;
+}
+
+.report-item{
+    padding:15px 7px;
+
+    border-radius:21px;
+
+    background:linear-gradient(
+        145deg,
+        #fff0f8,
+        #eee4ff
+    );
+
+    border:3px solid white;
+
+    box-shadow:
+        0 6px 0 rgba(90,45,120,.15);
+}
+
+.report-number{
+    display:block;
+
+    color:#923c87;
+
+    font-size:30px;
+    font-weight:900;
+}
+
+.report-label{
+    color:#55365e;
+
+    font-size:14px;
+    font-weight:900;
+}
+
+.final-text{
+    color:#51355a;
+
+    font-size:18px;
+    font-weight:800;
+
+    line-height:2;
+
+    margin-bottom:20px;
+}
+
+/* =========================
+   موبایل
+========================= */
+
+@media(max-width:700px){
+
+    .game{
+        padding:10px;
+        background-attachment:scroll;
+    }
+
+    .screen{
+        min-height:calc(100vh - 20px);
+    }
+
+    .start-card,
+    .report{
+        padding:25px 15px;
+    }
+
+    .game-panel{
+        padding:12px;
+    }
+
+    .ladybug-grid{
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap:20px 14px;
+    }
+
+    .ladybug-word{
+        width:58%;
+        font-size:17px;
+    }
+
+    .badge{
+        font-size:12px;
+        padding:8px 10px;
+    }
+
+    .instruction{
+        font-size:15px;
+    }
+
+    .game-message{
+        font-size:16px;
+    }
+}
+
+@media(max-width:390px){
+
+    .ladybug-grid{
+        gap:15px 10px;
+    }
+
+    .ladybug-word{
+        font-size:15px;
+    }
+
+    .question{
+        font-size:19px;
+    }
+
+    .report-number{
+        font-size:25px;
+    }
+
+    .report-label{
+        font-size:12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<div class="container">
+
+<!-- =====================================================
+     صفحه اول
+===================================================== -->
+
+<section id="startScreen" class="screen active">
+
+    <div class="start-card">
+
+        <div class="logo">🐞</div>
+
+        <h1>
+            بازی جادویی «ای» ✨
+        </h1>
+
+        <!-- //INTEGRATION: نام آموزگار پلتفرم -->
+        <div class="teacher-credit">
+            آموزگار: خانم دهگودی
+        </div>
+
+        <div class="start-text">
+            کلمه‌هایی را پیدا کن که می‌توانیم
+            در آخرشان «ای» اضافه کنیم.
+            <br>
+            با دقت کفشدوزک‌های درست را انتخاب کن! 🐞🌸
+        </div>
+
+        <button
+            id="startBtn"
+            class="main-btn"
+            type="button"
+        >
+            🚀 شروع بازی
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     تنها مرحله بازی
+===================================================== -->
+
+<section id="gameScreen" class="screen">
+
+    <div class="hud">
+
+        <!-- //INTEGRATION: امتیاز عددی از HUD حذف شد. -->
+        <div class="badge">
+            👋
+            <span id="playerName"></span>
+        </div>
+
+        <div class="badge">
+            ❌ غلط:
+            <strong id="wrongCount">۰</strong>
+        </div>
+
+        <div class="badge">
+            ✅ درست:
+            <strong id="correctCount">۰</strong>
+            / ۶
+        </div>
+
+    </div>
+
+    <div class="progress-wrap">
+
+        <div
+            id="progress"
+            class="progress"
+        ></div>
+
+    </div>
+
+    <div class="question">
+        کدام کلمه‌ها را می‌توانیم با اضافه کردن «ای» در آخرشان درست کنیم؟
+    </div>
+
+    <div class="game-panel">
+
+        <div class="instruction">
+            🐞 کفشدوزک‌های درست را پیدا کن.
+            <br>
+            اگر کلمه‌ای را اشتباه انتخاب کنی، می‌سوزد و دیگر امکان اصلاح آن نیست!
+        </div>
+
+        <div
+            id="ladybugGrid"
+            class="ladybug-grid"
+        ></div>
+
+        <div
+            id="gameMessage"
+            class="game-message"
+        >
+            🌸 با دقت انتخاب کن!
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     کارنامه
+===================================================== -->
+
+<section id="reportScreen" class="screen">
+
+    <div class="report">
+
+        <div class="trophy">
+            🏆🐞
+        </div>
+
+        <h2>
+            🎉 کارنامه‌ی قهرمان!
+        </h2>
+
+        <div class="final-name">
+            <span id="finalName"></span>
+            عزیز، بازی را با موفقیت تمام کردی! 🌟
+        </div>
+
+        <div class="report-grid">
+
+            <!-- //INTEGRATION: گزارش پایانی فقط پاسخ درست و غلط را نمایش می‌دهد. -->
+            <div class="report-item">
+
+                <span
+                    id="finalCorrect"
+                    class="report-number"
+                >
+                    ۰
+                </span>
+
+                <span class="report-label">
+                    ✅ درست
+                </span>
+
+            </div>
+
+            <div class="report-item">
+
+                <span
+                    id="finalWrong"
+                    class="report-number"
+                >
+                    ۰
+                </span>
+
+                <span class="report-label">
+                    ❌ غلط
+                </span>
+
+            </div>
+
+        </div>
+
+        <div
+            id="finalText"
+            class="final-text"
+        ></div>
+
+        <button
+            id="restartBtn"
+            class="main-btn"
+            type="button"
+        >
+            🔄 بازی دوباره
+        </button>
+
+    </div>
+
+</section>
+
+</div>
+
+</div>
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<!-- //INTEGRATION: فوتر ثابت پلتفرم -->
+<footer>
+    طراحی و پیاده‌سازی: سعید سراوانی
+</footer>
+
+<script src="../assets/js/google-sync.js"></script>
+<script>
+
+//INTEGRATION: شناسه ثابت بازی در پلتفرم مدرسه.
+const GAME_ID = 4;
+
+/* =====================================================
+   تصویر کفشدوزک ارسالی
+===================================================== */
+
+const LADYBUG_IMAGE =
+    "../assets/img/game04-ladybug.png";
+
+
+/* =====================================================
+   کلمات
+===================================================== */
+
+/*
+   دقیقاً ۶ کلمه درست داریم.
+   بازی به محض انتخاب هر ۶ کلمه درست تمام می‌شود.
+*/
+
+const words = [
+
+    /* ===== کلمات درست ===== */
+
+    {
+        text:"خانه",
+        correct:true
+    },
+
+    {
+        text:"فرشته",
+        correct:true
+    },
+
+    {
+        text:"دانه",
+        correct:true
+    },
+
+    {
+        text:"نماینده",
+        correct:true
+    },
+
+    {
+        text:"ویژه",
+        correct:true
+    },
+
+    {
+        text:"کتاب خانه",
+        correct:true
+    },
+
+    /* ===== کلمات نادرست ===== */
+
+    {
+        text:"آموزگار",
+        correct:false
+    },
+
+    {
+        text:"چاه",
+        correct:false
+    },
+
+    {
+        text:"روباه",
+        correct:false
+    },
+
+    {
+        text:"پاییز",
+        correct:false
+    },
+
+    {
+        text:"خواندن",
+        correct:false
+    }
+
+];
+
+
+/* =====================================================
+   وضعیت بازی
+===================================================== */
+
+let playerName = "";
+
+let wrongCount = 0;
+
+let correctCount = 0;
+
+let gameFinished = false;
+
+let startedAt = 0;
+
+
+/* =====================================================
+   عناصر
+===================================================== */
+
+const startScreen =
+    document.getElementById(
+        "startScreen"
+    );
+
+const gameScreen =
+    document.getElementById(
+        "gameScreen"
+    );
+
+const reportScreen =
+    document.getElementById(
+        "reportScreen"
+    );
+
+const startBtn =
+    document.getElementById(
+        "startBtn"
+    );
+
+const restartBtn =
+    document.getElementById(
+        "restartBtn"
+    );
+
+const ladybugGrid =
+    document.getElementById(
+        "ladybugGrid"
+    );
+
+const wrongCountEl =
+    document.getElementById(
+        "wrongCount"
+    );
+
+const correctCountEl =
+    document.getElementById(
+        "correctCount"
+    );
+
+const progress =
+    document.getElementById(
+        "progress"
+    );
+
+const gameMessage =
+    document.getElementById(
+        "gameMessage"
+    );
+
+const toast =
+    document.getElementById(
+        "toast"
+    );
+
+
+/* =====================================================
+   عدد فارسی
+===================================================== */
+
+function persianNumber(number){
+
+    const digits = [
+        "۰","۱","۲","۳","۴",
+        "۵","۶","۷","۸","۹"
+    ];
+
+    return String(number).replace(
+        /[0-9]/g,
+        digit => digits[digit]
+    );
+}
+
+
+/* =====================================================
+   تغییر صفحه
+===================================================== */
+
+function showScreen(screen){
+
+    [
+        startScreen,
+        gameScreen,
+        reportScreen
+    ].forEach(item => {
+
+        item.classList.remove(
+            "active"
+        );
+
+    });
+
+    screen.classList.add(
+        "active"
+    );
+
+    window.scrollTo({
+        top:0,
+        behavior:"instant"
+    });
+
+}
+
+
+/* =====================================================
+   Shuffle
+===================================================== */
+
+function shuffle(array){
+
+    const result = [...array];
+
+    for(
+        let i = result.length - 1;
+        i > 0;
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            result[i],
+            result[j]
+        ] =
+        [
+            result[j],
+            result[i]
+        ];
+
+    }
+
+    return result;
+
+}
+
+
+/* =====================================================
+   سیستم صدا
+===================================================== */
+
+let audioContext = null;
+
+
+function initAudio(){
+
+    try{
+
+        if(!audioContext){
+
+            const Audio =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+            if(Audio){
+
+                audioContext =
+                    new Audio();
+
+            }
+
+        }
+
+        if(
+            audioContext &&
+            audioContext.state === "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+    }catch(error){}
+
+}
+
+
+function tone(
+    frequency,
+    duration,
+    type="sine",
+    volume=.1
+){
+
+    if(!audioContext) return;
+
+    try{
+
+        const oscillator =
+            audioContext.createOscillator();
+
+        const gain =
+            audioContext.createGain();
+
+        oscillator.type =
+            type;
+
+        oscillator.frequency.setValueAtTime(
+            frequency,
+            audioContext.currentTime
+        );
+
+        gain.gain.setValueAtTime(
+            volume,
+            audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            audioContext.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(
+            audioContext.destination
+        );
+
+        oscillator.start();
+
+        oscillator.stop(
+            audioContext.currentTime + duration
+        );
+
+    }catch(error){}
+
+}
+
+
+function soundCorrect(){
+
+    initAudio();
+
+    [
+        523,
+        659,
+        784
+    ].forEach(
+        (frequency,index) => {
+
+            setTimeout(
+                () => {
+
+                    tone(
+                        frequency,
+                        .2,
+                        "triangle",
+                        .12
+                    );
+
+                },
+                index * 75
+            );
+
+        }
+    );
+
+}
+
+
+function soundWrong(){
+
+    initAudio();
+
+    tone(
+        240,
+        .18,
+        "sawtooth",
+        .13
+    );
+
+    setTimeout(
+        () => {
+
+            tone(
+                130,
+                .25,
+                "sawtooth",
+                .1
+            );
+
+        },
+        100
+    );
+
+}
+
+
+function soundWin(){
+
+    initAudio();
+
+    [
+        523,
+        659,
+        784,
+        1046
+    ].forEach(
+        (frequency,index) => {
+
+            setTimeout(
+                () => {
+
+                    tone(
+                        frequency,
+                        .3,
+                        "triangle",
+                        .13
+                    );
+
+                },
+                index * 100
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   اتصال به پلتفرم
+===================================================== */
+
+//INTEGRATION: هویت و مجوز بازی پیش از فعال شدن شروع بازی بررسی می‌شود.
+const student = getCurrentStudent();
+
+if(!student){
+
+    window.location.href = "../index.html";
+
+}
+else{
+
+    initializePlatform();
+
+}
+
+
+async function initializePlatform(){
+
+    const attemptCheck =
+        await syncCheckAttempts(
+            student.studentCode,
+            GAME_ID
+        );
+
+    if(!attemptCheck.success){
+
+        document.querySelector(".game").innerHTML = `
+            <div class="container">
+                <section class="screen active">
+                    <div class="start-card">
+                        <div class="start-text">${attemptCheck.error || "امکان شرکت در این بازی وجود ندارد."}</div>
+                    </div>
+                </section>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    //INTEGRATION: مدت زمان از تنظیمات پلتفرم خوانده می‌شود؛ این بازی تایمر داخلی ندارد.
+    const settings =
+        await syncGetGameSettings(
+            GAME_ID
+        );
+
+    const timerSeconds =
+        settings.timerSeconds || 180;
+
+    playerName = student.fullName;
+
+    document.getElementById(
+        "playerName"
+    ).textContent =
+        playerName;
+
+    startBtn.addEventListener(
+        "click",
+        startGame
+    );
+
+    restartBtn.addEventListener(
+        "click",
+        restartGame
+    );
+
+}
+
+
+function startGame(){
+
+    initAudio();
+
+    resetGame();
+
+    startedAt = Date.now();
+
+    showScreen(
+        gameScreen
+    );
+
+    createLadybugs();
+
+    showToast(
+        `سلام ${playerName} جان! 🐞✨`,
+        1000
+    );
+
+}
+
+
+/* =====================================================
+   ریست
+===================================================== */
+
+function resetGame(){
+    wrongCount = 0;
+
+    correctCount = 0;
+
+    gameFinished = false;
+
+    updateHUD();
+
+}
+
+
+/* =====================================================
+   HUD
+===================================================== */
+
+function updateHUD(){
+    wrongCountEl.textContent =
+        persianNumber(wrongCount);
+
+    correctCountEl.textContent =
+        persianNumber(correctCount);
+
+    progress.style.width =
+        `${(correctCount / 6) * 100}%`;
+
+}
+
+
+/* =====================================================
+   ساخت کفشدوزک‌ها
+===================================================== */
+
+function createLadybugs(){
+
+    ladybugGrid.innerHTML = "";
+
+    const shuffled =
+        shuffle(words);
+
+    shuffled.forEach(
+        item => {
+
+            const bug =
+                document.createElement(
+                    "button"
+                );
+
+            bug.type = "button";
+
+            bug.className =
+                "ladybug";
+
+            bug.dataset.correct =
+                item.correct;
+
+            bug.dataset.word =
+                item.text;
+
+            bug.innerHTML = `
+
+                <img
+                    src="${LADYBUG_IMAGE}"
+                    alt=""
+                    draggable="false"
+                >
+
+                <span class="ladybug-word">
+                    ${item.text}
+                </span>
+
+            `;
+
+            bug.addEventListener(
+                "click",
+                () => {
+
+                    handleWord(
+                        bug,
+                        item
+                    );
+
+                }
+            );
+
+            ladybugGrid.appendChild(
+                bug
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   انتخاب کلمه
+===================================================== */
+
+function handleWord(
+    bug,
+    item
+){
+
+    /*
+       اگر بازی تمام شده باشد،
+       هیچ کلیکی پذیرفته نمی‌شود.
+    */
+
+    if(gameFinished){
+
+        return;
+
+    }
+
+
+    /*
+       هر کفشدوزک فقط یک بار
+       قابل انتخاب است.
+    */
+
+    if(
+        bug.classList.contains(
+            "answered"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    /* =================================================
+       کلمه درست
+    ================================================= */
+
+    if(item.correct){
+
+        bug.classList.add(
+            "answered",
+            "correct"
+        );
+
+        correctCount++;
+
+        updateHUD();
+
+        soundCorrect();
+
+        createCorrectSparks(
+            bug
+        );
+
+        gameMessage.textContent =
+            `✨ آفرین! «${item.text}» درست است.`;
+
+
+        /*
+           مهم‌ترین قانون بازی:
+           به محض پیدا شدن هر ۶ کلمه درست،
+           بازی فوراً متوقف می‌شود.
+        */
+
+        if(
+            correctCount === 6
+        ){
+
+            gameFinished = true;
+
+            disableAllBugs();
+
+            progress.style.width =
+                "100%";
+
+            gameMessage.textContent =
+                "🏆 فوق‌العاده! هر ۶ کلمه‌ی درست را پیدا کردی!";
+
+            showToast(
+                "🎉 عالی! بازی تمام شد.",
+                1200
+            );
+
+            setTimeout(
+                finishGame,
+                1000
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    /* =================================================
+       کلمه غلط
+    ================================================= */
+
+    bug.classList.add(
+        "answered",
+        "wrong"
+    );
+
+    wrongCount++;
+
+    updateHUD();
+
+    soundWrong();
+
+    createBurnEffect(
+        bug
+    );
+
+    gameMessage.textContent =
+        `🔥 «${item.text}» اشتباه بود و دیگر قابل اصلاح نیست.`;
+
+    showToast(
+        "🔥 اشتباه بود!",
+        1100
+    );
+
+}
+
+
+/* =====================================================
+   توقف کامل بازی
+===================================================== */
+
+function disableAllBugs(){
+
+    const bugs =
+        document.querySelectorAll(
+            ".ladybug"
+        );
+
+    bugs.forEach(
+        bug => {
+
+            bug.disabled = true;
+
+            bug.style.pointerEvents =
+                "none";
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   افکت درست
+===================================================== */
+
+function createCorrectSparks(
+    element
+){
+
+    const rect =
+        element.getBoundingClientRect();
+
+    const icons = [
+        "✨",
+        "⭐",
+        "🌟",
+        "💖",
+        "🐞"
+    ];
+
+    for(
+        let i = 0;
+        i < 14;
+        i++
+    ){
+
+        const spark =
+            document.createElement(
+                "div"
+            );
+
+        spark.className =
+            "spark";
+
+        spark.textContent =
+            icons[
+                Math.floor(
+                    Math.random() *
+                    icons.length
+                )
+            ];
+
+        spark.style.left =
+            `${rect.left + rect.width / 2}px`;
+
+        spark.style.top =
+            `${rect.top + rect.height / 2}px`;
+
+        spark.style.setProperty(
+            "--x",
+            `${Math.random() * 220 - 110}px`
+        );
+
+        spark.style.setProperty(
+            "--y",
+            `${Math.random() * 220 - 110}px`
+        );
+
+        document.body.appendChild(
+            spark
+        );
+
+        setTimeout(
+            () => spark.remove(),
+            900
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   افکت سوختن
+===================================================== */
+
+function createBurnEffect(
+    element
+){
+
+    const rect =
+        element.getBoundingClientRect();
+
+    const icons = [
+        "🔥",
+        "💥",
+        "💨",
+        "🔥",
+        "✨"
+    ];
+
+    for(
+        let i = 0;
+        i < 16;
+        i++
+    ){
+
+        const fire =
+            document.createElement(
+                "div"
+            );
+
+        fire.className =
+            "fire";
+
+        fire.textContent =
+            icons[
+                Math.floor(
+                    Math.random() *
+                    icons.length
+                )
+            ];
+
+        fire.style.left =
+            `${rect.left + rect.width / 2}px`;
+
+        fire.style.top =
+            `${rect.top + rect.height / 2}px`;
+
+        fire.style.setProperty(
+            "--x",
+            `${Math.random() * 260 - 130}px`
+        );
+
+        fire.style.setProperty(
+            "--y",
+            `${Math.random() * 240 - 120}px`
+        );
+
+        document.body.appendChild(
+            fire
+        );
+
+        setTimeout(
+            () => fire.remove(),
+            850
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   پایان و کارنامه
+===================================================== */
+
+async function finishGame(){
+
+    gameFinished = true;
+
+    disableAllBugs();
+
+    soundWin();
+
+    document.getElementById(
+        "finalName"
+    ).textContent =
+        playerName;
+
+    document.getElementById(
+        "finalCorrect"
+    ).textContent =
+        persianNumber(correctCount);
+
+    document.getElementById(
+        "finalWrong"
+    ).textContent =
+        persianNumber(wrongCount);
+
+
+    let finalText = "";
+
+
+    if(wrongCount === 0){
+
+        finalText =
+            "🌟 فوق‌العاده بود! هیچ اشتباهی نداشتی و هر ۶ کلمه را درست پیدا کردی!";
+
+    }
+    else if(wrongCount <= 2){
+
+        finalText =
+            "👏 خیلی خوب بود! هر ۶ کلمه‌ی درست را پیدا کردی.";
+
+    }
+    else{
+
+        finalText =
+            "💪 آفرین که ادامه دادی و هر ۶ کلمه‌ی درست را پیدا کردی!";
+
+    }
+
+
+    document.getElementById(
+        "finalText"
+    ).textContent =
+        finalText;
+
+    //INTEGRATION: نتیجه نهایی بدون امتیاز عددی در پلتفرم ثبت می‌شود.
+    const durationSeconds =
+        Math.round(
+            (Date.now() - startedAt) / 1000
+        );
+
+    await syncSaveResult(
+        student.studentCode,
+        GAME_ID,
+        correctCount,
+        wrongCount,
+        durationSeconds
+    );
+
+
+    showScreen(
+        reportScreen
+    );
+
+    createFinalSparks();
+
+}
+
+
+/* =====================================================
+   جرقه‌های پایان
+===================================================== */
+
+function createFinalSparks(){
+
+    const icons = [
+        "✨",
+        "⭐",
+        "🎉",
+        "🌟",
+        "🐞",
+        "💖"
+    ];
+
+    for(
+        let i = 0;
+        i < 35;
+        i++
+    ){
+
+        setTimeout(
+            () => {
+
+                const spark =
+                    document.createElement(
+                        "div"
+                    );
+
+                spark.className =
+                    "spark";
+
+                spark.textContent =
+                    icons[
+                        Math.floor(
+                            Math.random() *
+                            icons.length
+                        )
+                    ];
+
+                spark.style.left =
+                    `${Math.random() * 100}vw`;
+
+                spark.style.top =
+                    `${Math.random() * 75 + 10}vh`;
+
+                spark.style.setProperty(
+                    "--x",
+                    `${Math.random() * 250 - 125}px`
+                );
+
+                spark.style.setProperty(
+                    "--y",
+                    `${Math.random() * 250 - 125}px`
+                );
+
+                document.body.appendChild(
+                    spark
+                );
+
+                setTimeout(
+                    () => spark.remove(),
+                    900
+                );
+
+            },
+            i * 60
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   پیام
+===================================================== */
+
+let toastTimer = null;
+
+
+function showToast(
+    text,
+    duration = 1200
+){
+
+    toast.textContent =
+        text;
+
+    toast.classList.add(
+        "show"
+    );
+
+    clearTimeout(
+        toastTimer
+    );
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            duration
+        );
+
+}
+
+
+/* =====================================================
+   بازی دوباره
+===================================================== */
+
+function restartGame(){
+
+        initAudio();
+
+        resetGame();
+
+        startedAt = Date.now();
+
+        showScreen(
+            gameScreen
+        );
+
+        createLadybugs();
+
+        showToast(
+            "🐞 بازی دوباره شروع شد!",
+            1000
+        );
+
+}
+
+</script>
+
+</body>
+</html>
