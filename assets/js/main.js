@@ -60,7 +60,7 @@ loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   loginError.textContent = '';
 
-  const studentCode = document.getElementById('studentCode').value.trim();
+  const studentCode = normalizeDigits(document.getElementById('studentCode').value.trim());
   const fullName = document.getElementById('fullName').value.trim();
   const className = document.getElementById('classSelect').value;
 
@@ -131,6 +131,23 @@ async function loadAndRenderGames() {
 }
 
 // ---------- Helpers ----------
+
+/**
+ * Converts Persian/Arabic-Indic digits to Western digits, so a student
+ * typing their code on a Persian keyboard doesn't end up with a
+ * different-looking code than the same code typed in Latin numerals
+ * (which would otherwise create a duplicate account server-side).
+ */
+function normalizeDigits(value) {
+  const persian = '۰۱۲۳۴۵۶۷۸۹';
+  const arabic = '٠١٢٣٤٥٦٧٨٩';
+  return String(value).replace(/[۰-۹٠-٩]/g, (ch) => {
+    let idx = persian.indexOf(ch);
+    if (idx === -1) idx = arabic.indexOf(ch);
+    return idx;
+  });
+}
+
 function toPersianDigits(num) {
   const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
   return String(num).replace(/[0-9]/g, (d) => persianDigits[d]);
