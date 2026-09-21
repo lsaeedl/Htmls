@@ -30,9 +30,6 @@ html, body{
     width:100%;
     height:100%;
     overflow:hidden;
-}
-
-body{
     background:#eadcff;
 }
 
@@ -63,6 +60,7 @@ body{
     pointer-events:none;
 }
 
+/* ساختار منعطف برای جلوگیری از تداخل المان‌ها */
 #app{
     position:relative;
     z-index:5;
@@ -72,7 +70,56 @@ body{
     flex-direction:column;
 }
 
+#platform-header{
+    flex-shrink:0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    width:100%;
+    padding:10px 20px;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(5px);
+    border-bottom:2px solid white;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+
+.breadcrumb{
+    font-weight:900;
+    color:#603a75;
+    font-size:14px;
+}
+
+.platform-teacher{
+    font-weight:900;
+    color:#8e3e91;
+    background:rgba(255,255,255,0.8);
+    padding:5px 15px;
+    border-radius:15px;
+    font-size:15px;
+    box-shadow:0 2px 0 rgba(142,62,145,0.2);
+}
+
+.back-btn{
+    text-decoration:none;
+    background:#ff8fcf;
+    color:white;
+    padding:6px 16px;
+    border-radius:15px;
+    font-weight:bold;
+    font-size:14px;
+    box-shadow:0 3px 0 #d66da9;
+    transition:0.2s;
+}
+
+.back-btn:active{
+    transform:translateY(2px);
+    box-shadow:0 1px 0 #d66da9;
+}
+
 #hud{
+    flex-shrink:0;
     width:100%;
     padding:12px 14px;
     display:flex;
@@ -99,12 +146,17 @@ body{
     color:#8a43a9;
 }
 
+#game-container{
+    flex-grow:1;
+    position:relative;
+    width:100%;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+
 .screen{
     position:absolute;
-    top:135px; /* بهینه شده برای موبایل و قرارگیری زیر نوار راهنما */
-    left:0;
-    right:0;
-    bottom:50px; /* جلوگیری از تداخل با فوتر */
+    inset:0;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -466,21 +518,18 @@ body{
     box-shadow:0 6px 0 #d5ae69, 0 0 20px #ffe483;
 }
 
-#guide{
-    position:absolute;
-    left:50%;
-    bottom:40px; 
-    transform:translateX(-50%);
-    z-index:20;
-    width:min(94%,650px);
+#guide-container{
+    flex-shrink:0;
+    width:100%;
+    padding:10px 20px;
     display:flex;
-    align-items:center;
     justify-content:center;
-    gap:10px;
+    align-items:center;
+    z-index:20;
 }
 
 .guideBubble{
-    width:100%;
+    width:min(100%, 650px);
     padding:11px 17px;
     border-radius:20px;
     background:rgba(255,255,255,.90);
@@ -490,6 +539,19 @@ body{
     font-weight:900;
     text-align:center;
     box-shadow:0 6px 0 rgba(99,59,119,.18), 0 0 18px rgba(255,255,255,.7);
+}
+
+.platform-footer{
+    flex-shrink:0;
+    width:100%;
+    text-align:center;
+    font-weight:bold;
+    padding:12px;
+    color:#49334e;
+    background:rgba(255,255,255,0.85);
+    font-size:14px;
+    z-index:100;
+    border-top:2px solid white;
 }
 
 #toast{
@@ -526,9 +588,106 @@ body{
 </head>
 
 <body>
+<img id="background" src="../assets/img/game008-media-02.jpeg" alt="" onerror="this.src='https://placehold.co/1920x1080/eadcff/eadcff'">
+<div id="backgroundOverlay"></div>
+<canvas id="particles"></canvas>
+
+<div id="app">
+    
+    <!-- هدر یکپارچه پلتفرم -->
+    <header id="platform-header">
+        <div class="breadcrumb">🏠 خانه / بازی‌ها / راز سرزمین بی</div>
+        <div class="platform-teacher" id="teacherNameDisplay">آموزگار: در حال بارگذاری...</div>
+        <a href="../index.html" class="back-btn">→ بازگشت</a>
+    </header>
+
+    <div id="hud">
+        <div class="hudBox">✅ درست: <span id="correctCount">۰</span></div>
+        <div class="hudBox">❌ غلط: <span id="wrongCount">۰</span></div>
+        <div class="hudBox">⏱ <span id="timer">۰:۰۰</span></div>
+        <div class="hudBox">🎯 مرحله: <span id="round">۰</span> / ۵</div>
+    </div>
+
+    <!-- کانتینر انعطاف‌پذیر برای محتوای اصلی -->
+    <div id="game-container">
+        
+        <!-- صفحه خوش‌آمدگویی -->
+        <section id="welcomeScreen" class="screen active">
+            <div class="welcomeCard">
+                <div class="magicIcon">🐰✨</div>
+                <h1 class="mainTitle">رازِ سرزمین «بی»</h1>
+                <p class="description">
+                    آماده‌ای وارد سرزمین جادویی واژه‌ها بشی؟<br>
+                    معنی کلمه‌هایی که با «بی» ساخته می‌شوند را پیدا کن! 🌸
+                </p>
+                <div class="nameBox">
+                    <button id="startButton" class="primaryButton" type="button">🚀 شروع ماجراجویی</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- صفحه نقشه -->
+        <section id="mapScreen" class="screen">
+            <h2 class="mapTitle">🗺️ نقشه‌ی سرزمین «بی»</h2>
+            <div id="map" class="map"></div>
+        </section>
+
+        <!-- صفحه پازل -->
+        <section id="puzzleScreen" class="screen">
+            <div class="puzzle">
+                <div class="wordImageCard">
+                    <div class="wordFormula">
+                        <span id="prefix" class="prefix">بی</span>
+                        <span class="plus">+</span>
+                        <span id="baseWord" class="base">ادب</span>
+                    </div>
+                    <div class="questionInCard">
+                        💡 معنی درست این کلمه را انتخاب کن:
+                    </div>
+                </div>
+                <div id="options" class="options"></div>
+                <div id="result" class="result"></div>
+            </div>
+        </section>
+
+        <!-- صفحه جایزه -->
+        <section id="rewardScreen" class="screen">
+            <div class="rewardBox">
+                <div id="treasure" class="treasure">🎁✨</div>
+                <div id="rewardTitle" class="rewardTitle">صندوق جایزه!</div>
+                <div id="rewardText" class="rewardText">روی صندوق بزن تا جایزه‌ات را باز کنیم! 🥳</div>
+                <button id="nextButton" class="primaryButton" style="display:none;margin:18px auto 0;">مرحله‌ی بعد 🚀</button>
+            </div>
+        </section>
+
+        <!-- صفحه پایان -->
+        <section id="endScreen" class="screen">
+            <div class="endCard">
+                <div class="trophy">🏆</div>
+                <h1 class="endTitle">آفرین قهرمان واژه‌ها! 🎉</h1>
+                <p id="endText" class="endText"></p>
+                <div id="finalResult" class="finalResult">پاسخ درست: ۰ | پاسخ غلط: ۰</div>
+                <button id="restartButton" class="primaryButton">🔄 بازی دوباره</button>
+            </div>
+        </section>
+        
+    </div>
+
+    <!-- کانتینر پیام راهنما -->
+    <div id="guide-container">
+        <div id="guideBubble" class="guideBubble">سلام دوست من! آماده‌ای شروع کنیم؟ 🐰✨</div>
+    </div>
+    
+    <!-- فوتر یکپارچه پلتفرم -->
+    <footer class="platform-footer">طراحی و پیاده‌سازی: سعید سراوانی</footer>
+
+</div>
+
+<div id="toast"></div>
+
 <script src="../assets/js/google-sync.js"></script>
 <script>
-// INTEGRATION BOILERPLATE (Safe with Try-Catch)
+// INTEGRATION BOILERPLATE (ایمن با Try-Catch)
 const GAME_ID = 8;
 let platformSaved = false;
 let startedAt = 0;
@@ -541,7 +700,7 @@ let timerSeconds = 180;
             console.warn("پلتفرم متصل نیست. اجرای حالت محلی...");
             window.platformStudent = { fullName: "تستر محلی", studentCode: "000" };
             window.platformTeacherName = "آموزگار تستر";
-            document.documentElement.style.visibility = 'visible';
+            document.getElementById('teacherNameDisplay').textContent = "آموزگار: " + window.platformTeacherName;
             return;
         }
 
@@ -551,14 +710,14 @@ let timerSeconds = 180;
             return;
         }
         
-        document.documentElement.style.visibility = 'hidden';
+        document.getElementById('app').style.visibility = 'hidden';
         startedAt = Date.now();
         
         // بررسی مجوز و نوبت
         if (typeof syncCheckAttempts !== 'undefined') {
             const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
             if (!attemptCheck.success) {
-                document.documentElement.style.visibility = 'visible';
+                document.getElementById('app').style.visibility = 'visible';
                 document.body.innerHTML = '<main style="display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px;"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
                 return;
             }
@@ -576,52 +735,33 @@ let timerSeconds = 180;
         if (platformStudent.teacherName) {
             teacherName = platformStudent.teacherName;
         } else if (platformStudent.className && typeof syncListClasses !== 'undefined') {
-            const classesResult = await syncListClasses();
-            if (classesResult && classesResult.success) {
-                const match = classesResult.classes.find(c => c.className === platformStudent.className);
-                if (match && match.teacherName) teacherName = match.teacherName;
-            }
+            try {
+                const classesResult = await syncListClasses();
+                if (classesResult && classesResult.success) {
+                    const match = classesResult.classes.find(c => c.className === platformStudent.className);
+                    if (match && match.teacherName) teacherName = match.teacherName;
+                }
+            } catch(e){}
         }
         window.platformTeacherName = teacherName;
         window.platformStudent = platformStudent;
         
-        // جایگذاری نام دانش‌آموز در UI
-        document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(el => {
-            if (!el.matches('input,textarea')) el.textContent = platformStudent.fullName;
-        });
+        // جایگذاری نام آموزگار در هدر
+        document.getElementById('teacherNameDisplay').textContent = "آموزگار: " + teacherName;
         
     } catch (err) {
         console.error("خطا در یکپارچه‌سازی پلتفرم:", err);
         window.platformStudent = { fullName: "قهرمان", studentCode: "000" };
         window.platformTeacherName = "آموزگار نامشخص";
+        document.getElementById('teacherNameDisplay').textContent = "آموزگار: " + window.platformTeacherName;
     } finally {
-        document.documentElement.style.visibility = 'visible';
+        document.getElementById('app').style.visibility = 'visible';
     }
 })();
 
-// ثبت نام آموزگار و فوتر در DOM
-window.addEventListener('DOMContentLoaded', function () {
-    if (!document.querySelector('.platform-teacher')) {
-        const teacher = document.createElement('div');
-        teacher.className = 'platform-teacher';
-        teacher.textContent = 'آموزگار: ' + (window.platformTeacherName || 'خانم دهگودی');
-        teacher.style.cssText = 'text-align:center; font-weight:900; color:#8e3e91; margin:8px auto; padding:5px 15px; background:rgba(255,255,255,0.7); border-radius:15px; width:max-content; font-size:16px;';
-        
-        const heading = document.querySelector('.mainTitle');
-        if (heading && heading.parentNode) heading.parentNode.insertBefore(teacher, heading.nextSibling);
-    }
-    if (!document.querySelector('.platform-footer')) {
-        const footer = document.createElement('footer');
-        footer.className = 'platform-footer';
-        footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
-        footer.style.cssText = 'position:fixed; bottom:0; left:0; width:100%; text-align:center; font-weight:bold; padding:8px; color:#49334e; background:rgba(255,255,255,0.85); z-index:1000; font-size:14px;';
-        document.body.appendChild(footer);
-    }
-});
-
 // تابع ایمن برای ثبت نتیجه بازی در پایان
 async function finishGamePlatform() {
-    if (platformSaved || !window.platformStudent) return;
+    if (platformSaved || !window.platformStudent || window.platformStudent.studentCode === "000") return;
     platformSaved = true;
     const durationSeconds = Math.round((Date.now() - startedAt) / 1000);
     if (typeof syncSaveResult !== 'undefined') {
@@ -632,96 +772,7 @@ async function finishGamePlatform() {
         }
     }
 }
-</script>
 
-<img id="background" src="../assets/img/game008-media-02.jpeg" alt="">
-<div id="backgroundOverlay"></div>
-<canvas id="particles"></canvas>
-
-<div id="app">
-    
-    <div class="breadcrumb" style="width:100%; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.8); z-index:100; backdrop-filter:blur(5px); border-bottom:2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex-shrink: 0;">
-        <span style="font-weight:bold; color:#603a75; font-size: 14px;">🏠 خانه / بازی‌ها / راز سرزمین بی</span>
-        <a href="../index.html" style="text-decoration:none; background:#ff8fcf; color:white; padding:5px 15px; border-radius:15px; font-weight:bold; font-size: 14px; box-shadow:0 3px 0 #d66da9; transition: 0.2s;">→ بازگشت</a>
-    </div>
-
-    <div id="hud">
-        <div class="hudBox">✅ درست: <span id="correctCount">۰</span></div>
-        <div class="hudBox">❌ غلط: <span id="wrongCount">۰</span></div>
-        <div class="hudBox">⏱ <span id="timer">۰:۰۰</span></div>
-        <div class="hudBox">🎯 مرحله: <span id="round">۰</span> / ۵</div>
-    </div>
-
-    <!-- WELCOME SCREEN -->
-    <section id="welcomeScreen" class="screen active">
-        <div class="welcomeCard">
-            <div class="magicIcon">🐰✨</div>
-            <h1 class="mainTitle">رازِ سرزمین «بی»</h1>
-            <p class="description">
-                آماده‌ای وارد سرزمین جادویی واژه‌ها بشی؟<br>
-                معنی کلمه‌هایی که با «بی» ساخته می‌شوند را پیدا کن! 🌸
-            </p>
-            <div class="nameBox">
-                <button id="startButton" class="primaryButton" type="button">🚀 شروع ماجراجویی</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- MAP SCREEN -->
-    <section id="mapScreen" class="screen">
-        <h2 class="mapTitle">🗺️ نقشه‌ی سرزمین «بی»</h2>
-        <div id="map" class="map"></div>
-    </section>
-
-    <!-- PUZZLE SCREEN -->
-    <section id="puzzleScreen" class="screen">
-        <div class="puzzle">
-            <div class="wordImageCard">
-                <div class="wordFormula">
-                    <span id="prefix" class="prefix">بی</span>
-                    <span class="plus">+</span>
-                    <span id="baseWord" class="base">ادب</span>
-                </div>
-                <div class="questionInCard">
-                    💡 معنی درست این کلمه را انتخاب کن:
-                </div>
-            </div>
-
-            <div id="options" class="options"></div>
-            <div id="result" class="result"></div>
-        </div>
-    </section>
-
-    <!-- REWARD SCREEN -->
-    <section id="rewardScreen" class="screen">
-        <div class="rewardBox">
-            <div id="treasure" class="treasure">🎁✨</div>
-            <div id="rewardTitle" class="rewardTitle">صندوق جایزه!</div>
-            <div id="rewardText" class="rewardText">روی صندوق بزن تا جایزه‌ات را باز کنیم! 🥳</div>
-            <button id="nextButton" class="primaryButton" style="display:none;margin:18px auto 0;">مرحله‌ی بعد 🚀</button>
-        </div>
-    </section>
-
-    <!-- END SCREEN -->
-    <section id="endScreen" class="screen">
-        <div class="endCard">
-            <div class="trophy">🏆</div>
-            <h1 class="endTitle">آفرین قهرمان واژه‌ها! 🎉</h1>
-            <p id="endText" class="endText"></p>
-            <div id="finalResult" class="finalResult">پاسخ درست: ۰ | پاسخ غلط: ۰</div>
-            <button id="restartButton" class="primaryButton">🔄 بازی دوباره</button>
-        </div>
-    </section>
-
-    <div id="guide">
-        <div id="guideBubble" class="guideBubble">سلام دوست من! آماده‌ای شروع کنیم؟ 🐰✨</div>
-    </div>
-
-</div>
-
-<div id="toast"></div>
-
-<script>
 const LEVELS = [
     {
         name:"دروازه‌ی واژه‌ها",
@@ -959,7 +1010,7 @@ function openTreasure(){
     treasureOpened = true;
     treasure.textContent = "🏆✨";
     rewardTitle.textContent = "✨ جایزه گرفتی! ✨";
-    rewardText.innerHTML = `مرحله با موفقیت کامل شد! 🥕`;
+    rewardText.innerHTML = `مرحله با موفقیت کامل شد! 🐰`;
     nextButton.style.display = "flex";
     createParticles(window.innerWidth/2, window.innerHeight/2, 50);
     guide(`عالی بود ${playerName} جان! آماده‌ی مرحله‌ی بعدی هستی! 🚀`);
@@ -1006,21 +1057,21 @@ document.getElementById("restartButton").addEventListener("click", () => {
 
 function startTimer(){
     clearInterval(timerInterval);
-    timeLeft=window.timerSeconds||180;
+    timeLeft = window.timerSeconds || 180;
     updateTimer();
-    timerInterval=setInterval(()=>{
+    timerInterval = setInterval(() => {
         timeLeft--;
         updateTimer();
-        if(timeLeft<=0){
+        if(timeLeft <= 0){
             clearInterval(timerInterval);
-            document.querySelectorAll('.option').forEach(button=>button.disabled=true);
+            document.querySelectorAll('.option').forEach(button => button.disabled = true);
             showEnd(); 
         }
-    },1000);
+    }, 1000);
 }
 
 function updateTimer(){
-    timerDisplay.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;
+    timerDisplay.textContent = `${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;
 }
 
 const canvas = document.getElementById("particles");
@@ -1035,7 +1086,7 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 function createParticles(x, y, amount=25){
-    const emojis = ["✨", "⭐", "🌸", "💖", "💎"];
+    const emojis = ["✨", "⭐", "🌸", "💖", "💎", "🐰"];
     for(let i = 0; i < amount; i++){
         particles.push({
             x: x,
