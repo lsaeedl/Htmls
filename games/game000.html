@@ -1,12 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بازی آموزشی گنج واژه‌ها</title>
     <style>
-        700;900&display=swap');
-
         :root {
             --primary-color: #ff4757;
             --secondary-color: #2ed573;
@@ -25,11 +23,10 @@
 
         body {
             background: var(--bg-sky);
-            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             color: #fff;
         }
 
@@ -54,12 +51,23 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
+        /* محیط بازی */
+        .game-wrapper {
+            flex: 1 1 0;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         /* کانتینر اصلی بازی */
         .game-container {
             position: relative;
             width: 100%;
             max-width: 800px;
-            height: 100vh;
+            height: 100%;
             max-height: 700px;
             background: linear-gradient(to bottom, #74b9ff, #81ecec);
             border-radius: 24px;
@@ -212,7 +220,7 @@
             left: 0;
             width: 100%;
             height: 45%;
-            background: #2ed573; /* چمن */
+            background: #2ed573;
             perspective: 150px;
             overflow: hidden;
             border-bottom-left-radius: 16px;
@@ -309,7 +317,6 @@
             border: 2px solid #ffa502;
             border-radius: 50%;
         }
-        /* باز شدن صندوق گنج */
         .chest.open .chest-lid {
             transform: rotateX(-110deg) translateY(-20px);
         }
@@ -369,13 +376,12 @@
             border-radius: 0 0 15px 15px;
         }
 
-        /* انیمیشن پریدن کاراکتر هنگام حرکت */
         @keyframes jump {
             0%, 100% { transform: translateX(-50%) translateY(0); }
             50% { transform: translateX(-50%) translateY(-40px) scale(1.1); }
         }
 
-        /* بخش سوالات و گیم‌پلی */
+        /* بخش سوالات */
         .gameplay-area {
             flex: 1;
             display: flex;
@@ -437,7 +443,6 @@
             100% { transform: scale(1.1); }
         }
 
-        /* ریسپانسیو موبایل */
         @media (max-width: 600px) {
             .game-title { font-size: 2.2rem; }
             .letter-card { width: 50px; height: 50px; font-size: 1.6rem; }
@@ -446,88 +451,24 @@
             .character { width: 55px; height: 70px; }
         }
     </style>
-<style id="platform-local-font">
-@font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
-</style>
+    <style id="platform-local-font">
+    @font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+    </style>
 </head>
 <body>
+
 <script src="../assets/js/google-sync.js"></script>
-<script>
-//INTEGRATION: اتصال بازی 0 به نشست دانش‌آموز، نوبت مجاز و تنظیمات پلتفرم.
-const GAME_ID = 0;
-const platformStudent = getCurrentStudent();
-const platformStartedAt = Date.now();
-let platformSaved = false;
 
-(async function initializeGamePlatform() {
-    if (!platformStudent) {
-        window.location.href = '../index.html';
-        return;
-    }
-    document.documentElement.style.visibility = 'hidden';
-    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
-    if (!attemptCheck.success) {
-        document.documentElement.style.visibility = 'visible';
-        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
-        return;
-    }
-    const settings = await syncGetGameSettings(GAME_ID);
-    const timerSeconds = settings.timerSeconds || 180;
-    window.timerSeconds = timerSeconds;
-    window.platformStudent = platformStudent;
-    document.documentElement.style.visibility = 'visible';
-    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(function (element) {
-        if (!element.matches('input,textarea')) element.textContent = platformStudent.fullName;
-    });
-})();
+<!-- هدر پلتفرم -->
+<header class="platform-header" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 2px solid white; z-index: 1000;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-weight: 900; color: #4a004e; font-size: clamp(12px, 3vw, 15px);">🏠 خانه / بازی‌ها / گنج واژه‌ها</div>
+        <div id="platformTeacherUI" style="font-weight: 900; color: #ff007f; font-size: clamp(12px, 3vw, 15px); border-right: 2px solid #ccc; padding-right: 10px;">آموزگار: ...</div>
+    </div>
+    <a href="../index.html" style="text-decoration: none; background: #00f5d4; color: #111; padding: 6px 14px; border-radius: 15px; font-weight: 900; font-size: 13px;">→ بازگشت</a>
+</header>
 
-//INTEGRATION: نمایش ثابت آموزگار و فوتر پلتفرم.
-window.addEventListener('DOMContentLoaded', function () {
-    if (!document.querySelector('.platform-teacher')) {
-        const teacher = document.createElement('div');
-        teacher.className = 'platform-teacher';
-        teacher.textContent = 'آموزگار: خانم دهگودی';
-        teacher.style.cssText = 'position:fixed;top:34px;left:0;right:0;text-align:center;font-weight:700;font-size:0.85rem;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);z-index:9998;pointer-events:none;';
-        document.body.appendChild(teacher);
-    }
-    if (!document.querySelector('.platform-back')) {
-        const back = document.createElement('a');
-        back.className = 'platform-back';
-        back.href = '../index.html';
-        back.textContent = '→ بازگشت به هاب بازی‌ها';
-        back.style.cssText = 'position:fixed;top:6px;right:10px;z-index:9999;background:rgba(0,0,0,0.35);color:#fff;text-decoration:none;font-weight:700;font-size:0.85rem;padding:6px 14px;border-radius:999px;';
-        document.body.appendChild(back);
-    }
-    if (!document.querySelector('.platform-footer')) {
-        const footer = document.createElement('footer');
-        footer.className = 'platform-footer';
-        footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
-        footer.style.cssText = 'position:fixed;bottom:0;left:0;right:0;text-align:center;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);padding:8px;background:rgba(0,0,0,0.25);z-index:9999;pointer-events:none;';
-        document.body.appendChild(footer);
-    }
-});
-
-//INTEGRATION: ثبت نتیجه فقط با تعداد پاسخ درست و غلط.
-function platformNumber(selectors) {
-    for (const selector of selectors) {
-        const element = document.querySelector(selector);
-        if (element && /^\s*[0-9۰-۹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9۰-۹]/g, '');
-    }
-    return null;
-}
-async function platformSaveResult() {
-    if (platformSaved || !window.platformStudent) return;
-    const correctText = platformNumber(['#correctCount','#correctFinal','#finalCorrect','#end-correct','#rCorrect','#correct-score','#correctScore']);
-    const wrongText = platformNumber(['#wrongCount','#wrongFinal','#finalWrong','#end-wrong','#rWrong','#wrong-score','#wrongScore']);
-    if (correctText === null || wrongText === null) return;
-    platformSaved = true;
-    const toNumber = value => Number(String(value).replace(/[۰-۹]/g, digit => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)));
-    const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
-    await syncSaveResult(platformStudent.studentCode, GAME_ID, toNumber(correctText), toNumber(wrongText), durationSeconds);
-}
-new MutationObserver(platformSaveResult).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
-</script>
-
+<main class="game-wrapper">
     <div class="stars" id="starsContainer"></div>
 
     <div class="game-container" id="gameContainer">
@@ -609,13 +550,79 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
                     <h3 style="color: #2f3542;">✅ پاسخ درست: <span id="final-correct">۰</span></h3>
                     <h3 style="color: #2f3542;">❌ پاسخ غلط: <span id="final-wrong">۰</span></h3>
                 </div>
-                <button class="btn" onclick="resetGame()">بازی دوباره 🔄</button>
+                <button class="btn" onclick="resetGame()">بازگشت به خانه 🏠</button>
             </div>
         </div>
 
     </div>
+</main>
+
+<!-- فوتر پلتفرم -->
+<footer class="platform-footer" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); text-align: center; padding: 10px; font-weight: 900; color: #4a004e; font-size: 13px; z-index: 1000; border-top: 2px solid white;">طراحی و پیاده‌سازی: سعید سراوانی</footer>
 
     <script>
+        // اتصال بازی به پلتفرم
+        const GAME_ID = 0; 
+        let platformStudent = null;
+        let platformSaved = false;
+        let platformTeacherName = 'خانم دهگودی';
+        let startedAt = 0;
+        let timerSeconds = 180;
+
+        (async function initPlatform(){
+            try {
+                if (typeof getCurrentStudent === 'function') {
+                    platformStudent = getCurrentStudent();
+                } else {
+                    platformStudent = { fullName: "دانش‌آموز", studentCode: "test-123" };
+                }
+                
+                if (!platformStudent) { window.location.href = '../index.html'; return; }
+                document.documentElement.style.visibility = 'hidden';
+
+                if (typeof syncCheckAttempts === 'function') {
+                    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
+                    if (!attemptCheck.success) {
+                        document.documentElement.style.visibility = 'visible';
+                        document.body.innerHTML = '<main style="display:flex;height:100dvh;align-items:center;justify-content:center;text-align:center;padding:24px;background:#fff;color:#333;"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
+                        return;
+                    }
+                }
+                
+                if (typeof syncGetGameSettings === 'function') {
+                    const settings = await syncGetGameSettings(GAME_ID);
+                    timerSeconds = settings.timerSeconds || 180;
+                }
+
+                if (typeof syncListClasses === 'function' && platformStudent.className) {
+                    try {
+                        const classesResult = await syncListClasses();
+                        if (classesResult && classesResult.success) {
+                            const match = classesResult.classes.find(c => c.className === platformStudent.className);
+                            if (match && match.teacherName) platformTeacherName = match.teacherName;
+                        }
+                    } catch(e) {}
+                } else if (platformStudent.teacherName) {
+                    platformTeacherName = platformStudent.teacherName;
+                }
+
+                const teacherUI = document.getElementById("platformTeacherUI");
+                if(teacherUI) teacherUI.textContent = 'آموزگار: ' + platformTeacherName;
+                
+                document.documentElement.style.visibility = 'visible';
+            } catch (error) {
+                document.documentElement.style.visibility = 'visible';
+            }
+        })();
+
+        async function saveGameResultFinal(corrects, wrongs) {
+            if (!platformSaved && platformStudent && typeof syncSaveResult === 'function') {
+                platformSaved = true;
+                const duration = Math.round((Date.now() - startedAt) / 1000);
+                await syncSaveResult(platformStudent.studentCode, GAME_ID, corrects, wrongs, duration);
+            }
+        }
+
         // بانک اطلاعاتی مراحل بازی
         const levels = [
             { scrambled: ["ف", "ص", "د"], correct: "صدف" },
@@ -636,31 +643,34 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
         let errorsCount = 0;
         let timerInterval = null;
         let timeLeft = 0;
-        let resultSaved = false;
 
-        // ساخت موتور صوتی Web Audio API برای تولید صدای آفلاین
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null;
 
-        function playSound(type) {
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
 
             if (type === 'success') {
-                // صدای برنده شدن (دو نت موسیقیایی صعودی و شاد)
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // نت C5
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // نت E5
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
                 gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.4);
             } else if (type === 'error') {
-                // صدای بوق خطا (فرکانس پایین و خشن)
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(120, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
@@ -670,7 +680,6 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             }
         }
 
-        // ساخت افکت ستاره در پس‌زمینه آسمان
         function initStars() {
             const container = document.getElementById('starsContainer');
             for (let i = 0; i < 40; i++) {
@@ -684,36 +693,36 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             }
         }
 
-        // تبدیل اعداد به فارسی برای ظاهر زیباتر صمیمی کودکانه
         function toFarsiNumber(n) {
             const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
             return n.toString().replace(/\d/g, x => farsiDigits[x]);
         }
 
-        // جابجایی بین صفحات بازی
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        // شروع بازی پس از ورود نام
         function startGame() {
-            document.getElementById('signboard-name').innerText = platformStudent.fullName;
+            initAudio(); // مدیریت ایمن صدا روی اولین تعامل کاربر
+            startedAt = Date.now();
+            
+            const pName = (platformStudent && platformStudent.fullName) ? platformStudent.fullName : "دانش‌آموز";
+            document.getElementById('signboard-name').innerText = pName;
             document.getElementById('gameHud').style.display = 'flex';
             
             currentLevelIndex = 0;
             correctCount = 0;
             errorsCount = 0;
-            resultSaved = false;
-            startTimer();
+            platformSaved = false;
             
+            startTimer();
             updateHud();
             loadLevel();
             showScreen('game-screen');
             updateCharacterPosition();
         }
 
-        // بارگذاری اطلاعات مرحله فعلی
         function loadLevel() {
             if (currentLevelIndex >= levels.length) {
                 endGame(true);
@@ -725,12 +734,10 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             container.innerHTML = '';
             document.getElementById('answer-input').value = '';
 
-            // تولید کارت‌های حروف با افکت چیدمان نامرتب فانتزی
             levelData.scrambled.forEach(letter => {
                 const card = document.createElement('div');
                 card.className = 'letter-card';
                 card.innerText = letter;
-                // ایجاد انحراف زاویه تصادفی کوچک برای حس طبیعی‌تر و زیباتر
                 card.style.setProperty('--r', Math.floor(Math.random() * 14) - 7);
                 container.appendChild(card);
             });
@@ -738,7 +745,6 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             updateHud();
         }
 
-        // به‌روزرسانی اطلاعات نوار ابزار بالا و پیشرفت جاده
         function updateHud() {
             document.getElementById('hud-level').innerText = toFarsiNumber(currentLevelIndex + 1);
             document.getElementById('hud-correct').innerText = toFarsiNumber(correctCount);
@@ -748,21 +754,17 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             document.getElementById('progressBar').style.width = progressPercent + '%';
         }
 
-        // تغییر موقعیت شخصیت بر اساس پیشرفت روی جاده سه بعدی
         function updateCharacterPosition() {
             const char = document.getElementById('gameCharacter');
-            // محاسبه گام حرکتی به سمت صندوق گنج واقع در عمق جاده (بالای جاده)
-            const startBottom = 20; // موقعیت شروع در پایین صفحه
-            const endBottom = 160;  // موقعیت نهایی نزدیک صندوق گنج
+            const startBottom = 20; 
+            const endBottom = 160;  
             
             const step = (endBottom - startBottom) / levels.length;
             const currentBottom = startBottom + (currentLevelIndex * step);
             
-            // انیمیشن پرش رو به جلو هنگام حرکت روی جاده
             char.style.animation = 'jump 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
             char.style.bottom = currentBottom + 'px';
             
-            // با نزدیک شدن به انتهای جاده، کاراکتر به دلیل پرسپکتیو کمی کوچک‌تر می‌شود
             const scale = 1 - (currentLevelIndex * 0.03);
             char.style.transform = `translateX(-50%) scale(${scale})`;
 
@@ -771,7 +773,6 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             }, 600);
         }
 
-        // بررسی درستی یا نادرستی کلمه وارد شده
         function checkAnswer() {
             const userAnswer = document.getElementById('answer-input').value.trim();
             const correctAnswer = levels[currentLevelIndex].correct;
@@ -779,7 +780,6 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             if (userAnswer === "") return;
 
             if (userAnswer === correctAnswer) {
-                // پاسخ درست است
                 playSound('success');
                 correctCount++;
                 startCoinShower();
@@ -793,12 +793,10 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
                 }, 800);
 
             } else {
-                // پاسخ اشتباه است
                 playSound('error');
                 errorsCount++;
                 updateHud();
 
-                // افکت لرزش صفحه بازی
                 const container = document.getElementById('gameContainer');
                 container.classList.add('shake');
                 setTimeout(() => container.classList.remove('shake'), 500);
@@ -811,41 +809,38 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             }
         }
 
-        // پایان بازی (برد یا باخت)
         function endGame(isVictory) {
             clearInterval(timerInterval);
             document.getElementById('gameHud').style.display = 'none';
+            const pName = (platformStudent && platformStudent.fullName) ? platformStudent.fullName : "دانش‌آموز";
+            
             if (isVictory) {
                 document.getElementById('treasureChest').querySelector('.chest').classList.add('open');
-                document.getElementById('victory-title').innerText = `آفرین ${platformStudent.fullName}! 🎉`;
+                document.getElementById('victory-title').innerText = `آفرین دختر گل، ${pName}! 🎉`;
                 document.getElementById('victory-msg').innerText = `تو به گنج واژه‌ها رسیدی و تمام کلمات را با موفقیت یاد گرفتی.`;
                 document.getElementById('final-correct').innerText = toFarsiNumber(correctCount);
                 document.getElementById('final-wrong').innerText = toFarsiNumber(errorsCount);
-                if (!resultSaved) {
-                    resultSaved = true;
-                    syncSaveResult(platformStudent.studentCode, GAME_ID, correctCount, errorsCount, Math.round((Date.now() - platformStartedAt) / 1000));
-                }
                 
-                // رگبار عظیم سکه به مناسبت برد نهایی
+                saveGameResultFinal(correctCount, errorsCount);
+                
                 for(let i=0; i<5; i++) {
                     setTimeout(startCoinShower, i * 400);
                 }
 
                 showScreen('victory-screen');
             } else {
+                saveGameResultFinal(correctCount, errorsCount);
                 showScreen('gameover-screen');
             }
         }
 
-        // ریست کردن و بازگشت به صفحه اول
         function resetGame() {
-            document.getElementById('treasureChest').querySelector('.chest').classList.remove('open');
-            showScreen('login-screen');
+            window.location.href = '../index.html';
         }
 
         function startTimer() {
             clearInterval(timerInterval);
-            timeLeft = window.timerSeconds || 180;
+            timeLeft = timerSeconds || 180;
             updateTimer();
             timerInterval = setInterval(() => {
                 timeLeft--;
@@ -863,12 +858,12 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             document.getElementById('hud-timer').innerText = `${toFarsiNumber(minutes)}:${toFarsiNumber(seconds)}`;
         }
 
-        /* سیستم انیمیشن بارش سکه‌های طلایی با استفاده از Canvas */
         const canvas = document.getElementById('coinCanvas');
         const ctx = canvas.getContext('2d');
         let coinsArray = [];
 
         function resizeCanvas() {
+            if(!canvas) return;
             canvas.width = document.getElementById('gameContainer').offsetWidth;
             canvas.height = document.getElementById('gameContainer').offsetHeight;
         }
@@ -895,7 +890,6 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.rotation * Math.PI / 180);
                 
-                // رسم دایره سکه طلایی با افکت عمق رنگ
                 ctx.beginPath();
                 ctx.arc(0, 0, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = '#ffd32a';
@@ -904,7 +898,6 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
                 ctx.strokeStyle = '#ffa502';
                 ctx.stroke();
 
-                // خط مرکزی سکه برای حالت درخشش در حال چرخش
                 ctx.beginPath();
                 ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
                 ctx.strokeStyle = '#ffa502';
@@ -927,7 +920,6 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
                 coinsArray[i].update();
                 coinsArray[i].draw();
                 
-                // حذف سکه‌هایی که از صفحه خارج شده‌اند
                 if (coinsArray[i].y > canvas.height) {
                     coinsArray.splice(i, 1);
                     i--;
@@ -936,11 +928,9 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             requestAnimationFrame(animateCoins);
         }
 
-        // اجرای اولیه توابع پس‌زمینه
         initStars();
         animateCoins();
 
-        // امکان ارسال پاسخ با زدن کلید Enter در کادر ورود جواب
         document.getElementById('answer-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 checkAnswer();
@@ -949,4 +939,3 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
     </script>
 </body>
 </html>
-
