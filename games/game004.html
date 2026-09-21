@@ -352,11 +352,6 @@ h1{
         transform .2s ease;
 }
 
-/*
-   متن دقیقاً در کادر سفید موجود
-   روی تصویر کفشدوزک قرار می‌گیرد.
-*/
-
 .ladybug-word{
     position:absolute;
 
@@ -701,7 +696,7 @@ h1{
     display:grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(2,1fr);
 
     gap:12px;
 
@@ -829,6 +824,73 @@ h1{
 
 <body>
 
+<!-- INTEGRATION: اسکریپت و منطق پلتفرم -->
+<script src="../assets/js/google-sync.js"></script>
+<script>
+const GAME_ID = 4; 
+const platformStudent = getCurrentStudent();
+const platformStartedAt = Date.now();
+let platformSaved = false;
+
+(async function initializeGamePlatform() {
+    if (!platformStudent) {
+        window.location.href = '../index.html';
+        return;
+    }
+    document.documentElement.style.visibility = 'hidden';
+    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
+    if (!attemptCheck.success) {
+        document.documentElement.style.visibility = 'visible';
+        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
+        return;
+    }
+    const settings = await syncGetGameSettings(GAME_ID);
+    window.timerSeconds = settings.timerSeconds || 180;
+    window.platformStudent = platformStudent;
+
+    let teacherName = 'خانم دهگودی'; 
+    if (platformStudent.teacherName) {
+        teacherName = platformStudent.teacherName;
+    } else if (platformStudent.className) {
+        try {
+            const classesResult = await syncListClasses();
+            if (classesResult && classesResult.success) {
+                const match = classesResult.classes.find(c => c.className === platformStudent.className);
+                if (match && match.teacherName) {
+                    teacherName = match.teacherName;
+                }
+            }
+        } catch (e) {
+            console.error('Error fetching teacher name:', e);
+        }
+    }
+    window.platformTeacherName = teacherName;
+
+    // ثبت نام دانش‌آموز در صورت وجود المان قبل از لود صفحه
+    const nameDisplay = document.getElementById('playerName');
+    if(nameDisplay) nameDisplay.textContent = platformStudent.fullName;
+
+    document.documentElement.style.visibility = 'visible';
+})();
+
+window.addEventListener('DOMContentLoaded', function () {
+    if (!document.querySelector('.platform-teacher')) {
+        const teacher = document.createElement('div');
+        teacher.className = 'platform-teacher';
+        teacher.textContent = 'آموزگار: ' + (window.platformTeacherName || 'خانم دهگودی');
+        teacher.style.cssText = 'position:absolute;top:15px;left:50%;transform:translateX(-50%);text-align:center;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);background:linear-gradient(135deg, #ff69b9, #9b58e8);padding:6px 20px;border-radius:20px;z-index:9999;border:2px solid white;box-shadow:0 4px 10px rgba(0,0,0,0.2);';
+        document.body.appendChild(teacher);
+    }
+    if (!document.querySelector('.platform-footer')) {
+        const footer = document.createElement('footer');
+        footer.className = 'platform-footer';
+        footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
+        footer.style.cssText = 'text-align:center;font-weight:700;padding:12px;color:#fff;background:rgba(67, 35, 79, 0.85);position:fixed;bottom:0;width:100%;z-index:9999;font-size:14px;';
+        document.body.appendChild(footer);
+    }
+});
+</script>
+
 <div class="game">
 
 <div class="container">
@@ -846,11 +908,6 @@ h1{
         <h1>
             بازی جادویی «ای» ✨
         </h1>
-
-        <!-- //INTEGRATION: نام آموزگار پلتفرم -->
-        <div class="teacher-credit">
-            آموزگار: خانم دهگودی
-        </div>
 
         <div class="start-text">
             کلمه‌هایی را پیدا کن که می‌توانیم
@@ -880,7 +937,6 @@ h1{
 
     <div class="hud">
 
-        <!-- //INTEGRATION: امتیاز عددی از HUD حذف شد. -->
         <div class="badge">
             👋
             <span id="playerName"></span>
@@ -960,7 +1016,6 @@ h1{
 
         <div class="report-grid">
 
-            <!-- //INTEGRATION: گزارش پایانی فقط پاسخ درست و غلط را نمایش می‌دهد. -->
             <div class="report-item">
 
                 <span
@@ -1021,16 +1076,7 @@ h1{
 ></div>
 
 
-<!-- //INTEGRATION: فوتر ثابت پلتفرم -->
-<footer>
-    طراحی و پیاده‌سازی: سعید سراوانی
-</footer>
-
-<script src="../assets/js/google-sync.js"></script>
 <script>
-
-//INTEGRATION: شناسه ثابت بازی در پلتفرم مدرسه.
-const GAME_ID = 4;
 
 /* =====================================================
    تصویر کفشدوزک ارسالی
@@ -1043,11 +1089,6 @@ const LADYBUG_IMAGE =
 /* =====================================================
    کلمات
 ===================================================== */
-
-/*
-   دقیقاً ۶ کلمه درست داریم.
-   بازی به محض انتخاب هر ۶ کلمه درست تمام می‌شود.
-*/
 
 const words = [
 
@@ -1455,76 +1496,11 @@ function soundWin(){
 
 
 /* =====================================================
-   اتصال به پلتفرم
+   شروع بازی (با اتصال به پلتفرم)
 ===================================================== */
 
-//INTEGRATION: هویت و مجوز بازی پیش از فعال شدن شروع بازی بررسی می‌شود.
-const student = getCurrentStudent();
-
-if(!student){
-
-    window.location.href = "../index.html";
-
-}
-else{
-
-    initializePlatform();
-
-}
-
-
-async function initializePlatform(){
-
-    const attemptCheck =
-        await syncCheckAttempts(
-            student.studentCode,
-            GAME_ID
-        );
-
-    if(!attemptCheck.success){
-
-        document.querySelector(".game").innerHTML = `
-            <div class="container">
-                <section class="screen active">
-                    <div class="start-card">
-                        <div class="start-text">${attemptCheck.error || "امکان شرکت در این بازی وجود ندارد."}</div>
-                    </div>
-                </section>
-            </div>
-        `;
-
-        return;
-
-    }
-
-    //INTEGRATION: مدت زمان از تنظیمات پلتفرم خوانده می‌شود؛ این بازی تایمر داخلی ندارد.
-    const settings =
-        await syncGetGameSettings(
-            GAME_ID
-        );
-
-    const timerSeconds =
-        settings.timerSeconds || 180;
-
-    playerName = student.fullName;
-
-    document.getElementById(
-        "playerName"
-    ).textContent =
-        playerName;
-
-    startBtn.addEventListener(
-        "click",
-        startGame
-    );
-
-    restartBtn.addEventListener(
-        "click",
-        restartGame
-    );
-
-}
-
+startBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", restartGame);
 
 function startGame(){
 
@@ -1533,6 +1509,8 @@ function startGame(){
     resetGame();
 
     startedAt = Date.now();
+    playerName = window.platformStudent ? window.platformStudent.fullName : "دانش‌آموز";
+    document.getElementById("playerName").textContent = playerName;
 
     showScreen(
         gameScreen
@@ -1999,20 +1977,12 @@ async function finishGame(){
     ).textContent =
         finalText;
 
-    //INTEGRATION: نتیجه نهایی بدون امتیاز عددی در پلتفرم ثبت می‌شود.
-    const durationSeconds =
-        Math.round(
-            (Date.now() - startedAt) / 1000
-        );
-
-    await syncSaveResult(
-        student.studentCode,
-        GAME_ID,
-        correctCount,
-        wrongCount,
-        durationSeconds
-    );
-
+    //INTEGRATION: ثبت نتیجه در پلتفرم 
+    if (!platformSaved && window.platformStudent) {
+        platformSaved = true;
+        const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
+        await syncSaveResult(window.platformStudent.studentCode, GAME_ID, correctCount, wrongCount, durationSeconds);
+    }
 
     showScreen(
         reportScreen
@@ -2146,6 +2116,7 @@ function restartGame(){
         resetGame();
 
         startedAt = Date.now();
+        platformSaved = false;
 
         showScreen(
             gameScreen
