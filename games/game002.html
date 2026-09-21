@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>بازی گردونه واژگان فارسی</title>
     <style>
-        /* تعریف فونت‌های سیستم برای نمایش زیبای فارسی */
         @font-face {
             font-family: 'Vazir';
             src: local('Vazir'), local('Tahoma');
@@ -22,10 +21,12 @@
 
         body, html {
             width: 100%;
-            height: 100%;
+            height: 100dvh;
             overflow: hidden;
             background-color: #050515;
             color: #fff;
+            display: flex;
+            flex-direction: column;
         }
 
         /* پس‌زمینه کهکشانی متحرک */
@@ -39,14 +40,25 @@
             pointer-events: none;
         }
 
-        /* ساختار کلی صفحات */
+        /* ساختار کلی صفحات داخل کانتینر اصلی */
+        .game-wrapper {
+            flex: 1 1 0;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            z-index: 2;
+        }
+
         .screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -84,31 +96,6 @@
             margin-bottom: 30px;
             box-shadow: 0 0 25px rgba(225, 0, 255, 0.5);
             animation: float 3s ease-in-out infinite;
-        }
-
-        .input-group {
-            width: 100%;
-            max-width: 320px;
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border-radius: 25px;
-            border: 2px solid #7f00ff;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-size: 1.1rem;
-            text-align: center;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        input[type="text"]:focus {
-            border-color: #00f2fe;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-            background: rgba(255, 255, 255, 0.15);
         }
 
         .btn {
@@ -151,7 +138,7 @@
             justify-content: center;
             font-size: 1.2rem;
             cursor: pointer;
-            z-index: 10;
+            z-index: 1005;
         }
 
         /* هدر اطلاعات بازی */
@@ -173,13 +160,12 @@
         .student-name { color: #00f2fe; font-weight: bold; }
         .score-val { color: #ff007f; font-weight: bold; }
         .stats-val { color: #00ff88; font-weight: bold; }
-        .teacher-val { color: #e100ff; font-weight: bold; }
 
         /* بخش گردونه */
         .wheel-container {
             position: relative;
-            width: 290px;
-            height: 290px;
+            width: 250px;
+            height: 250px;
             margin: 15px 0;
         }
 
@@ -228,7 +214,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 160px;
+            min-height: 140px;
             justify-content: center;
         }
 
@@ -241,10 +227,29 @@
             display: none;
         }
 
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 25px;
+            border: 2px solid #7f00ff;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.1rem;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
         .feedback-box {
             text-align: center;
             font-size: 1.1rem;
-            margin: 12px 0;
+            margin: 10px 0;
             min-height: 27px;
             font-weight: bold;
         }
@@ -276,7 +281,6 @@
             padding-bottom: 5px;
         }
 
-        /* انیمیشن افکت موفقیت */
         .sparkle {
             position: absolute;
             pointer-events: none;
@@ -289,18 +293,6 @@
             0% { transform: translate(0,0) scale(1); opacity: 1; }
             100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
         }
-
-        /* فوتر یکپارچه */
-        .platform-footer {
-            position: fixed;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-            z-index: 10;
-            font-weight: bold;
-        }
     </style>
 <style id="platform-local-font">
 @font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
@@ -308,102 +300,140 @@
 </head>
 <body>
 
-    <!-- اسکریپت توابع پلتفرم -->
     <script src="../assets/js/google-sync.js"></script>
 
     <canvas id="space-bg"></canvas>
 
+    <!-- هدر پلتفرم -->
+    <header class="platform-header" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 2px solid white; z-index: 1000;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-weight: 900; color: #4a004e; font-size: clamp(12px, 3vw, 15px);">🏠 خانه / بازی‌ها / گردونه واژگان</div>
+            <div id="platformTeacherUI" style="font-weight: 900; color: #ff007f; font-size: clamp(12px, 3vw, 15px); border-right: 2px solid #ccc; padding-right: 10px;">آموزگار: خانم دهگودی</div>
+        </div>
+        <a href="../index.html" style="text-decoration: none; background: #00f5d4; color: #111; padding: 6px 14px; border-radius: 15px; font-weight: 900; font-size: 13px;">→ بازگشت</a>
+    </header>
+
     <button class="audio-control" id="audio-toggle" onclick="toggleMute()">🔊</button>
 
-    <div class="screen active" id="welcome-screen">
-        <h1 class="welcome-title">بازی گردونه واژگان فارسی</h1>
-        <!-- INTEGRATION 2: نمایش نام آموزگار در صفحه خوش‌آمدگویی -->
-        <h3 style="font-size: 1.2rem; color: #e100ff; text-shadow: 0 0 10px rgba(225, 0, 255, 0.4); margin-top: -15px; margin-bottom: 25px;">آموزگار: خانم دهگودی</h3>
-        
-        <div class="space-avatar">🚀</div>
-        <p>آماده‌ای واژه‌ها را پیدا کنی؟</p>
-        <button class="btn" id="start-game-btn" onclick="startGame()">شروع بازی</button>
-    </div>
-
-    <div class="screen" id="game-screen">
-        <div class="game-header">
-            <!-- INTEGRATION 2: نمایش ثابت آموزگار در هدر بازی -->
-            <div>آموزگار: <span class="teacher-val">خانم دهگودی</span></div>
-            <div>دانش‌آموز: <span class="student-name" id="header-name">-</span></div>
-            <div>⏱ زمان: <span class="stats-val" id="header-timer">۰:۰۰</span></div>
-            <div>صحیح: <span class="stats-val" id="header-correct">0</span> / غلط: <span class="score-val" id="header-wrong">0</span></div>
+    <main class="game-wrapper">
+        <div class="screen active" id="welcome-screen">
+            <h1 class="welcome-title">بازی گردونه واژگان فارسی</h1>
+            <div class="space-avatar">🚀</div>
+            <p style="margin-bottom: 20px;">آماده‌ای واژه‌ها را پیدا کنی؟</p>
+            <button class="btn" id="start-game-btn" onclick="startGame()">شروع بازی</button>
         </div>
 
-        <div class="wheel-container">
-            <div class="wheel-pointer"></div>
-            <div class="wheel-center-pin"></div>
-            <canvas id="wheel"></canvas>
-        </div>
-
-        <div class="action-area">
-            <div class="current-word-display" id="word-display">واژه</div>
-            
-            <div id="answer-form-container" style="display: none; width: 100%;">
-                <input type="text" id="answer-input" placeholder="معنی این کلمه چیست؟" autocomplete="off">
-                <button class="btn" id="submit-answer-btn" style="margin-top: 10px; width: 100%;" onclick="checkAnswer()">ثبت پاسخ</button>
+        <div class="screen" id="game-screen">
+            <div class="game-header">
+                <div>دانش‌آموز: <span class="student-name" id="header-name">-</span></div>
+                <div>⏱ زمان: <span class="stats-val" id="header-timer">۰:۰۰</span></div>
+                <div>صحیح: <span class="stats-val" id="header-correct">0</span> / غلط: <span class="score-val" id="header-wrong">0</span></div>
             </div>
 
-            <button class="btn" id="spin-btn" onclick="spinWheel()">چرخش گردونه</button>
-            
-            <button class="btn" id="next-btn" style="display: none;" onclick="prepareNextTurn()">مرحله بعد 🌟</button>
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <div class="wheel-center-pin"></div>
+                <canvas id="wheel"></canvas>
+            </div>
 
-            <div class="feedback-box" id="feedback-text"></div>
+            <div class="action-area">
+                <div class="current-word-display" id="word-display">واژه</div>
+                
+                <div id="answer-form-container" style="display: none; width: 100%;">
+                    <input type="text" id="answer-input" placeholder="معنی این کلمه چیست؟" autocomplete="off">
+                    <button class="btn" id="submit-answer-btn" style="margin-top: 10px; width: 100%;" onclick="checkAnswer()">ثبت پاسخ</button>
+                </div>
+
+                <button class="btn" id="spin-btn" onclick="spinWheel()">چرخش گردونه</button>
+                
+                <button class="btn" id="next-btn" style="display: none;" onclick="prepareNextTurn()">مرحله بعد 🌟</button>
+
+                <div class="feedback-box" id="feedback-text"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="screen" id="end-screen">
-        <div class="end-card">
-            <h2 id="end-title">تبریک!</h2>
-            <p style="margin-bottom: 20px; color: #aaa;" id="end-subtitle">شما همه واژگان را کامل کردید.</p>
-            
-            <div class="final-stat"><span>دانش‌آموز:</span> <span id="end-name" style="color:#00f2fe"></span></div>
-            <div class="final-stat"><span>پاسخ‌های صحیح:</span> <span id="end-correct" style="color:#00ff88"></span></div>
-            <div class="final-stat"><span>پاسخ‌های غلط:</span> <span id="end-wrong" style="color:#ff2a2a"></span></div>
-            
-            <button class="btn" style="margin-top: 25px; width: 100%;" onclick="resetGameToWelcome()">بازی دوباره</button>
+        <div class="screen" id="end-screen">
+            <div class="end-card">
+                <h2 id="end-title">تبریک!</h2>
+                <p style="margin-bottom: 20px; color: #aaa;" id="end-subtitle">شما همه واژگان را کامل کردید.</p>
+                
+                <div class="final-stat"><span>دانش‌آموز:</span> <span id="end-name" style="color:#00f2fe"></span></div>
+                <div class="final-stat"><span>پاسخ‌های صحیح:</span> <span id="end-correct" style="color:#00ff88"></span></div>
+                <div class="final-stat"><span>پاسخ‌های غلط:</span> <span id="end-wrong" style="color:#ff2a2a"></span></div>
+                
+                <button class="btn" style="margin-top: 25px; width: 100%;" onclick="resetGameToWelcome()">بازگشت به خانه</button>
+            </div>
         </div>
-    </div>
+    </main>
 
-    <!-- INTEGRATION 2: نمایش نام طراح در فوتر -->
-    <footer class="platform-footer">
-        طراحی و پیاده‌سازی: سعید سراوانی
-    </footer>
+    <!-- فوتر پلتفرم -->
+    <footer class="platform-footer" style="flex: 0 0 auto; background: rgba(5, 5, 21, 0.9); text-align: center; padding: 10px; font-weight: 900; color: #fff; font-size: 13px; z-index: 1000; border-top: 1px solid rgba(255,255,255,0.1);">طراحی و پیاده‌سازی: سعید سراوانی</footer>
 
     <script>
-        // ============================================================
-        // INTEGRATION 1, 2, 3, 4: متغیرهای اتصال و بررسی‌های اولیه
-        // ============================================================
         const GAME_ID = 2;
         let globalStudent = null;
         let dynamicTimerSeconds = 180;
         let startedAt = null;
+        let platformSaved = false;
+        let platformTeacherName = 'خانم دهگودی';
 
         (async function initPlatform() {
-            // 2. بررسی هویت دانش‌آموز
-            globalStudent = getCurrentStudent();
-            if (!globalStudent) {
-                window.location.href = '../index.html';
-                return;
-            }
+            try {
+                if (typeof getCurrentStudent === 'function') {
+                    globalStudent = getCurrentStudent();
+                } else {
+                    globalStudent = { fullName: "دانش‌آموز تستی", studentCode: "test-123" };
+                }
 
-            // 3. بررسی تعداد نوبت مجاز
-            const attemptCheck = await syncCheckAttempts(globalStudent.studentCode, GAME_ID);
-            if (!attemptCheck.success) {
-                document.body.innerHTML = `<main style="display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:'Vazir',Tahoma,sans-serif;"><h2 style="color:#ff2a2a;line-height:1.6;">${attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.'}</h2></main>`;
-                return;
-            }
+                if (!globalStudent) {
+                    window.location.href = '../index.html';
+                    return;
+                }
+                document.documentElement.style.visibility = 'hidden';
 
-            // 4. دریافت تایمر پویا از پلتفرم
-            const settings = await syncGetGameSettings(GAME_ID);
-            dynamicTimerSeconds = settings.timerSeconds || 180;
+                if (typeof syncCheckAttempts === 'function') {
+                    const attemptCheck = await syncCheckAttempts(globalStudent.studentCode, GAME_ID);
+                    if (!attemptCheck.success) {
+                        document.documentElement.style.visibility = 'visible';
+                        document.body.innerHTML = '<main style="display:flex;height:100dvh;align-items:center;justify-content:center;text-align:center;padding:24px;background:#050515;color:#fff;"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
+                        return;
+                    }
+                }
+
+                if (typeof syncGetGameSettings === 'function') {
+                    const settings = await syncGetGameSettings(GAME_ID);
+                    dynamicTimerSeconds = settings.timerSeconds || 180;
+                }
+
+                if (typeof syncListClasses === 'function' && globalStudent.className) {
+                    try {
+                        const classesResult = await syncListClasses();
+                        if (classesResult && classesResult.success) {
+                            const match = classesResult.classes.find(c => c.className === globalStudent.className);
+                            if (match && match.teacherName) platformTeacherName = match.teacherName;
+                        }
+                    } catch(e) {}
+                } else if (globalStudent.teacherName) {
+                    platformTeacherName = globalStudent.teacherName;
+                }
+
+                const teacherUI = document.getElementById("platformTeacherUI");
+                if(teacherUI) teacherUI.textContent = 'آموزگار: ' + platformTeacherName;
+
+                document.documentElement.style.visibility = 'visible';
+            } catch (error) {
+                document.documentElement.style.visibility = 'visible';
+            }
         })();
 
-        // --- داده‌های اصلی بازی ---
+        async function saveGameResultFinal(corrects, wrongs) {
+            if (!platformSaved && globalStudent && typeof syncSaveResult === 'function') {
+                platformSaved = true;
+                const duration = Math.round((Date.now() - startedAt) / 1000);
+                await syncSaveResult(globalStudent.studentCode, GAME_ID, corrects, wrongs, duration);
+            }
+        }
+
         const vocabulary = [
             { word: "گفت و گو", meaning: "مشورت" },
             { word: "پیشنهاد", meaning: "نظر" },
@@ -419,7 +449,6 @@
 
         const positiveFeedbacks = ["آفرین!", "عالی بود!", "فوق‌العاده!", "احسنت!", "خیلی خوب!", "ستاره گرفتی!"];
 
-        // --- متغیرهای وضعیت بازی ---
         let studentName = "";
         let correctCount = 0;
         let wrongCount = 0;
@@ -430,7 +459,6 @@
         let timerInterval = null;
         let timeLeft = 0;
 
-        // --- تنظیمات سیستم صوتی دیجیتال (Web Audio API) ---
         let audioCtx = null;
         let bgOscillator = null;
         let bgGain = null;
@@ -449,17 +477,11 @@
                 bgOscillator.type = 'sine';
                 bgOscillator.frequency.setValueAtTime(120, audioCtx.currentTime);
                 
-                setInterval(() => {
-                    if(!isMuted && audioCtx) {
-                        bgOscillator.frequency.linearRampToValueAtTime(110 + Math.random() * 20, audioCtx.currentTime + 1);
-                    }
-                }, 1000);
-
                 bgGain.gain.setValueAtTime(isMuted ? 0 : 0.04, audioCtx.currentTime);
                 bgOscillator.connect(bgGain);
                 bgGain.connect(audioCtx.destination);
                 bgOscillator.start();
-            } catch(e) { console.log("Audio play deferred"); }
+            } catch(e) {}
         }
 
         function playSoundEffect(type) {
@@ -503,12 +525,11 @@
         function toggleMute() {
             isMuted = !isMuted;
             document.getElementById('audio-toggle').innerText = isMuted ? "❌" : "🔊";
-            if (bgGain) {
-                bgGain.gain.setValueAtTime(isMuted ? 0 : 0.04, audioCtx ? audioCtx.currentTime : 0);
+            if (bgGain && audioCtx) {
+                bgGain.gain.setValueAtTime(isMuted ? 0 : 0.04, audioCtx.currentTime);
             }
         }
 
-        // --- انیمیشن پس‌زمینه ذرات ستاره‌ای و کهکشان ---
         const canvas = document.getElementById('space-bg');
         const ctx = canvas.getContext('2d');
         let stars = [];
@@ -567,26 +588,20 @@
         }
         drawSpace();
 
-        // --- ناوبری بین صفحات بازی ---
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        // --- شروع بازی ---
         function startGame() {
             initAudio();
             playSoundEffect('click');
             
-            // INTEGRATION 2: استفاده از نام دریافت شده از پلتفرم
-            studentName = globalStudent.fullName;
-            
-            // INTEGRATION 5: ثبت زمان شروع بازی
+            studentName = (globalStudent && globalStudent.fullName) ? globalStudent.fullName : "دانش‌آموز";
             startedAt = Date.now();
+            platformSaved = false;
             
             clearInterval(timerInterval);
-            
-            // INTEGRATION 4: استفاده از مقدار تایمر پویا از تنظیمات
             timeLeft = dynamicTimerSeconds;
             
             updateTimer();
@@ -597,7 +612,7 @@
                     clearInterval(timerInterval); 
                     document.getElementById('spin-btn').disabled = true; 
                     document.getElementById('next-btn').disabled = true;
-                    showEndScreen(); // پایان اجباری در صورت اتمام زمان
+                    showEndScreen();
                 } 
             }, 1000);
             
@@ -613,7 +628,6 @@
             document.getElementById('header-wrong').innerText = wrongCount;
         }
 
-        // --- پیاده‌سازی رندر گرافیکی سه‌بعدی گردونه واژگان ---
         const wheelCanvas = document.getElementById('wheel');
         const wheelCtx = wheelCanvas.getContext('2d');
         const totalSegments = vocabulary.length;
@@ -625,8 +639,8 @@
         ];
 
         function initWheelCanvas() {
-            wheelCanvas.width = 400;
-            wheelCanvas.height = 400;
+            wheelCanvas.width = 300;
+            wheelCanvas.height = 300;
             drawWheelStructure();
         }
 
@@ -655,25 +669,14 @@
                 wheelCtx.shadowColor = "#00f2fe";
                 wheelCtx.shadowBlur = 4;
                 wheelCtx.fillStyle = "#ffffff";
-                wheelCtx.font = "bold 15px Vazir, Tahoma";
+                wheelCtx.font = "bold 13px Vazir, Tahoma";
                 
-                wheelCtx.fillText(vocabulary[i].word, radius - 25, 0);
+                wheelCtx.fillText(vocabulary[i].word, radius - 20, 0);
                 wheelCtx.restore();
             }
-            
-            let glossGrd = wheelCtx.createLinearGradient(-radius, -radius, radius, radius);
-            glossGrd.addColorStop(0, 'rgba(255,255,255,0.15)');
-            glossGrd.addColorStop(0.5, 'rgba(255,255,255,0)');
-            glossGrd.addColorStop(1, 'rgba(0,0,0,0.4)');
-            wheelCtx.fillStyle = glossGrd;
-            wheelCtx.beginPath();
-            wheelCtx.arc(0, 0, radius, 0, Math.PI * 2);
-            wheelCtx.fill();
-
             wheelCtx.restore();
         }
 
-        // --- مکانیک چرخاندن گردونه ---
         function spinWheel() {
             if (remainingWords.length === 0) return;
             
@@ -685,7 +688,6 @@
             currentSelectedPair = randomPick;
 
             const targetIdx = vocabulary.findIndex(v => v.word === randomPick.word);
-            
             const targetSegmentCenterAngle = (targetIdx * segmentAngle) + (segmentAngle / 2);
             const stopAngleRad = (1.5 * Math.PI) - targetSegmentCenterAngle;
             
@@ -788,47 +790,22 @@
             }
         }
 
-        // INTEGRATION 5: پایان بازی و ثبت نتیجه بدون نمره اضافی
         async function showEndScreen() {
-            clearInterval(timerInterval); // توقف تایمر در صورت اتمام زودتر از موعد
+            clearInterval(timerInterval);
             
             document.getElementById('end-title').innerText = `تبریک ${studentName}!`;
             document.getElementById('end-name').innerText = studentName;
             document.getElementById('end-correct').innerText = correctCount;
             document.getElementById('end-wrong').innerText = wrongCount;
             
-            // محاسبه مدت زمان اجرای بازی
-            const durationSeconds = Math.round((Date.now() - startedAt) / 1000);
-            
-            // ذخیره نتیجه در پلتفرم
-            await syncSaveResult(globalStudent.studentCode, GAME_ID, correctCount, wrongCount, durationSeconds);
+            await saveGameResultFinal(correctCount, wrongCount);
             
             switchScreen('end-screen');
         }
 
         function resetGameToWelcome() {
             playSoundEffect('click');
-            correctCount = 0;
-            wrongCount = 0;
-            remainingWords = [...vocabulary];
-            currentSelectedPair = null;
-            clearInterval(timerInterval);
-
-            const wheelEl = document.getElementById('wheel');
-            wheelEl.style.transition = 'none';
-            currentRotation = 0;
-            wheelEl.style.transform = `rotate(0deg)`;
-            setTimeout(() => {
-                wheelEl.style.transition = 'transform 4s cubic-bezier(0.1, 0.8, 0.1, 1)';
-            }, 50);
-
-            document.getElementById('spin-btn').style.display = "block";
-            document.getElementById('spin-btn').disabled = false;
-            document.getElementById('word-display').style.display = "none";
-            document.getElementById('answer-form-container').style.display = "none";
-            document.getElementById('feedback-text').innerText = "";
-
-            switchScreen('welcome-screen');
+            window.location.href = '../index.html';
         }
 
         function updateTimer() {
