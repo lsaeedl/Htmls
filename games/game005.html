@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -65,17 +65,30 @@ body{
     display:flex;
 }
 .platform-teacher{
-    text-align:center;
-    font-weight:700;
-    margin:8px auto;
-    color:#6d267b;
-    font-size:16px;
+    position: relative;
+    text-align: center;
+    font-weight: 900;
+    margin: 0 auto 15px auto;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    background: linear-gradient(135deg, #ff69b9, #9b58e8);
+    padding: 6px 20px;
+    border-radius: 20px;
+    border: 2px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: table;
+    z-index: 10;
 }
 .platform-footer{
     text-align:center;
     font-weight:700;
-    padding:16px;
-    color:#6d267b;
+    padding:12px;
+    color:#fff;
+    background:rgba(56, 32, 92, 0.85);
+    position:fixed;
+    bottom:0;
+    width:100%;
+    z-index:9999;
     font-size:14px;
 }
 .start-card{
@@ -490,10 +503,77 @@ h1{
 </head>
 <body>
 <script src="../assets/js/google-sync.js"></script>
+<script>
+// INTEGRATION: دریافت اطلاعات و بررسی نوبت مجاز
+const GAME_ID = "005";
+let platformStudent = null;
+let platformSaved = false;
+
+(async function initPlatform(){
+    platformStudent = getCurrentStudent();
+    if (!platformStudent) {
+        window.location.href = '../index.html';
+        return;
+    }
+    
+    document.documentElement.style.visibility = 'hidden';
+    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
+    if (!attemptCheck.success) {
+        document.documentElement.style.visibility = 'visible';
+        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
+        return;
+    }
+    
+    const settings = await syncGetGameSettings(GAME_ID);
+    window.timerSeconds = settings.timerSeconds || 180;
+    
+    // دریافت نام آموزگار پلتفرم
+    let teacherName = 'خانم دهگودی'; 
+    if (platformStudent.teacherName) {
+        teacherName = platformStudent.teacherName;
+    } else if (platformStudent.className) {
+        try {
+            const classesResult = await syncListClasses();
+            if (classesResult && classesResult.success) {
+                const match = classesResult.classes.find(c => c.className === platformStudent.className);
+                if (match && match.teacherName) {
+                    teacherName = match.teacherName;
+                }
+            }
+        } catch (e) {
+            console.error('Error fetching teacher name:', e);
+        }
+    }
+    window.platformTeacherName = teacherName;
+    
+    document.getElementById("startStudentName").textContent = platformStudent.fullName;
+    document.getElementById("playerName").textContent = platformStudent.fullName;
+    document.getElementById("playerName2").textContent = platformStudent.fullName;
+    
+    document.documentElement.style.visibility = 'visible';
+})();
+
+window.addEventListener('DOMContentLoaded', function () {
+    if (!document.querySelector('.platform-teacher')) {
+        const teacher = document.createElement('div');
+        teacher.className = 'platform-teacher';
+        teacher.textContent = 'آموزگار: ' + (window.platformTeacherName || 'خانم دهگودی');
+        const container = document.querySelector('.container');
+        if(container) {
+            container.insertBefore(teacher, container.firstChild);
+        }
+    }
+    if (!document.querySelector('.platform-footer')) {
+        const footer = document.createElement('footer');
+        footer.className = 'platform-footer';
+        footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
+        document.body.appendChild(footer);
+    }
+});
+</script>
 
 <div class="game">
 <div class="container">
-<div class="platform-teacher">آموزگار: خانم دهگودی</div>
 
 <!-- صفحه شروع -->
 <section id="startScreen" class="screen active">
@@ -586,15 +666,12 @@ h1{
 </div>
 </section>
 
-<footer class="platform-footer">طراحی و پیاده‌سازی: سعید سراوانی</footer>
 </div>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
-const GAME_ID = "005";
-let student = null;
 let startedAt = 0;
 let timerSeconds = 180;
 let timerInterval = null;
@@ -662,17 +739,6 @@ function formatTime(sec){
     return `${persianNumber(m)}:${s < 10 ? '۰' : ''}${persianNumber(s)}`;
 }
 
-(async function initPlatform(){
-    student = getCurrentStudent();
-    if (!student) {
-        window.location.href = '../index.html';
-        return;
-    }
-    document.getElementById("startStudentName").textContent = student.fullName;
-    document.getElementById("playerName").textContent = student.fullName;
-    document.getElementById("playerName2").textContent = student.fullName;
-})();
-
 function startTimer(){
     clearInterval(timerInterval);
     updateTimerDisplays();
@@ -702,6 +768,7 @@ function stopGameOnTimeout(){
         if (el.id !== 'restartBtn') el.style.pointerEvents = 'none';
     });
     showToast("⏱️ زمان شما به پایان رسید!", 4000);
+    finishGame();
 }
 
 function showScreen(screen){
@@ -748,23 +815,16 @@ function soundWin(){
     [523,659,784,1046].forEach((f,i) => setTimeout(() => tone(f, .35, "triangle", .13), i*100));
 }
 
-startBtn.addEventListener("click", async () => {
+startBtn.addEventListener("click", () => {
     initAudio();
     startBtn.disabled = true;
-    const attemptCheck = await syncCheckAttempts(student.studentCode, GAME_ID);
-    if (!attemptCheck.success) {
-        alert(attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.');
-        startBtn.disabled = false;
-        return;
-    }
-    const settings = await syncGetGameSettings(GAME_ID);
-    timerSeconds = settings.timerSeconds || 180;
+    timerSeconds = window.timerSeconds || 180;
     startedAt = Date.now();
     startTimer();
     resetGame();
     showScreen(stage1Screen);
     createStage1();
-    showToast(`سلام ${student.fullName} جان! 🌟`);
+    showToast(`سلام ${platformStudent.fullName} جان! 🌟`);
 });
 
 function resetGame(){
@@ -951,7 +1011,7 @@ async function finishGame(){
     progress2.style.width = "100%";
     soundWin();
 
-    document.getElementById("finalName").textContent = student.fullName;
+    document.getElementById("finalName").textContent = platformStudent.fullName;
     document.getElementById("finalCorrect").textContent = persianNumber(correctCount);
     document.getElementById("finalWrong").textContent = persianNumber(wrongCount);
 
@@ -967,18 +1027,22 @@ async function finishGame(){
     showScreen(reportScreen);
     createFinalSparks();
 
-    await syncSaveResult(
-        student.studentCode,
-        GAME_ID,
-        correctCount,
-        wrongCount,
-        Math.round((Date.now() - startedAt) / 1000)
-    );
+    if (!platformSaved) {
+        platformSaved = true;
+        await syncSaveResult(
+            platformStudent.studentCode,
+            GAME_ID,
+            correctCount,
+            wrongCount,
+            Math.round((Date.now() - startedAt) / 1000)
+        );
+    }
 }
 
 restartBtn.addEventListener("click", () => {
     soundClick();
     startBtn.disabled = false;
+    platformSaved = false;
     showScreen(startScreen);
 });
 
