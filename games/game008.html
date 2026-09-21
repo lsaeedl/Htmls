@@ -101,10 +101,10 @@ body{
 
 .screen{
     position:absolute;
-    top:120px; /* Adjusted to make room for breadcrumb */
+    top:135px; /* بهینه شده برای موبایل و قرارگیری زیر نوار راهنما */
     left:0;
     right:0;
-    bottom:95px;
+    bottom:50px; /* جلوگیری از تداخل با فوتر */
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -469,7 +469,7 @@ body{
 #guide{
     position:absolute;
     left:50%;
-    bottom:40px; /* Adjusted to not overlap with footer */
+    bottom:40px; 
     transform:translateX(-50%);
     z-index:20;
     width:min(94%,650px);
@@ -528,58 +528,75 @@ body{
 <body>
 <script src="../assets/js/google-sync.js"></script>
 <script>
-// INTEGRATION BOILERPLATE
+// INTEGRATION BOILERPLATE (Safe with Try-Catch)
 const GAME_ID = 8;
-let platformStudent = null;
 let platformSaved = false;
 let startedAt = 0;
 let timerSeconds = 180;
 
 (async function initPlatform() {
-    platformStudent = getCurrentStudent();
-    if (!platformStudent) {
-        window.location.href = '../index.html';
-        return;
-    }
-    
-    document.documentElement.style.visibility = 'hidden';
-    startedAt = Date.now();
-    
-    // بررسی مجوز و نوبت
-    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
-    if (!attemptCheck.success) {
-        document.documentElement.style.visibility = 'visible';
-        document.body.innerHTML = '<main style="display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px;"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
-        return;
-    }
-    
-    // دریافت تنظیمات (تایمر)
-    const settings = await syncGetGameSettings(GAME_ID);
-    timerSeconds = settings.timerSeconds || 180;
-    window.timerSeconds = timerSeconds;
-    
-    // کشف نام آموزگار
-    let teacherName = 'خانم دهگودی'; 
-    if (platformStudent.teacherName) {
-        teacherName = platformStudent.teacherName;
-    } else if (platformStudent.className) {
-        try {
+    try {
+        // ایمن‌سازی برای اجرای بدون کرش روی لوکال
+        if (typeof getCurrentStudent === 'undefined') {
+            console.warn("پلتفرم متصل نیست. اجرای حالت محلی...");
+            window.platformStudent = { fullName: "تستر محلی", studentCode: "000" };
+            window.platformTeacherName = "آموزگار تستر";
+            document.documentElement.style.visibility = 'visible';
+            return;
+        }
+
+        const platformStudent = getCurrentStudent();
+        if (!platformStudent) {
+            window.location.href = '../index.html';
+            return;
+        }
+        
+        document.documentElement.style.visibility = 'hidden';
+        startedAt = Date.now();
+        
+        // بررسی مجوز و نوبت
+        if (typeof syncCheckAttempts !== 'undefined') {
+            const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
+            if (!attemptCheck.success) {
+                document.documentElement.style.visibility = 'visible';
+                document.body.innerHTML = '<main style="display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px;"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
+                return;
+            }
+        }
+        
+        // دریافت تنظیمات (تایمر)
+        if (typeof syncGetGameSettings !== 'undefined') {
+            const settings = await syncGetGameSettings(GAME_ID);
+            timerSeconds = settings.timerSeconds || 180;
+        }
+        window.timerSeconds = timerSeconds;
+        
+        // کشف نام آموزگار
+        let teacherName = 'خانم دهگودی'; 
+        if (platformStudent.teacherName) {
+            teacherName = platformStudent.teacherName;
+        } else if (platformStudent.className && typeof syncListClasses !== 'undefined') {
             const classesResult = await syncListClasses();
             if (classesResult && classesResult.success) {
                 const match = classesResult.classes.find(c => c.className === platformStudent.className);
                 if (match && match.teacherName) teacherName = match.teacherName;
             }
-        } catch (e) {}
+        }
+        window.platformTeacherName = teacherName;
+        window.platformStudent = platformStudent;
+        
+        // جایگذاری نام دانش‌آموز در UI
+        document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(el => {
+            if (!el.matches('input,textarea')) el.textContent = platformStudent.fullName;
+        });
+        
+    } catch (err) {
+        console.error("خطا در یکپارچه‌سازی پلتفرم:", err);
+        window.platformStudent = { fullName: "قهرمان", studentCode: "000" };
+        window.platformTeacherName = "آموزگار نامشخص";
+    } finally {
+        document.documentElement.style.visibility = 'visible';
     }
-    window.platformTeacherName = teacherName;
-    window.platformStudent = platformStudent;
-    
-    // جایگذاری نام دانش‌آموز در UI (در صورت وجود المنت‌های مربوطه)
-    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(el => {
-        if (!el.matches('input,textarea')) el.textContent = platformStudent.fullName;
-    });
-    
-    document.documentElement.style.visibility = 'visible';
 })();
 
 // ثبت نام آموزگار و فوتر در DOM
@@ -602,12 +619,18 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// تابع ثبت نتیجه بازی (برای فراخوانی در پایان بازی)
+// تابع ایمن برای ثبت نتیجه بازی در پایان
 async function finishGamePlatform() {
-    if (platformSaved || !platformStudent) return;
+    if (platformSaved || !window.platformStudent) return;
     platformSaved = true;
     const durationSeconds = Math.round((Date.now() - startedAt) / 1000);
-    await syncSaveResult(platformStudent.studentCode, GAME_ID, correctCount, wrongCount, durationSeconds);
+    if (typeof syncSaveResult !== 'undefined') {
+        try {
+            await syncSaveResult(window.platformStudent.studentCode, GAME_ID, correctCount, wrongCount, durationSeconds);
+        } catch (e) {
+            console.error("Failed to save result:", e);
+        }
+    }
 }
 </script>
 
@@ -617,8 +640,7 @@ async function finishGamePlatform() {
 
 <div id="app">
     
-    <!-- نوار راهنما (Breadcrumb) اضافه شده طبق استاندارد -->
-    <div class="breadcrumb" style="width:100%; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.8); z-index:100; backdrop-filter:blur(5px); border-bottom:2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div class="breadcrumb" style="width:100%; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.8); z-index:100; backdrop-filter:blur(5px); border-bottom:2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex-shrink: 0;">
         <span style="font-weight:bold; color:#603a75; font-size: 14px;">🏠 خانه / بازی‌ها / راز سرزمین بی</span>
         <a href="../index.html" style="text-decoration:none; background:#ff8fcf; color:white; padding:5px 15px; border-radius:15px; font-weight:bold; font-size: 14px; box-shadow:0 3px 0 #d66da9; transition: 0.2s;">→ بازگشت</a>
     </div>
@@ -654,7 +676,6 @@ async function finishGamePlatform() {
     <!-- PUZZLE SCREEN -->
     <section id="puzzleScreen" class="screen">
         <div class="puzzle">
-            <!-- کادر تصویر ۲ با کلمه و عبارت سوال درون آن -->
             <div class="wordImageCard">
                 <div class="wordFormula">
                     <span id="prefix" class="prefix">بی</span>
@@ -693,7 +714,6 @@ async function finishGamePlatform() {
     </section>
 
     <div id="guide">
-        <!-- متن اصلاح شده راهنما (عدم درخواست نام) -->
         <div id="guideBubble" class="guideBubble">سلام دوست من! آماده‌ای شروع کنیم؟ 🐰✨</div>
     </div>
 
@@ -800,12 +820,11 @@ function showToast(text, type){
 startButton.addEventListener("click", startGame);
 
 function startGame(){
-    // خواندن نام دانش‌آموز از متغیر پلتفرم
     playerName = window.platformStudent ? window.platformStudent.fullName : "قهرمان";
     currentLevel = 0;
     correctCount = 0;
     wrongCount = 0;
-    platformSaved = false; // Reset saved flag on restart
+    platformSaved = false; 
     startTimer();
     updateHUD();
     guide(`سلام ${playerName} جان! 🌸 مرحله‌ی اول آماده‌ست!`);
@@ -964,10 +983,8 @@ function showEnd(){
     clearInterval(timerInterval);
     finalResult.textContent = `پاسخ درست: ${faNumber(correctCount)} | پاسخ غلط: ${faNumber(wrongCount)}`;
     
-    // ثبت نهایی نتیجه در پلتفرم (جایگزین شده بر اساس استاندارد)
-    if(typeof finishGamePlatform === "function") {
-        finishGamePlatform();
-    }
+    // ثبت نهایی نتیجه در پلتفرم
+    finishGamePlatform();
 
     endText.innerHTML = `
         <strong>${playerName}</strong> عزیز! 🌸<br>
@@ -997,7 +1014,7 @@ function startTimer(){
         if(timeLeft<=0){
             clearInterval(timerInterval);
             document.querySelectorAll('.option').forEach(button=>button.disabled=true);
-            showEnd(); // پایان بازی هنگام اتمام تایمر
+            showEnd(); 
         }
     },1000);
 }
