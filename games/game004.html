@@ -27,7 +27,6 @@
     font-family:'Vazirmatn',Tahoma,sans-serif;
 }
 
-/* ساختار پایه و جلوگیری قطعی از اسکرول کل صفحه */
 html, body {
     margin: 0;
     padding: 0;
@@ -40,7 +39,6 @@ html, body {
     background: #f5dff1;
 }
 
-/* کانتینر اصلی بازی - استفاده از Flexbox برای تراز خودکار */
 .game {
     position: relative;
     width: 100%;
@@ -65,13 +63,13 @@ html, body {
     justify-content: center;
 }
 
-/* حذف ابعاد ثابت و سپردن تراز به کانتینر والد */
 .screen{
     display: none;
     width: 100%;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    /* حذف transform برای جلوگیری از خراب شدن مختصات ذرات ثابت */
     animation: fadeIn 0.4s ease forwards;
 }
 
@@ -80,14 +78,13 @@ html, body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* =========================
    صفحه شروع
 ========================= */
-
 .start-card{
     width: min(94%, 650px);
     padding: 35px 25px;
@@ -95,10 +92,7 @@ html, body {
     background: rgba(255,255,255,.9);
     border: 4px solid white;
     border-radius: 38px;
-    box-shadow:
-        0 22px 50px rgba(65,30,90,.25),
-        0 8px 0 rgba(130,70,160,.22),
-        inset 0 4px 14px rgba(255,255,255,.95);
+    box-shadow: 0 22px 50px rgba(65,30,90,.25), 0 8px 0 rgba(130,70,160,.22), inset 0 4px 14px rgba(255,255,255,.95);
     backdrop-filter: blur(4px);
 }
 
@@ -122,123 +116,29 @@ html, body {
     50%{ transform:translateY(-9px) rotate(2deg); }
 }
 
-h1{
-    margin: 8px 0 15px;
-    color: #70236f;
-    font-size: clamp(24px, 5vw, 40px);
-    font-weight: 900;
-}
-
-.start-text{
-    color: #51385d;
-    font-size: clamp(15px, 3vw, 18px);
-    font-weight: 800;
-    line-height: 2;
-    margin: 0 0 20px;
-}
-
-.main-btn{
-    border: 0;
-    padding: 15px 35px;
-    border-radius: 23px;
-    color: white;
-    background: linear-gradient(135deg, #ff69b9, #9b58e8);
-    font-family: inherit;
-    font-size: 19px;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 8px 0 #7137a8, 0 15px 25px rgba(110,55,150,.3);
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.main-btn:active{
-    transform: translateY(5px);
-    box-shadow: 0 3px 0 #7137a8;
-}
+h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-weight: 900; }
+.start-text{ color: #51385d; font-size: clamp(15px, 3vw, 18px); font-weight: 800; line-height: 2; margin: 0 0 20px; }
+.main-btn{ border: 0; padding: 15px 35px; border-radius: 23px; color: white; background: linear-gradient(135deg, #ff69b9, #9b58e8); font-family: inherit; font-size: 19px; font-weight: 900; cursor: pointer; box-shadow: 0 8px 0 #7137a8, 0 15px 25px rgba(110,55,150,.3); transition: transform 0.1s, box-shadow 0.1s; }
+.main-btn:active{ transform: translateY(5px); box-shadow: 0 3px 0 #7137a8; }
 
 /* =========================
-   HUD (هدر داخلی بازی)
+   HUD
 ========================= */
-
-.hud{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 14px;
-}
-
-.badge{
-    padding: 8px 14px;
-    border-radius: 19px;
-    background: rgba(255,255,255,.94);
-    border: 3px solid white;
-    color: #4b2d56;
-    font-size: 14px;
-    font-weight: 900;
-    box-shadow: 0 5px 0 rgba(90,45,110,.18);
-}
-
-.badge strong{
-    color: #a32b78;
-    font-size: 16px;
-}
-
-.question{
-    width: min(100%, 900px);
-    margin: 0 auto 15px;
-    padding: 14px 18px;
-    text-align: center;
-    color: #54225e;
-    background: rgba(255,255,255,.92);
-    border: 3px solid white;
-    border-radius: 25px;
-    font-size: clamp(18px, 3.5vw, 25px);
-    font-weight: 900;
-    line-height: 1.6;
-    box-shadow: 0 7px 0 rgba(90,45,120,.17), 0 10px 25px rgba(70,35,90,.15);
-}
+.hud{ width: 100%; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.badge{ padding: 8px 14px; border-radius: 19px; background: rgba(255,255,255,.94); border: 3px solid white; color: #4b2d56; font-size: 14px; font-weight: 900; box-shadow: 0 5px 0 rgba(90,45,110,.18); }
+.badge strong{ color: #a32b78; font-size: 16px; }
+.question{ width: min(100%, 900px); margin: 0 auto 15px; padding: 14px 18px; text-align: center; color: #54225e; background: rgba(255,255,255,.92); border: 3px solid white; border-radius: 25px; font-size: clamp(18px, 3.5vw, 25px); font-weight: 900; line-height: 1.6; box-shadow: 0 7px 0 rgba(90,45,120,.17), 0 10px 25px rgba(70,35,90,.15); }
 
 /* =========================
    پنل و شبکه بازی
 ========================= */
-
-.game-panel{
-    width: 100%;
-    padding: 20px;
-    background: rgba(255,255,255,.3);
-    border: 3px solid rgba(255,255,255,.7);
-    border-radius: 35px;
-    box-shadow: 0 18px 40px rgba(70,35,90,.14);
-    backdrop-filter: blur(2px);
-}
-
-.instruction{
-    text-align: center;
-    color: #4f3158;
-    font-size: clamp(14px, 2.5vw, 17px);
-    font-weight: 900;
-    background: rgba(255,255,255,.91);
-    border: 2px solid white;
-    border-radius: 19px;
-    padding: 10px 15px;
-    margin-bottom: 22px;
-}
-
-.ladybug-grid{
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 25px 20px;
-    align-items: center;
-}
+.game-panel{ width: 100%; padding: 20px; background: rgba(255,255,255,.3); border: 3px solid rgba(255,255,255,.7); border-radius: 35px; box-shadow: 0 18px 40px rgba(70,35,90,.14); backdrop-filter: blur(2px); }
+.instruction{ text-align: center; color: #4f3158; font-size: clamp(14px, 2.5vw, 17px); font-weight: 900; background: rgba(255,255,255,.91); border: 2px solid white; border-radius: 19px; padding: 10px 15px; margin-bottom: 22px; }
+.ladybug-grid{ width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 25px 20px; align-items: center; }
 
 /* =========================
-   دکمه کفشدوزک (تثبیت موقعیت متن در ۱/۴ پایین)
+   دکمه کفشدوزک و انیمیشن‌ها
 ========================= */
-
 .ladybug{
     position: relative;
     width: 100%;
@@ -248,7 +148,9 @@ h1{
     background: transparent;
     cursor: pointer;
     display: block;
-    transition: transform .2s ease, filter .2s ease;
+    transform-origin: center center;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease;
+    outline: none;
 }
 
 .ladybug img{
@@ -262,14 +164,14 @@ h1{
     pointer-events: none;
     z-index: 1;
     filter: drop-shadow(0 10px 8px rgba(60,20,50,.25));
-    transition: filter .2s ease, transform .2s ease;
+    transition: filter 0.2s ease, transform 0.2s ease;
 }
 
 .ladybug-word{
     position: absolute;
     z-index: 2;
     left: 50%;
-    top: 76%; /* قرارگیری دقیق در یک چهارم پایین */
+    top: 76%;
     transform: translate(-50%, -50%);
     width: 85%;
     color: #111;
@@ -278,108 +180,59 @@ h1{
     line-height: 1.2;
     text-align: center;
     pointer-events: none;
-    text-shadow: 
-        0px 0px 4px white,
-        0px 0px 8px white,
-        0px 0px 12px white,
-        1px 1px 0px white,
-        -1px -1px 0px white;
+    text-shadow: 0px 0px 4px white, 0px 0px 8px white, 0px 0px 12px white, 1px 1px 0px white, -1px -1px 0px white;
 }
 
-.ladybug:hover{ transform: translateY(-6px) scale(1.035); }
-.ladybug:active{ transform: scale(.96); }
+/* هاور و کلیک (مخصوص پاسخ‌های انتخاب‌نشده) */
+.ladybug:not(.answered):hover {
+    transform: translateY(-8px) scale(1.05);
+}
+.ladybug:not(.answered):active {
+    transform: scale(0.92);
+}
 
-/* افکت درست و غلط */
+/* جلوگیری از تعامل بعد از انتخاب */
+.ladybug.answered {
+    pointer-events: none !important;
+}
+
+/* افکت درست */
 .ladybug.correct{
-    pointer-events: none;
-    animation: correctBug .7s ease forwards;
+    animation: correctBug 0.7s ease forwards;
 }
-.ladybug.correct img{ filter: drop-shadow(0 0 10px white) drop-shadow(0 0 25px #55e88a); }
+.ladybug.correct img{ 
+    filter: drop-shadow(0 0 10px white) drop-shadow(0 0 25px #55e88a); 
+}
 
 @keyframes correctBug{
-    0%{ transform:scale(1); opacity:1; }
-    35%{ transform:scale(1.12) rotate(5deg); }
-    70%{ transform:scale(1.05) rotate(-5deg); }
-    100%{ transform:scale(.08) rotate(25deg); opacity:0; }
+    0%   { transform: scale(1); opacity: 1; }
+    35%  { transform: scale(1.15) rotate(8deg); }
+    70%  { transform: scale(1.05) rotate(-6deg); }
+    100% { transform: scale(0.05) rotate(35deg); opacity: 0; }
 }
 
+/* افکت غلط */
 .ladybug.wrong{
-    pointer-events: none;
-    animation: burnBug .75s ease forwards;
+    animation: burnBug 0.8s ease forwards;
 }
 
 @keyframes burnBug{
-    0%{ transform:scale(1); opacity:1; filter:brightness(1); }
-    20%{ transform:scale(1.08) rotate(-5deg); filter: brightness(1.7) saturate(2) drop-shadow(0 0 15px #ff8a00); }
-    40%{ transform:scale(1.13) rotate(6deg); filter: brightness(2) saturate(3) drop-shadow(0 0 28px #ff3200); }
-    65%{ transform:scale(.95) rotate(-10deg); filter: grayscale(1) brightness(.35) drop-shadow(0 0 15px red); }
-    100%{ transform:scale(.06) rotate(35deg); opacity:0; filter:grayscale(1) brightness(.1); }
+    0%   { transform: scale(1); opacity: 1; filter: brightness(1); }
+    20%  { transform: scale(1.1) rotate(-6deg); filter: brightness(1.7) saturate(2) drop-shadow(0 0 20px #ff8a00); }
+    40%  { transform: scale(1.15) rotate(8deg); filter: brightness(2) saturate(3) drop-shadow(0 0 35px #ff3200); }
+    65%  { transform: scale(0.95) rotate(-12deg); filter: grayscale(1) brightness(0.35) drop-shadow(0 0 15px red); }
+    100% { transform: scale(0.05) rotate(40deg); opacity: 0; filter: grayscale(1) brightness(0.1); }
 }
 
-.game-message{
-    min-height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    margin-top: 15px;
-    color: #542d60;
-    font-size: clamp(16px, 3vw, 19px);
-    font-weight: 900;
-}
+.game-message{ min-height: 45px; display: flex; align-items: center; justify-content: center; text-align: center; margin-top: 15px; color: #542d60; font-size: clamp(16px, 3vw, 19px); font-weight: 900; }
+.progress-wrap{ width: min(100%, 850px); height: 14px; margin: 0 auto 15px; background: rgba(255,255,255,.72); border: 2px solid white; border-radius: 20px; overflow: hidden; }
+.progress{ width: 0%; height: 100%; border-radius: 20px; background: linear-gradient(90deg, #ff6fba, #a75be8, #54dfff, #58dc87); transition: width .45s ease; }
 
 /* =========================
-   نوار پیشرفت
+   افکت‌های جرقه و آتش
 ========================= */
-
-.progress-wrap{
-    width: min(100%, 850px);
-    height: 14px;
-    margin: 0 auto 15px;
-    background: rgba(255,255,255,.72);
-    border: 2px solid white;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.progress{
-    width: 0%;
-    height: 100%;
-    border-radius: 20px;
-    background: linear-gradient(90deg, #ff6fba, #a75be8, #54dfff, #58dc87);
-    transition: width .45s ease;
-}
-
-/* =========================
-   افکت‌ها
-========================= */
-
-.toast{
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%) scale(.7);
-    width: min(90%, 500px);
-    padding: 18px 22px;
-    z-index: 2000;
-    opacity: 0;
-    pointer-events: none;
-    background: rgba(255,255,255,.97);
-    border: 4px solid white;
-    border-radius: 28px;
-    color: #51265c;
-    font-size: 19px;
-    font-weight: 900;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(60,25,80,.3), 0 7px 0 rgba(125,60,155,.2);
-    transition: .25s;
-}
-
-.toast.show{
-    opacity: 1;
-    transform: translate(-50%,-50%) scale(1);
-}
-
+.toast{ position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.7); width: min(90%, 500px); padding: 18px 22px; z-index: 2000; opacity: 0; pointer-events: none; background: rgba(255,255,255,.97); border: 4px solid white; border-radius: 28px; color: #51265c; font-size: 19px; font-weight: 900; text-align: center; box-shadow: 0 20px 40px rgba(60,25,80,.3), 0 7px 0 rgba(125,60,155,.2); transition: .25s; }
+.toast.show{ opacity: 1; transform: translate(-50%,-50%) scale(1); }
 .spark, .fire{ position: fixed; z-index: 2500; pointer-events: none; }
 .spark{ font-size: 25px; animation: sparkFly .9s ease-out forwards; }
 @keyframes sparkFly{ 0%{ opacity:1; transform:translate(0,0) scale(.3); } 100%{ opacity:0; transform:translate(var(--x),var(--y)) rotate(360deg) scale(1.3); } }
@@ -389,54 +242,23 @@ h1{
 /* =========================
    کارنامه
 ========================= */
-
-.report{
-    width: min(94%, 680px);
-    padding: 30px 24px;
-    text-align: center;
-    background: rgba(255,255,255,.94);
-    border: 4px solid white;
-    border-radius: 38px;
-    box-shadow: 0 22px 50px rgba(65,30,90,.25), 0 8px 0 rgba(130,70,160,.2);
-}
-
+.report{ width: min(94%, 680px); padding: 30px 24px; text-align: center; background: rgba(255,255,255,.94); border: 4px solid white; border-radius: 38px; box-shadow: 0 22px 50px rgba(65,30,90,.25), 0 8px 0 rgba(130,70,160,.2); }
 .trophy{ font-size: 78px; animation: logoFloat 2s infinite; }
 .report h2{ margin: 8px 0 20px; color: #8b347d; font-size: 32px; font-weight: 900; }
 .final-name{ color: #6c2870; font-size: 20px; font-weight: 900; }
-
-.report-grid{
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 12px;
-    margin: 22px 0;
-}
-
-.report-item{
-    padding: 15px 7px;
-    border-radius: 21px;
-    background: linear-gradient(145deg, #fff0f8, #eee4ff);
-    border: 3px solid white;
-    box-shadow: 0 6px 0 rgba(90,45,120,.15);
-}
-
+.report-grid{ display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 22px 0; }
+.report-item{ padding: 15px 7px; border-radius: 21px; background: linear-gradient(145deg, #fff0f8, #eee4ff); border: 3px solid white; box-shadow: 0 6px 0 rgba(90,45,120,.15); }
 .report-number{ display: block; color: #923c87; font-size: 30px; font-weight: 900; }
 .report-label{ color: #55365e; font-size: 14px; font-weight: 900; }
 .final-text{ color: #51355a; font-size: 17px; font-weight: 800; line-height: 1.8; margin-bottom: 20px; }
 
-/* =========================
-   ریسپانسیو (موبایل)
-========================= */
-
+/* ریسپانسیو */
 @media(max-width:700px){
     .game{ padding: 15px 10px; }
     .start-card, .report{ padding: 25px 15px; }
     .game-panel{ padding: 15px 10px; }
-    .ladybug-grid{
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px 15px;
-    }
+    .ladybug-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 15px; }
 }
-
 @media(max-width:390px){
     .ladybug-grid{ gap: 15px 10px; }
     .report-number{ font-size: 25px; }
@@ -445,11 +267,8 @@ h1{
 </head>
 
 <body>
-
-<!-- فایل‌های گوگل سینک پلتفرم -->
 <script src="../assets/js/google-sync.js"></script>
 
-<!-- هدر پلتفرم -->
 <header class="platform-header" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 2px solid white; z-index: 1000;">
     <div style="display: flex; align-items: center; gap: 10px;">
         <div style="font-weight: 900; color: #4a004e; font-size: clamp(12px, 3vw, 15px);">🏠 خانه / بازی‌ها / بازی جادویی «ای»</div>
@@ -458,7 +277,6 @@ h1{
     <a href="../index.html" style="text-decoration: none; background: #00f5d4; color: #111; padding: 6px 14px; border-radius: 15px; font-weight: 900; font-size: 13px;">→ بازگشت</a>
 </header>
 
-<!-- کانتینر اصلی بازی با معماری ظاهری صحیح برای جلوگیری از Overlap -->
 <main class="game-wrapper" style="flex: 1 1 0; position: relative; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column;">
     <div class="game">
         <div class="container">
@@ -528,14 +346,9 @@ h1{
     <div id="toast" class="toast"></div>
 </main>
 
-<!-- فوتر پلتفرم -->
 <footer class="platform-footer" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); text-align: center; padding: 10px; font-weight: 900; color: #4a004e; font-size: 13px; z-index: 1000; border-top: 2px solid white;">طراحی و پیاده‌سازی: سعید سراوانی</footer>
 
-<!-- اسکریپت اصلی بازی -->
 <script>
-// ==========================================
-// 1. تنظیمات و یکپارچه‌سازی با پلتفرم آموزشی
-// ==========================================
 const GAME_ID = 4;
 let platformStudent = null;
 let platformSaved = false;
@@ -580,11 +393,9 @@ let timerSeconds = 180;
             platformTeacherName = platformStudent.teacherName;
         }
 
-        // جایگذاری نام آموزگار در هدر
         const teacherUI = document.getElementById("platformTeacherUI");
         if(teacherUI) teacherUI.textContent = 'آموزگار: ' + platformTeacherName;
         
-        // جایگذاری نام دانش‌آموز در منوی بازی
         const nameDisplay = document.getElementById('playerName');
         if(nameDisplay && platformStudent) nameDisplay.textContent = platformStudent.fullName || "مسافر";
         
@@ -594,7 +405,6 @@ let timerSeconds = 180;
     }
 })();
 
-// تابع امن ثبت اطلاعات به دیتابیس در هنگام اتمام بازی (فقط یک‌بار)
 async function saveGameResultFinal(corrects, wrongs) {
     if (!platformSaved && platformStudent && typeof syncSaveResult === 'function') {
         platformSaved = true;
@@ -603,9 +413,6 @@ async function saveGameResultFinal(corrects, wrongs) {
     }
 }
 
-// ==========================================
-// 2. تنظیمات بازی
-// ==========================================
 const LADYBUG_IMAGE = "../assets/img/game04-ladybug.png";
 
 const words = [
@@ -647,7 +454,6 @@ function persianNumber(number){
 function showScreen(screen){
     [startScreen, gameScreen, reportScreen].forEach(item => { item.classList.remove("active"); });
     screen.classList.add("active");
-    // اسکرول محیط داخلی
     document.querySelector('.game-wrapper').scrollTo({ top:0, behavior:"instant" });
 }
 
@@ -660,20 +466,14 @@ function shuffle(array){
     return result;
 }
 
-// ==========================================
-// 3. سیستم مدیریت صدا (ایمن و وابسته به کلیک)
-// ==========================================
 let audioContext = null;
-
 function initAudio(){
     try{
         if(!audioContext){
             const Audio = window.AudioContext || window.webkitAudioContext;
             if(Audio) audioContext = new Audio();
         }
-        if(audioContext && audioContext.state === "suspended") {
-            audioContext.resume();
-        }
+        if(audioContext && audioContext.state === "suspended") audioContext.resume();
     }catch(error){}
 }
 
@@ -699,13 +499,11 @@ function soundCorrect(){
         setTimeout(() => { tone(frequency, .2, "triangle", .12); }, index * 75);
     });
 }
-
 function soundWrong(){
     initAudio();
     tone(240, .18, "sawtooth", .13);
     setTimeout(() => { tone(130, .25, "sawtooth", .1); }, 100);
 }
-
 function soundWin(){
     initAudio();
     [523, 659, 784, 1046].forEach((frequency,index) => {
@@ -713,14 +511,11 @@ function soundWin(){
     });
 }
 
-// ==========================================
-// 4. منطق اجرایی بازی
-// ==========================================
 startBtn.addEventListener("click", startGame);
 restartBtn.addEventListener("click", restartGame);
 
 function startGame(){
-    initAudio(); // فعال‌سازی ایمن AudioContext توسط اولین کلیک
+    initAudio(); 
     resetGame();
     startedAt = Date.now();
     playerName = platformStudent ? (platformStudent.fullName || "مسافر") : "مسافر";
@@ -765,8 +560,10 @@ function createLadybugs(){
 function handleWord(bug, item){
     if(gameFinished || bug.classList.contains("answered")) return;
 
+    bug.classList.add("answered"); // سریعا جلوی هاور اضافی را می‌گیرد
+
     if(item.correct){
-        bug.classList.add("answered", "correct");
+        bug.classList.add("correct");
         correctCount++;
         updateHUD();
         soundCorrect();
@@ -784,7 +581,7 @@ function handleWord(bug, item){
         return;
     }
 
-    bug.classList.add("answered", "wrong");
+    bug.classList.add("wrong");
     wrongCount++;
     updateHUD();
     soundWrong();
@@ -796,7 +593,7 @@ function handleWord(bug, item){
 function disableAllBugs(){
     const bugs = document.querySelectorAll(".ladybug");
     bugs.forEach(bug => {
-        bug.disabled = true;
+        /* بسیار مهم: استفاده از disabled=true انیمیشن را در کروم/سافاری قطع می‌کرد! فقط از استایل زیر استفاده شد */
         bug.style.pointerEvents = "none";
     });
 }
@@ -826,8 +623,8 @@ function createBurnEffect(element){
         fire.textContent = icons[Math.floor(Math.random() * icons.length)];
         fire.style.left = `${rect.left + rect.width / 2}px`;
         fire.style.top = `${rect.top + rect.height / 2}px`;
-        fire.style.setProperty("--x", `${Math.random() * 260 - 130}px`);
-        fire.style.setProperty("--y", `${Math.random() * 240 - 120}px`);
+        spark.style.setProperty("--x", `${Math.random() * 260 - 130}px`);
+        spark.style.setProperty("--y", `${Math.random() * 240 - 120}px`);
         document.body.appendChild(fire);
         setTimeout(() => fire.remove(), 850);
     }
@@ -852,9 +649,7 @@ async function finishGame(){
     }
     document.getElementById("finalText").textContent = finalText;
 
-    // ثبت نهایی داده در پلتفرم (فقط یک بار)
     await saveGameResultFinal(correctCount, wrongCount);
-
     showScreen(reportScreen);
     createFinalSparks();
 }
@@ -888,7 +683,7 @@ function restartGame(){
     initAudio();
     resetGame();
     startedAt = Date.now();
-    platformSaved = false; // بازنشانی وضعیت ثبت برای دور جدید بازی
+    platformSaved = false; 
     showScreen(gameScreen);
     createLadybugs();
     showToast("🐞 بازی دوباره شروع شد!", 1000);
