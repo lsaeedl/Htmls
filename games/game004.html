@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>بازی جادویی «ای»</title>
 
-<style>
 @font-face{
     font-family:'Vazirmatn';
     src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');
@@ -27,11 +26,12 @@
     font-family:'Vazirmatn',Tahoma,sans-serif;
 }
 
-/* ساختار Flexbox برای جلوگیری از Overlap طبق قوانین ظاهری */
+/* ساختار پایه و جلوگیری قطعی از اسکرول کل صفحه */
 html, body {
     margin: 0;
     padding: 0;
     width: 100%;
+    height: 100vh; /* فال‌بک برای مرورگرهای قدیمی */
     height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -39,35 +39,48 @@ html, body {
     background: #f5dff1;
 }
 
-/* کانتینر اصلی بازی با اسکرول داخلی */
+/* کانتینر اصلی بازی - استفاده از Flexbox برای تراز خودکار */
 .game {
     position: relative;
     width: 100%;
     min-height: 100%;
-    padding: 18px;
+    padding: 20px 15px;
     background-image: url("../assets/img/game04-background.jpeg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container{
-    position:relative;
-    z-index:2;
-    width:min(100%,1050px);
-    margin:auto;
+    position: relative;
+    z-index: 2;
+    width: min(100%, 1050px);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
+/* حذف ابعاد ثابت و سپردن تراز به کانتینر والد */
 .screen{
-    display:none;
-    min-height:calc(100vh - 120px); /* تنظیم شده با هدر و فوتر */
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
+    display: none;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    animation: fadeIn 0.4s ease forwards;
 }
 
 .screen.active{
-    display:flex;
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* =========================
@@ -75,34 +88,32 @@ html, body {
 ========================= */
 
 .start-card{
-    width:min(94%,650px);
-    padding:34px 25px;
-    text-align:center;
-    background:rgba(255,255,255,.9);
-    border:4px solid white;
-    border-radius:38px;
+    width: min(94%, 650px);
+    padding: 35px 25px;
+    text-align: center;
+    background: rgba(255,255,255,.9);
+    border: 4px solid white;
+    border-radius: 38px;
     box-shadow:
         0 22px 50px rgba(65,30,90,.25),
         0 8px 0 rgba(130,70,160,.22),
         inset 0 4px 14px rgba(255,255,255,.95);
-    backdrop-filter:blur(4px);
+    backdrop-filter: blur(4px);
 }
 
 .logo{
-    width:105px;
-    height:105px;
-    margin:0 auto 15px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    border:4px solid white;
-    background:linear-gradient(145deg, #fff, #ffd8eb, #d9c4ff);
-    font-size:64px;
-    box-shadow:
-        0 12px 25px rgba(80,40,110,.22),
-        0 0 30px rgba(255,105,190,.3);
-    animation:logoFloat 2.5s ease-in-out infinite;
+    width: 105px;
+    height: 105px;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 4px solid white;
+    background: linear-gradient(145deg, #fff, #ffd8eb, #d9c4ff);
+    font-size: 64px;
+    box-shadow: 0 12px 25px rgba(80,40,110,.22), 0 0 30px rgba(255,105,190,.3);
+    animation: logoFloat 2.5s ease-in-out infinite;
 }
 
 @keyframes logoFloat{
@@ -111,134 +122,123 @@ html, body {
 }
 
 h1{
-    margin:8px 0 15px;
-    color:#70236f;
-    font-size:clamp(26px,5vw,40px);
-    font-weight:900;
+    margin: 8px 0 15px;
+    color: #70236f;
+    font-size: clamp(24px, 5vw, 40px);
+    font-weight: 900;
 }
 
 .start-text{
-    color:#51385d;
-    font-size:18px;
-    font-weight:800;
-    line-height:2;
-    margin:0 0 20px;
+    color: #51385d;
+    font-size: clamp(15px, 3vw, 18px);
+    font-weight: 800;
+    line-height: 2;
+    margin: 0 0 20px;
 }
 
 .main-btn{
-    border:0;
-    padding:15px 35px;
-    border-radius:23px;
-    color:white;
-    background:linear-gradient(135deg, #ff69b9, #9b58e8);
-    font-family:inherit;
-    font-size:19px;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow:
-        0 8px 0 #7137a8,
-        0 15px 25px rgba(110,55,150,.3);
+    border: 0;
+    padding: 15px 35px;
+    border-radius: 23px;
+    color: white;
+    background: linear-gradient(135deg, #ff69b9, #9b58e8);
+    font-family: inherit;
+    font-size: 19px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 8px 0 #7137a8, 0 15px 25px rgba(110,55,150,.3);
+    transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .main-btn:active{
-    transform:translateY(5px);
-    box-shadow:0 3px 0 #7137a8;
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 #7137a8;
 }
 
 /* =========================
-   HUD
+   HUD (هدر داخلی بازی)
 ========================= */
 
 .hud{
-    width:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom:14px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
 }
 
 .badge{
-    padding:9px 15px;
-    border-radius:19px;
-    background:rgba(255,255,255,.94);
-    border:3px solid white;
-    color:#4b2d56;
-    font-size:14px;
-    font-weight:900;
+    padding: 8px 14px;
+    border-radius: 19px;
+    background: rgba(255,255,255,.94);
+    border: 3px solid white;
+    color: #4b2d56;
+    font-size: 14px;
+    font-weight: 900;
     box-shadow: 0 5px 0 rgba(90,45,110,.18);
 }
 
 .badge strong{
-    color:#a32b78;
-    font-size:16px;
+    color: #a32b78;
+    font-size: 16px;
 }
-
-/* =========================
-   عنوان
-========================= */
 
 .question{
-    width:min(100%,900px);
-    margin:0 auto 17px;
-    padding:14px 18px;
-    text-align:center;
-    color:#54225e;
-    background:rgba(255,255,255,.92);
-    border:3px solid white;
-    border-radius:25px;
-    font-size:clamp(20px,4vw,29px);
-    font-weight:900;
-    line-height:1.7;
-    box-shadow:
-        0 7px 0 rgba(90,45,120,.17),
-        0 10px 25px rgba(70,35,90,.15);
+    width: min(100%, 900px);
+    margin: 0 auto 15px;
+    padding: 14px 18px;
+    text-align: center;
+    color: #54225e;
+    background: rgba(255,255,255,.92);
+    border: 3px solid white;
+    border-radius: 25px;
+    font-size: clamp(18px, 3.5vw, 25px);
+    font-weight: 900;
+    line-height: 1.6;
+    box-shadow: 0 7px 0 rgba(90,45,120,.17), 0 10px 25px rgba(70,35,90,.15);
 }
 
 /* =========================
-   پنل بازی
+   پنل و شبکه بازی
 ========================= */
 
 .game-panel{
-    width:100%;
-    padding:20px;
-    background:rgba(255,255,255,.3);
-    border:3px solid rgba(255,255,255,.7);
-    border-radius:35px;
+    width: 100%;
+    padding: 20px;
+    background: rgba(255,255,255,.3);
+    border: 3px solid rgba(255,255,255,.7);
+    border-radius: 35px;
     box-shadow: 0 18px 40px rgba(70,35,90,.14);
-    backdrop-filter:blur(1px);
+    backdrop-filter: blur(2px);
 }
 
 .instruction{
-    text-align:center;
-    color:#4f3158;
-    font-size:17px;
-    font-weight:900;
-    background:rgba(255,255,255,.91);
-    border:2px solid white;
-    border-radius:19px;
-    padding:10px 15px;
-    margin-bottom:22px;
+    text-align: center;
+    color: #4f3158;
+    font-size: clamp(14px, 2.5vw, 17px);
+    font-weight: 900;
+    background: rgba(255,255,255,.91);
+    border: 2px solid white;
+    border-radius: 19px;
+    padding: 10px 15px;
+    margin-bottom: 22px;
 }
-
-/* =========================
-   شبکه کفشدوزک‌ها
-========================= */
 
 .ladybug-grid{
-    width:100%;
-    display:grid;
-    grid-template-columns: repeat(3,minmax(0,1fr));
-    gap:28px 24px;
-    align-items:center;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px 20px;
+    align-items: center;
 }
 
 /* =========================
-   کفشدوزک (نوشته در ۱/۴ پایین)
+   دکمه کفشدوزک (تثبیت موقعیت متن در ۱/۴ پایین)
 ========================= */
 
-.ladybug {
+.ladybug{
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -246,11 +246,11 @@ h1{
     padding: 0;
     background: transparent;
     cursor: pointer;
-    display: block;
+    display: block; /* حذف استایل‌های مزاحم دکمه */
     transition: transform .2s ease, filter .2s ease;
 }
 
-.ladybug img {
+.ladybug img{
     position: absolute;
     top: 0;
     left: 0;
@@ -264,33 +264,68 @@ h1{
     transition: filter .2s ease, transform .2s ease;
 }
 
-.ladybug-word {
+.ladybug-word{
     position: absolute;
     z-index: 2;
     left: 50%;
-    top: 50%; /* انتقال به ۱/۴ پایینی ارتفاع */
-    transform: translate(-50%, -50%); /* تراز کردن دقیق مرکز متن با نقطه ۷۵٪ */
-    width: 80%;
-    color: #000;
-    font-size: clamp(17px, 2.7vw, 25px);
+    top: 76%; /* قرارگیری دقیق در یک چهارم پایین */
+    transform: translate(-50%, -50%);
+    width: 85%;
+    color: #111;
+    font-size: clamp(14px, 2.5vw, 22px);
     font-weight: 900;
-    line-height: 1.45;
+    line-height: 1.2;
     text-align: center;
     pointer-events: none;
+    /* ایجاد هاله بسیار ضخیم و سفید برای خوانایی مطلق روی بافت عکس */
     text-shadow: 
-        0 1px 0 rgba(255,255,255,1), 
-        0 0 6px rgba(255,255,255,0.8);
+        0px 0px 4px white,
+        0px 0px 8px white,
+        0px 0px 12px white,
+        1px 1px 0px white,
+        -1px -1px 0px white;
 }
+
+.ladybug:hover{ transform: translateY(-6px) scale(1.035); }
+.ladybug:active{ transform: scale(.96); }
+
+/* افکت درست و غلط */
+.ladybug.correct{
+    pointer-events: none;
+    animation: correctBug .7s ease forwards;
+}
+.ladybug.correct img{ filter: drop-shadow(0 0 10px white) drop-shadow(0 0 25px #55e88a); }
+
+@keyframes correctBug{
+    0%{ transform:scale(1); opacity:1; }
+    35%{ transform:scale(1.12) rotate(5deg); }
+    70%{ transform:scale(1.05) rotate(-5deg); }
+    100%{ transform:scale(.08) rotate(25deg); opacity:0; }
+}
+
+.ladybug.wrong{
+    pointer-events: none;
+    animation: burnBug .75s ease forwards;
+}
+
+@keyframes burnBug{
+    0%{ transform:scale(1); opacity:1; filter:brightness(1); }
+    20%{ transform:scale(1.08) rotate(-5deg); filter: brightness(1.7) saturate(2) drop-shadow(0 0 15px #ff8a00); }
+    40%{ transform:scale(1.13) rotate(6deg); filter: brightness(2) saturate(3) drop-shadow(0 0 28px #ff3200); }
+    65%{ transform:scale(.95) rotate(-10deg); filter: grayscale(1) brightness(.35) drop-shadow(0 0 15px red); }
+    100%{ transform:scale(.06) rotate(35deg); opacity:0; filter:grayscale(1) brightness(.1); }
+}
+
 .game-message{
-    min-height:50px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    margin-top:15px;
-    color:#542d60;
-    font-size:18px;
-    font-weight:900;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 15px;
+    color: #542d60;
+    font-size: clamp(16px, 3vw, 19px);
+    font-weight: 900;
 }
 
 /* =========================
@@ -298,21 +333,21 @@ h1{
 ========================= */
 
 .progress-wrap{
-    width:min(100%,850px);
-    height:14px;
-    margin:0 auto 18px;
-    background:rgba(255,255,255,.72);
-    border:2px solid white;
-    border-radius:20px;
-    overflow:hidden;
+    width: min(100%, 850px);
+    height: 14px;
+    margin: 0 auto 15px;
+    background: rgba(255,255,255,.72);
+    border: 2px solid white;
+    border-radius: 20px;
+    overflow: hidden;
 }
 
 .progress{
-    width:0%;
-    height:100%;
-    border-radius:20px;
-    background:linear-gradient(90deg, #ff6fba, #a75be8, #54dfff, #58dc87);
-    transition:width .45s ease;
+    width: 0%;
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #ff6fba, #a75be8, #54dfff, #58dc87);
+    transition: width .45s ease;
 }
 
 /* =========================
@@ -320,118 +355,92 @@ h1{
 ========================= */
 
 .toast{
-    position:fixed;
-    left:50%;
-    top:50%;
+    position: fixed;
+    left: 50%;
+    top: 50%;
     transform: translate(-50%,-50%) scale(.7);
-    width:min(90%,500px);
-    padding:18px 22px;
-    z-index:2000;
-    opacity:0;
-    pointer-events:none;
-    background:rgba(255,255,255,.97);
-    border:4px solid white;
-    border-radius:28px;
-    color:#51265c;
-    font-size:19px;
-    font-weight:900;
-    text-align:center;
+    width: min(90%, 500px);
+    padding: 18px 22px;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(255,255,255,.97);
+    border: 4px solid white;
+    border-radius: 28px;
+    color: #51265c;
+    font-size: 19px;
+    font-weight: 900;
+    text-align: center;
     box-shadow: 0 20px 40px rgba(60,25,80,.3), 0 7px 0 rgba(125,60,155,.2);
-    transition:.25s;
+    transition: .25s;
 }
 
 .toast.show{
-    opacity:1;
+    opacity: 1;
     transform: translate(-50%,-50%) scale(1);
 }
 
-.spark, .fire{
-    position:fixed;
-    z-index:2500;
-    pointer-events:none;
-}
-
-.spark{
-    font-size:25px;
-    animation:sparkFly .9s ease-out forwards;
-}
-
-@keyframes sparkFly{
-    0%{ opacity:1; transform:translate(0,0) scale(.3); }
-    100%{ opacity:0; transform:translate(var(--x),var(--y)) rotate(360deg) scale(1.3); }
-}
-
-.fire{
-    font-size:30px;
-    animation:fireFly .8s ease-out forwards;
-}
-
-@keyframes fireFly{
-    0%{ opacity:1; transform:translate(0,0) scale(.4); }
-    100%{ opacity:0; transform:translate(var(--x),var(--y)) rotate(240deg) scale(1.3); }
-}
+.spark, .fire{ position: fixed; z-index: 2500; pointer-events: none; }
+.spark{ font-size: 25px; animation: sparkFly .9s ease-out forwards; }
+@keyframes sparkFly{ 0%{ opacity:1; transform:translate(0,0) scale(.3); } 100%{ opacity:0; transform:translate(var(--x),var(--y)) rotate(360deg) scale(1.3); } }
+.fire{ font-size: 30px; animation: fireFly .8s ease-out forwards; }
+@keyframes fireFly{ 0%{ opacity:1; transform:translate(0,0) scale(.4); } 100%{ opacity:0; transform:translate(var(--x),var(--y)) rotate(240deg) scale(1.3); } }
 
 /* =========================
    کارنامه
 ========================= */
 
 .report{
-    width:min(94%,680px);
-    padding:30px 24px;
-    text-align:center;
-    background:rgba(255,255,255,.94);
-    border:4px solid white;
-    border-radius:38px;
+    width: min(94%, 680px);
+    padding: 30px 24px;
+    text-align: center;
+    background: rgba(255,255,255,.94);
+    border: 4px solid white;
+    border-radius: 38px;
     box-shadow: 0 22px 50px rgba(65,30,90,.25), 0 8px 0 rgba(130,70,160,.2);
 }
 
-.trophy{ font-size:78px; animation:logoFloat 2s infinite; }
-.report h2{ margin:8px 0 20px; color:#8b347d; font-size:32px; font-weight:900; }
-.final-name{ color:#6c2870; font-size:21px; font-weight:900; }
+.trophy{ font-size: 78px; animation: logoFloat 2s infinite; }
+.report h2{ margin: 8px 0 20px; color: #8b347d; font-size: 32px; font-weight: 900; }
+.final-name{ color: #6c2870; font-size: 20px; font-weight: 900; }
 
 .report-grid{
-    display:grid;
+    display: grid;
     grid-template-columns: repeat(2,1fr);
-    gap:12px;
-    margin:22px 0;
+    gap: 12px;
+    margin: 22px 0;
 }
 
 .report-item{
-    padding:15px 7px;
-    border-radius:21px;
-    background:linear-gradient(145deg, #fff0f8, #eee4ff);
-    border:3px solid white;
+    padding: 15px 7px;
+    border-radius: 21px;
+    background: linear-gradient(145deg, #fff0f8, #eee4ff);
+    border: 3px solid white;
     box-shadow: 0 6px 0 rgba(90,45,120,.15);
 }
 
-.report-number{ display:block; color:#923c87; font-size:30px; font-weight:900; }
-.report-label{ color:#55365e; font-size:14px; font-weight:900; }
-.final-text{ color:#51355a; font-size:18px; font-weight:800; line-height:2; margin-bottom:20px; }
+.report-number{ display: block; color: #923c87; font-size: 30px; font-weight: 900; }
+.report-label{ color: #55365e; font-size: 14px; font-weight: 900; }
+.final-text{ color: #51355a; font-size: 17px; font-weight: 800; line-height: 1.8; margin-bottom: 20px; }
 
 /* =========================
-   موبایل
+   ریسپانسیو (موبایل)
 ========================= */
 
 @media(max-width:700px){
-    .game{ padding:10px; }
-    .screen{ min-height:calc(100vh - 120px); }
-    .start-card, .report{ padding:25px 15px; }
-    .game-panel{ padding:12px; }
-    .ladybug-grid{ grid-template-columns: repeat(2,minmax(0,1fr)); gap:20px 14px; }
-    .ladybug-word{ font-size:17px; }
-    .badge{ font-size:12px; padding:8px 10px; }
-    .instruction{ font-size:15px; }
-    .game-message{ font-size:16px; }
+    .game{ padding: 15px 10px; }
+    .start-card, .report{ padding: 25px 15px; }
+    .game-panel{ padding: 15px 10px; }
+    .ladybug-grid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 15px;
+    }
 }
 
 @media(max-width:390px){
-    .ladybug-grid{ gap:15px 10px; }
-    .ladybug-word{ font-size:15px; }
-    .question{ font-size:19px; }
-    .report-number{ font-size:25px; }
-    .report-label{ font-size:12px; }
+    .ladybug-grid{ gap: 15px 10px; }
+    .report-number{ font-size: 25px; }
 }
-</style>
 </head>
 
 <body>
@@ -449,7 +458,7 @@ h1{
 </header>
 
 <!-- کانتینر اصلی بازی با معماری ظاهری صحیح برای جلوگیری از Overlap -->
-<main class="game-wrapper" style="flex: 1 1 0; position: relative; overflow-y: auto; overflow-x: hidden;">
+<main class="game-wrapper" style="flex: 1 1 0; position: relative; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column;">
     <div class="game">
         <div class="container">
             
