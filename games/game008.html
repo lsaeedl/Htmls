@@ -1,13 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>راز سرزمین بی ✨</title>
-
-
-
 
 <style>
 :root{
@@ -104,7 +101,7 @@ body{
 
 .screen{
     position:absolute;
-    top:70px;
+    top:120px; /* Adjusted to make room for breadcrumb */
     left:0;
     right:0;
     bottom:95px;
@@ -170,26 +167,6 @@ body{
     flex-direction:column;
     align-items:center;
     gap:12px;
-}
-
-.nameInput{
-    width:min(100%,380px);
-    height:60px;
-    padding:10px 18px;
-    border-radius:20px;
-    border:4px solid #b87dff;
-    background:#ffffff;
-    color:#28202d;
-    outline:none;
-    font-size:20px;
-    font-weight:900;
-    text-align:center;
-    box-shadow:0 7px 0 #9b70d8, 0 0 20px rgba(178,115,255,.45);
-}
-
-.nameInput:focus{
-    border-color:#ff8bcf;
-    box-shadow:0 7px 0 #d66da9, 0 0 28px rgba(255,139,207,.65);
 }
 
 .primaryButton{
@@ -275,7 +252,6 @@ body{
     gap:14px;
 }
 
-/* کارت تصویر ۲ شامل فرمول و عبارت سوال */
 .wordImageCard{
     width:min(96%,620px);
     min-height:200px;
@@ -493,7 +469,7 @@ body{
 #guide{
     position:absolute;
     left:50%;
-    bottom:12px;
+    bottom:40px; /* Adjusted to not overlap with footer */
     transform:translateX(-50%);
     z-index:20;
     width:min(94%,650px);
@@ -552,72 +528,87 @@ body{
 <body>
 <script src="../assets/js/google-sync.js"></script>
 <script>
-//INTEGRATION: Ø§ØªØµØ§Ù„ Ø¨Ø§Ø²ÛŒ 8 Ø¨Ù‡ Ù†Ø´Ø³Øª Ø¯Ø§Ù†Ø´â€ŒØ¢Ù…ÙˆØ²ØŒ Ù†ÙˆØ¨Øª Ù…Ø¬Ø§Ø² Ùˆ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ù¾Ù„ØªÙØ±Ù….
+// INTEGRATION BOILERPLATE
 const GAME_ID = 8;
-const platformStudent = getCurrentStudent();
-const platformStartedAt = Date.now();
+let platformStudent = null;
 let platformSaved = false;
+let startedAt = 0;
+let timerSeconds = 180;
 
-(async function initializeGamePlatform() {
+(async function initPlatform() {
+    platformStudent = getCurrentStudent();
     if (!platformStudent) {
         window.location.href = '../index.html';
         return;
     }
+    
     document.documentElement.style.visibility = 'hidden';
+    startedAt = Date.now();
+    
+    // بررسی مجوز و نوبت
     const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
     if (!attemptCheck.success) {
         document.documentElement.style.visibility = 'visible';
-        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'Ø§Ù…Ú©Ø§Ù† Ø´Ø±Ú©Øª Ø¯Ø± Ø§ÛŒÙ† Ø¨Ø§Ø²ÛŒ ÙˆØ¬ÙˆØ¯ Ù†Ø¯Ø§Ø±Ø¯.') + '</h2></main>';
+        document.body.innerHTML = '<main style="display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px;"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
         return;
     }
+    
+    // دریافت تنظیمات (تایمر)
     const settings = await syncGetGameSettings(GAME_ID);
-    const timerSeconds = settings.timerSeconds || 180;
+    timerSeconds = settings.timerSeconds || 180;
     window.timerSeconds = timerSeconds;
+    
+    // کشف نام آموزگار
+    let teacherName = 'خانم دهگودی'; 
+    if (platformStudent.teacherName) {
+        teacherName = platformStudent.teacherName;
+    } else if (platformStudent.className) {
+        try {
+            const classesResult = await syncListClasses();
+            if (classesResult && classesResult.success) {
+                const match = classesResult.classes.find(c => c.className === platformStudent.className);
+                if (match && match.teacherName) teacherName = match.teacherName;
+            }
+        } catch (e) {}
+    }
+    window.platformTeacherName = teacherName;
     window.platformStudent = platformStudent;
-    document.documentElement.style.visibility = 'visible';
-    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(function (element) {
-        if (!element.matches('input,textarea')) element.textContent = platformStudent.fullName;
+    
+    // جایگذاری نام دانش‌آموز در UI (در صورت وجود المنت‌های مربوطه)
+    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(el => {
+        if (!el.matches('input,textarea')) el.textContent = platformStudent.fullName;
     });
+    
+    document.documentElement.style.visibility = 'visible';
 })();
 
-//INTEGRATION: Ù†Ù…Ø§ÛŒØ´ Ø«Ø§Ø¨Øª Ø¢Ù…ÙˆØ²Ú¯Ø§Ø± Ùˆ ÙÙˆØªØ± Ù¾Ù„ØªÙØ±Ù….
+// ثبت نام آموزگار و فوتر در DOM
 window.addEventListener('DOMContentLoaded', function () {
     if (!document.querySelector('.platform-teacher')) {
         const teacher = document.createElement('div');
         teacher.className = 'platform-teacher';
-        teacher.textContent = 'Ø¢Ù…ÙˆØ²Ú¯Ø§Ø±: Ø®Ø§Ù†Ù… Ø¯Ù‡Ú¯ÙˆØ¯ÛŒ';
-        teacher.style.cssText = 'text-align:center;font-weight:700;margin:8px auto;';
-        const heading = document.querySelector('h1,h2,.title,.game-title') || document.body.firstElementChild;
+        teacher.textContent = 'آموزگار: ' + (window.platformTeacherName || 'خانم دهگودی');
+        teacher.style.cssText = 'text-align:center; font-weight:900; color:#8e3e91; margin:8px auto; padding:5px 15px; background:rgba(255,255,255,0.7); border-radius:15px; width:max-content; font-size:16px;';
+        
+        const heading = document.querySelector('.mainTitle');
         if (heading && heading.parentNode) heading.parentNode.insertBefore(teacher, heading.nextSibling);
     }
     if (!document.querySelector('.platform-footer')) {
         const footer = document.createElement('footer');
         footer.className = 'platform-footer';
-        footer.textContent = 'Ø·Ø±Ø§Ø­ÛŒ Ùˆ Ù¾ÛŒØ§Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ: Ø³Ø¹ÛŒØ¯ Ø³Ø±Ø§ÙˆØ§Ù†ÛŒ';
-        footer.style.cssText = 'text-align:center;font-weight:700;padding:16px;';
+        footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
+        footer.style.cssText = 'position:fixed; bottom:0; left:0; width:100%; text-align:center; font-weight:bold; padding:8px; color:#49334e; background:rgba(255,255,255,0.85); z-index:1000; font-size:14px;';
         document.body.appendChild(footer);
     }
 });
 
-//INTEGRATION: Ø«Ø¨Øª Ù†ØªÛŒØ¬Ù‡ ÙÙ‚Ø· Ø¨Ø§ ØªØ¹Ø¯Ø§Ø¯ Ù¾Ø§Ø³Ø® Ø¯Ø±Ø³Øª Ùˆ ØºÙ„Ø·.
-function platformNumber(selectors) {
-    for (const selector of selectors) {
-        const element = document.querySelector(selector);
-        if (element && /^\s*[0-9Û°-Û¹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9Û°-Û¹]/g, '');
-    }
-    return null;
-}
-async function platformSaveResult() {
-    if (platformSaved || !window.platformStudent) return;
-    const correctText = platformNumber(['#correctCount','#correctFinal','#finalCorrect','#end-correct','#rCorrect','#correct-score','#correctScore']);
-    const wrongText = platformNumber(['#wrongCount','#wrongFinal','#finalWrong','#end-wrong','#rWrong','#wrong-score','#wrongScore']);
-    if (correctText === null || wrongText === null) return;
+// تابع ثبت نتیجه بازی (برای فراخوانی در پایان بازی)
+async function finishGamePlatform() {
+    if (platformSaved || !platformStudent) return;
     platformSaved = true;
-    const toNumber = value => Number(String(value).replace(/[Û°-Û¹]/g, digit => 'Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹'.indexOf(digit)));
-    const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
-    await syncSaveResult(platformStudent.studentCode, GAME_ID, toNumber(correctText), toNumber(wrongText), durationSeconds);
+    const durationSeconds = Math.round((Date.now() - startedAt) / 1000);
+    await syncSaveResult(platformStudent.studentCode, GAME_ID, correctCount, wrongCount, durationSeconds);
 }
-new MutationObserver(platformSaveResult).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
 </script>
 
 <img id="background" src="../assets/img/game008-media-02.jpeg" alt="">
@@ -625,6 +616,12 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
 <canvas id="particles"></canvas>
 
 <div id="app">
+    
+    <!-- نوار راهنما (Breadcrumb) اضافه شده طبق استاندارد -->
+    <div class="breadcrumb" style="width:100%; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.8); z-index:100; backdrop-filter:blur(5px); border-bottom:2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <span style="font-weight:bold; color:#603a75; font-size: 14px;">🏠 خانه / بازی‌ها / راز سرزمین بی</span>
+        <a href="../index.html" style="text-decoration:none; background:#ff8fcf; color:white; padding:5px 15px; border-radius:15px; font-weight:bold; font-size: 14px; box-shadow:0 3px 0 #d66da9; transition: 0.2s;">→ بازگشت</a>
+    </div>
 
     <div id="hud">
         <div class="hudBox">✅ درست: <span id="correctCount">۰</span></div>
@@ -696,7 +693,8 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
     </section>
 
     <div id="guide">
-        <div id="guideBubble" class="guideBubble">سلام دوست من! اسمت رو بنویس تا شروع کنیم! 🐰✨</div>
+        <!-- متن اصلاح شده راهنما (عدم درخواست نام) -->
+        <div id="guideBubble" class="guideBubble">سلام دوست من! آماده‌ای شروع کنیم؟ 🐰✨</div>
     </div>
 
 </div>
@@ -748,7 +746,6 @@ let correctCount = 0;
 let wrongCount = 0;
 let timerInterval = null;
 let timeLeft = 0;
-let resultSaved = false;
 let answered = false;
 let treasureOpened = false;
 
@@ -803,11 +800,12 @@ function showToast(text, type){
 startButton.addEventListener("click", startGame);
 
 function startGame(){
-    playerName = student.fullName;
+    // خواندن نام دانش‌آموز از متغیر پلتفرم
+    playerName = window.platformStudent ? window.platformStudent.fullName : "قهرمان";
     currentLevel = 0;
     correctCount = 0;
     wrongCount = 0;
-    resultSaved = false;
+    platformSaved = false; // Reset saved flag on restart
     startTimer();
     updateHUD();
     guide(`سلام ${playerName} جان! 🌸 مرحله‌ی اول آماده‌ست!`);
@@ -965,7 +963,12 @@ function showEnd(){
     showScreen(endScreen);
     clearInterval(timerInterval);
     finalResult.textContent = `پاسخ درست: ${faNumber(correctCount)} | پاسخ غلط: ${faNumber(wrongCount)}`;
-    if(!resultSaved){resultSaved=true;platformSaved=true;syncSaveResult(student.studentCode,GAME_ID,correctCount,wrongCount,Math.round((Date.now()-platformStartedAt)/1000));}
+    
+    // ثبت نهایی نتیجه در پلتفرم (جایگزین شده بر اساس استاندارد)
+    if(typeof finishGamePlatform === "function") {
+        finishGamePlatform();
+    }
+
     endText.innerHTML = `
         <strong>${playerName}</strong> عزیز! 🌸<br>
         تو تمام مرحله‌های سرزمین «بی» را با موفقیت پشت سر گذاشتی!<br>
@@ -979,7 +982,7 @@ document.getElementById("restartButton").addEventListener("click", () => {
     currentLevel = 0;
     correctCount = 0;
     wrongCount = 0;
-    resultSaved = false;
+    platformSaved = false;
     updateHUD();
     showMap();
 });
@@ -988,10 +991,20 @@ function startTimer(){
     clearInterval(timerInterval);
     timeLeft=window.timerSeconds||180;
     updateTimer();
-    timerInterval=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInterval);document.querySelectorAll('.option').forEach(button=>button.disabled=true);}},1000);
+    timerInterval=setInterval(()=>{
+        timeLeft--;
+        updateTimer();
+        if(timeLeft<=0){
+            clearInterval(timerInterval);
+            document.querySelectorAll('.option').forEach(button=>button.disabled=true);
+            showEnd(); // پایان بازی هنگام اتمام تایمر
+        }
+    },1000);
 }
 
-function updateTimer(){timerDisplay.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;}
+function updateTimer(){
+    timerDisplay.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;
+}
 
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
@@ -1040,9 +1053,8 @@ function animateParticles(){
 animateParticles();
 
 updateHUD();
-guide("سلام دوست من! اسمت رو بنویس تا با هم وارد سرزمین جادویی کلمه‌ها بشیم! 🐰✨");
+guide("سلام دوست من! آماده‌ای با هم وارد سرزمین جادویی کلمه‌ها بشیم؟ 🐰✨");
 </script>
 
 </body>
 </html>
-
