@@ -1,9 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>بازی نشانه «و»</title>
 
 <style>
@@ -29,12 +28,9 @@ body{
     Tahoma,
     Arial,
     sans-serif;
-
     overflow-x:hidden;
-
     background:#f4dce7;
 }
-
 
 /* =========================
    پس زمینه
@@ -42,25 +38,91 @@ body{
 
 .game{
     min-height:100vh;
-
     padding:15px;
-
     background-image:
     linear-gradient(
         rgba(255,255,255,.12),
         rgba(255,255,255,.12)
     ),
     url("../assets/img/game006-media-01.png");
-
     background-size:cover;
-
     background-position:center;
-
     background-repeat:no-repeat;
-
     background-attachment:fixed;
+    padding-bottom: 60px; /* فضای خالی برای فوتر */
 }
 
+/* =========================
+   نوار ناوبری (Breadcrumb & Back)
+========================= */
+.top-nav {
+    width: min(100%, 900px);
+    margin: 0 auto 15px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 3px solid white;
+    border-radius: 25px;
+    box-shadow: 0 8px 20px rgba(80,50,70,.1);
+    z-index: 10;
+    position: relative;
+}
+
+.nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #70475f;
+    font-weight: bold;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #bd6e91;
+    transition: color 0.2s;
+}
+
+.breadcrumb a:hover {
+    color: #e68aaa;
+}
+
+.crumb-sep {
+    color: #a07891;
+}
+
+.crumb-current {
+    color: #70475f;
+}
+
+.back-btn {
+    align-self: flex-start;
+    display: inline-block;
+    padding: 8px 16px;
+    background: #bd6e91;
+    color: white;
+    text-decoration: none;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 10px rgba(189, 110, 145, 0.3);
+}
+
+.back-btn:hover {
+    background: #a35a7a;
+    transform: translateY(-2px);
+}
 
 /* =========================
    صفحه اصلی
@@ -69,848 +131,370 @@ body{
 .container{
     width:100%;
     max-width:900px;
-
-    min-height:95vh;
-
+    min-height:85vh;
     margin:auto;
-
     position:relative;
 }
-
 
 /* =========================
    صفحه خوش آمد
 ========================= */
 
 .start-screen{
-
-    min-height:92vh;
-
+    min-height:75vh;
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     padding:20px;
 }
 
-
 .welcome-card{
-
     width:min(95%,620px);
-
     padding:35px 25px;
-
     text-align:center;
-
     background:
     linear-gradient(
         145deg,
         rgba(255,255,255,.96),
         rgba(255,239,247,.96)
     );
-
     border:5px solid white;
-
     border-radius:42px;
-
     box-shadow:
-
     0 10px 0 #c899af,
-
-    0 20px 45px
-    rgba(80,50,70,.2);
+    0 20px 45px rgba(80,50,70,.2);
 }
 
-
 /* توپ لوگو */
-
 .logo-ball{
-
     width:105px;
-
     height:105px;
-
-    margin:
-    0 auto 15px;
-
+    margin:0 auto 15px;
     border-radius:50%;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     font-size:55px;
-
     font-weight:bold;
-
     color:white;
-
     background:
     linear-gradient(
         145deg,
         #ffd4e4,
         #e684aa
     );
-
     box-shadow:
-
-    inset -12px -15px
-    rgba(0,0,0,.13),
-
-    inset 10px 10px
-    rgba(255,255,255,.45),
-
+    inset -12px -15px rgba(0,0,0,.13),
+    inset 10px 10px rgba(255,255,255,.45),
     0 9px 0 #bd7895;
 }
 
-
 .welcome-card h1{
-
     margin:10px 0;
-
     color:#70475f;
-
     font-size:36px;
-
-    text-shadow:
-    2px 3px white;
+    text-shadow:2px 3px white;
 }
 
-
 .welcome-card p{
-
     color:#98758a;
-
     font-size:19px;
-
     line-height:1.8;
 }
 
-
-/* ورودی نام */
-
-.name-input{
-
-    width:100%;
-
-    padding:16px;
-
-    border:
-
-    4px solid
-    #efd0df;
-
-    border-radius:23px;
-
-    background:white;
-
-    font-size:20px;
-
-    text-align:center;
-
-    outline:none;
+.student-greeting {
+    font-size: 22px;
+    font-weight: bold;
+    color: #bd6e91;
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 15px;
+    border: 2px dashed #efd0df;
 }
 
-
 /* دکمه شروع */
-
 .start-button{
-
     margin-top:20px;
-
-    padding:
-    16px 42px;
-
+    padding:16px 42px;
     border:0;
-
     border-radius:25px;
-
     background:
     linear-gradient(
         180deg,
         #ffb6d1,
         #e68aaa
     );
-
     color:white;
-
     font-size:22px;
-
     font-weight:bold;
-
     cursor:pointer;
-
     box-shadow:
-
     0 8px 0 #bd6e91,
-
-    0 14px 25px
-    rgba(100,50,80,.18);
+    0 14px 25px rgba(100,50,80,.18);
 }
-
 
 .start-button:active{
-
-    transform:
-    translateY(6px);
-
-    box-shadow:
-    0 2px 0 #bd6e91;
+    transform:translateY(6px);
+    box-shadow:0 2px 0 #bd6e91;
 }
-
 
 /* =========================
    بازی
 ========================= */
 
 #game{
-
     display:none;
-
-    padding:
-    10px 5px 30px;
+    padding:10px 5px 30px;
 }
 
-
 /* بالای صفحه */
-
 .top{
-
     display:flex;
-
-    justify-content:
-    space-between;
-
+    justify-content:space-between;
     align-items:center;
-
+    flex-wrap: wrap;
     gap:10px;
-
     margin-bottom:18px;
 }
 
-
 .badge{
-
-    background:
-    rgba(255,255,255,.94);
-
-    border:
-    3px solid white;
-
+    background:rgba(255,255,255,.94);
+    border:3px solid white;
     border-radius:23px;
-
-    padding:
-    10px 16px;
-
+    padding:10px 16px;
     color:#684b60;
-
     font-weight:bold;
-
-    box-shadow:
-    0 6px 0 #cdaabd;
+    box-shadow:0 6px 0 #cdaabd;
 }
-
 
 /* =========================
    کارت سوال
 ========================= */
 
 .question-card{
-
-    background:
-    rgba(255,255,255,.96);
-
-    border:
-    5px solid white;
-
+    background:rgba(255,255,255,.96);
+    border:5px solid white;
     border-radius:35px;
-
     padding:20px;
-
     text-align:center;
-
     box-shadow:
-
     0 9px 0 #c7a4b7,
-
-    0 15px 30px
-    rgba(80,50,70,.16);
+    0 15px 30px rgba(80,50,70,.16);
 }
 
-
 .question-card small{
-
     color:#a07891;
-
     font-size:16px;
 }
 
-
 .question{
-
     color:#684b60;
-
     font-size:28px;
-
     line-height:1.8;
-
-    margin:
-    7px 0 0;
+    margin:7px 0 0;
 }
-
 
 /* =========================
    توپ ها
 ========================= */
 
 .balls{
-
     display:grid;
-
-    grid-template-columns:
-    repeat(4,1fr);
-
+    grid-template-columns:repeat(4,1fr);
     gap:18px;
-
     max-width:850px;
-
-    margin:
-    30px auto;
+    margin:30px auto;
 }
-
 
 /* توپ */
-
 .ball{
-
     position:relative;
-
     border:0;
-
     aspect-ratio:1;
-
     border-radius:50%;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     text-align:center;
-
     padding:12px;
-
     color:white;
-
     font-size:20px;
-
     font-weight:900;
-
     cursor:pointer;
-
     overflow:hidden;
-
-
     box-shadow:
-
-    inset -14px -18px
-    rgba(0,0,0,.14),
-
-    inset 10px 10px
-    rgba(255,255,255,.42),
-
-    inset 0 0 20px
-    rgba(255,255,255,.18),
-
-    0 9px 0
-    rgba(70,50,65,.22),
-
-    0 15px 25px
-    rgba(70,50,65,.16);
-
-
-    transition:
-    transform .15s,
-    filter .15s;
+    inset -14px -18px rgba(0,0,0,.14),
+    inset 10px 10px rgba(255,255,255,.42),
+    inset 0 0 20px rgba(255,255,255,.18),
+    0 9px 0 rgba(70,50,65,.22),
+    0 15px 25px rgba(70,50,65,.16);
+    transition:transform .15s,filter .15s;
 }
 
-
 /* نور توپ */
-
 .ball::before{
-
     content:"";
-
     position:absolute;
-
     width:40%;
-
     height:22%;
-
     top:12%;
-
     left:18%;
-
     border-radius:50%;
-
-    background:
-    rgba(255,255,255,.55);
-
-    transform:
-    rotate(-25deg);
-
+    background:rgba(255,255,255,.55);
+    transform:rotate(-25deg);
     filter:blur(2px);
 }
 
-
 /* بافت */
-
 .ball::after{
-
     content:"";
-
     position:absolute;
-
     inset:0;
-
     border-radius:50%;
-
     opacity:.13;
-
     background-image:
-
     radial-gradient(
-        rgba(255,255,255,.9)
-        1px,
+        rgba(255,255,255,.9) 1px,
         transparent 1px
     );
-
     background-size:7px 7px;
 }
 
-
 /* رنگ ها */
-
-.ball:nth-child(1){
-
-    background:
-    linear-gradient(
-        145deg,
-        #ffc2d8,
-        #df729b
-    );
-}
-
-
-.ball:nth-child(2){
-
-    background:
-    linear-gradient(
-        145deg,
-        #a5eee9,
-        #4eb5bb
-    );
-}
-
-
-.ball:nth-child(3){
-
-    background:
-    linear-gradient(
-        145deg,
-        #ccd2ff,
-        #8996e1
-    );
-}
-
-
-.ball:nth-child(4){
-
-    background:
-    linear-gradient(
-        145deg,
-        #ffe49d,
-        #e3ad43
-    );
-}
-
-
-.ball:nth-child(5){
-
-    background:
-    linear-gradient(
-        145deg,
-        #d8f1ae,
-        #8dc76d
-    );
-}
-
-
-.ball:nth-child(6){
-
-    background:
-    linear-gradient(
-        145deg,
-        #e9bcec,
-        #b978c1
-    );
-}
-
-
-.ball:nth-child(7){
-
-    background:
-    linear-gradient(
-        145deg,
-        #ffc39f,
-        #dc8059
-    );
-}
-
-
-.ball:nth-child(8){
-
-    background:
-    linear-gradient(
-        145deg,
-        #b9e6ff,
-        #70b5df
-    );
-}
-
-
-.ball:nth-child(9){
-
-    background:
-    linear-gradient(
-        145deg,
-        #ffc3c3,
-        #dc8585
-    );
-}
-
-
-.ball:nth-child(10){
-
-    background:
-    linear-gradient(
-        145deg,
-        #c8edda,
-        #75bb99
-    );
-}
-
-
-.ball:nth-child(11){
-
-    background:
-    linear-gradient(
-        145deg,
-        #e0c5ff,
-        #9f78d1
-    );
-}
-
+.ball:nth-child(1){ background:linear-gradient(145deg,#ffc2d8,#df729b); }
+.ball:nth-child(2){ background:linear-gradient(145deg,#a5eee9,#4eb5bb); }
+.ball:nth-child(3){ background:linear-gradient(145deg,#ccd2ff,#8996e1); }
+.ball:nth-child(4){ background:linear-gradient(145deg,#ffe49d,#e3ad43); }
+.ball:nth-child(5){ background:linear-gradient(145deg,#d8f1ae,#8dc76d); }
+.ball:nth-child(6){ background:linear-gradient(145deg,#e9bcec,#b978c1); }
+.ball:nth-child(7){ background:linear-gradient(145deg,#ffc39f,#dc8059); }
+.ball:nth-child(8){ background:linear-gradient(145deg,#b9e6ff,#70b5df); }
+.ball:nth-child(9){ background:linear-gradient(145deg,#ffc3c3,#dc8585); }
+.ball:nth-child(10){ background:linear-gradient(145deg,#c8edda,#75bb99); }
+.ball:nth-child(11){ background:linear-gradient(145deg,#e0c5ff,#9f78d1); }
 
 /* لمس */
-
 .ball:active{
-
-    transform:
-    scale(.91)
-    translateY(5px);
+    transform:scale(.91) translateY(5px);
 }
 
-
 /* جواب درست */
-
 .ball.correct{
-
-    animation:
-    correctBall .7s ease;
-
-    outline:
-    6px solid white;
-
+    animation:correctBall .7s ease;
+    outline:6px solid white;
     pointer-events:none;
 }
 
-
 @keyframes correctBall{
-
-    0%{
-        transform:scale(1);
-    }
-
-    35%{
-        transform:
-        scale(1.23)
-        rotate(-6deg);
-    }
-
-    65%{
-        transform:
-        scale(.94)
-        rotate(5deg);
-    }
-
-    100%{
-        transform:scale(1);
-    }
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.23) rotate(-6deg); }
+    65%{ transform:scale(.94) rotate(5deg); }
+    100%{ transform:scale(1); }
 }
-
 
 /* جواب غلط */
-
 .ball.wrong{
-
-    animation:
-    wrongBall .45s ease;
+    animation:wrongBall .45s ease;
 }
-
 
 @keyframes wrongBall{
-
-    0%,100%{
-        transform:
-        translateX(0);
-    }
-
-    25%{
-        transform:
-        translateX(-13px);
-    }
-
-    50%{
-        transform:
-        translateX(13px);
-    }
-
-    75%{
-        transform:
-        translateX(-8px);
-    }
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-13px); }
+    50%{ transform:translateX(13px); }
+    75%{ transform:translateX(-8px); }
 }
-
 
 /* =========================
    پیام
 ========================= */
 
 .message{
-
     position:fixed;
-
     left:50%;
-
     top:50%;
-
-    transform:
-    translate(-50%,-50%)
-    scale(.5);
-
+    transform:translate(-50%,-50%) scale(.5);
     opacity:0;
-
     z-index:100;
-
     background:white;
-
-    padding:
-    25px 30px;
-
+    padding:25px 30px;
     border-radius:32px;
-
     color:#684b60;
-
     font-size:23px;
-
     font-weight:bold;
-
     text-align:center;
-
-    box-shadow:
-    0 20px 50px
-    rgba(70,40,60,.3);
-
+    box-shadow:0 20px 50px rgba(70,40,60,.3);
     transition:.25s;
-
     pointer-events:none;
 }
 
-
 .message.show{
-
     opacity:1;
-
-    transform:
-    translate(-50%,-50%)
-    scale(1);
+    transform:translate(-50%,-50%) scale(1);
 }
-
 
 /* =========================
    فشفشه
 ========================= */
 
 .spark{
-
     position:fixed;
-
     z-index:200;
-
     font-size:38px;
-
     pointer-events:none;
-
-    animation:
-    fireworks 1s forwards;
+    animation:fireworks 1s forwards;
 }
-
 
 @keyframes fireworks{
-
     0%{
-
         opacity:1;
-
-        transform:
-        translate(0,0)
-        scale(.3)
-        rotate(0);
+        transform:translate(0,0) scale(.3) rotate(0);
     }
-
     100%{
-
         opacity:0;
-
-        transform:
-        translate(
-            var(--x),
-            var(--y)
-        )
-        scale(1.5)
-        rotate(360deg);
+        transform:translate(var(--x),var(--y)) scale(1.5) rotate(360deg);
     }
 }
-
 
 /* =========================
    بمب
 ========================= */
 
 .bomb{
-
     position:fixed;
-
     left:50%;
-
     top:50%;
-
     z-index:150;
-
     font-size:100px;
-
     opacity:0;
-
     pointer-events:none;
 }
 
-
 .bomb.show{
-
-    animation:
-    bombAnimation .75s ease;
+    animation:bombAnimation .75s ease;
 }
-
 
 @keyframes bombAnimation{
-
-    0%{
-
-        opacity:0;
-
-        transform:
-        translate(-50%,-50%)
-        scale(.2);
-    }
-
-    35%{
-
-        opacity:1;
-
-        transform:
-        translate(-50%,-50%)
-        scale(1.3);
-    }
-
-    70%{
-
-        opacity:1;
-
-        transform:
-        translate(-50%,-50%)
-        scale(1);
-    }
-
-    100%{
-
-        opacity:0;
-
-        transform:
-        translate(-50%,-50%)
-        scale(1.5);
-    }
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(.2); }
+    35%{ opacity:1; transform:translate(-50%,-50%) scale(1.3); }
+    70%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-50%) scale(1.5); }
 }
-
 
 /* =========================
    موبایل
 ========================= */
 
 @media(max-width:650px){
-
-    .game{
-        padding:10px;
-    }
-
-
-    .welcome-card h1{
-        font-size:30px;
-    }
-
-
-    .question{
-        font-size:21px;
-    }
-
-
+    .game{ padding:10px; }
+    .welcome-card h1{ font-size:30px; }
+    .question{ font-size:21px; }
     .balls{
-
-        grid-template-columns:
-        repeat(3,1fr);
-
+        grid-template-columns:repeat(3,1fr);
         gap:12px;
     }
-
-
-    .ball{
-        font-size:16px;
-    }
-
-
-    .badge{
-
-        font-size:14px;
-
-        padding:
-        9px 12px;
-    }
-
+    .ball{ font-size:16px; }
+    .badge{ font-size:14px; padding:9px 12px; }
 }
 
 </style>
@@ -920,161 +504,136 @@ body{
 </style>
 </head>
 
-
 <body>
+
+<!-- اسکریپت پلتفرم -->
 <script src="../assets/js/google-sync.js"></script>
 <script>
-//INTEGRATION: Ø§ØªØµØ§Ù„ Ø¨Ø§Ø²ÛŒ 6 Ø¨Ù‡ Ù†Ø´Ø³Øª Ø¯Ø§Ù†Ø´â€ŒØ¢Ù…ÙˆØ²ØŒ Ù†ÙˆØ¨Øª Ù…Ø¬Ø§Ø² Ùˆ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ù¾Ù„ØªÙØ±Ù….
+// INTEGRATION: دریافت اطلاعات و بررسی نوبت مجاز
 const GAME_ID = 6;
-const platformStudent = getCurrentStudent();
-const platformStartedAt = Date.now();
+let platformStudent = null;
 let platformSaved = false;
 
-(async function initializeGamePlatform() {
+(async function initPlatform(){
+    platformStudent = getCurrentStudent();
     if (!platformStudent) {
         window.location.href = '../index.html';
         return;
     }
+    
     document.documentElement.style.visibility = 'hidden';
     const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
     if (!attemptCheck.success) {
         document.documentElement.style.visibility = 'visible';
-        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'Ø§Ù…Ú©Ø§Ù† Ø´Ø±Ú©Øª Ø¯Ø± Ø§ÛŒÙ† Ø¨Ø§Ø²ÛŒ ÙˆØ¬ÙˆØ¯ Ù†Ø¯Ø§Ø±Ø¯.') + '</h2></main>';
+        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2 style="color:#bd6e91;">' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
         return;
     }
+    
     const settings = await syncGetGameSettings(GAME_ID);
-    const timerSeconds = settings.timerSeconds || 180;
-    window.timerSeconds = timerSeconds;
-    window.platformStudent = platformStudent;
+    window.timerSeconds = settings.timerSeconds || 180;
+    
+    // دریافت نام آموزگار پلتفرم
+    let teacherName = 'خانم دهگودی'; 
+    if (platformStudent.teacherName) {
+        teacherName = platformStudent.teacherName;
+    } else if (platformStudent.className) {
+        try {
+            const classesResult = await syncListClasses();
+            if (classesResult && classesResult.success) {
+                const match = classesResult.classes.find(c => c.className === platformStudent.className);
+                if (match && match.teacherName) {
+                    teacherName = match.teacherName;
+                }
+            }
+        } catch (e) {
+            console.error('Error fetching teacher name:', e);
+        }
+    }
+    window.platformTeacherName = teacherName;
+    
+    // تنظیم نام دانش آموز در صفحه استارت
+    const startNameEl = document.getElementById("startStudentName");
+    if(startNameEl) startNameEl.textContent = platformStudent.fullName;
+    
     document.documentElement.style.visibility = 'visible';
-    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(function (element) {
-        if (!element.matches('input,textarea')) element.textContent = platformStudent.fullName;
-    });
 })();
 
-//INTEGRATION: Ù†Ù…Ø§ÛŒØ´ Ø«Ø§Ø¨Øª Ø¢Ù…ÙˆØ²Ú¯Ø§Ø± Ùˆ ÙÙˆØªØ± Ù¾Ù„ØªÙØ±Ù….
 window.addEventListener('DOMContentLoaded', function () {
+    // ایجاد نوار آموزگار
     if (!document.querySelector('.platform-teacher')) {
         const teacher = document.createElement('div');
         teacher.className = 'platform-teacher';
-        teacher.textContent = 'Ø¢Ù…ÙˆØ²Ú¯Ø§Ø±: Ø®Ø§Ù†Ù… Ø¯Ù‡Ú¯ÙˆØ¯ÛŒ';
-        teacher.style.cssText = 'text-align:center;font-weight:700;margin:8px auto;';
-        const heading = document.querySelector('h1,h2,.title,.game-title') || document.body.firstElementChild;
-        if (heading && heading.parentNode) heading.parentNode.insertBefore(teacher, heading.nextSibling);
+        teacher.textContent = 'آموزگار: ' + (window.platformTeacherName || 'خانم دهگودی');
+        
+        // قرار دادن نوار آموزگار در بالای Breadcrumb
+        const topNav = document.querySelector('.nav-row');
+        if(topNav) {
+            teacher.style.cssText = 'font-weight:900; color:#bd6e91; font-size:16px; background:rgba(255,255,255,0.7); padding:5px 12px; border-radius:15px; border:2px dashed #efd0df;';
+            topNav.appendChild(teacher);
+        }
     }
+    // ایجاد فوتر
     if (!document.querySelector('.platform-footer')) {
         const footer = document.createElement('footer');
         footer.className = 'platform-footer';
-        footer.textContent = 'Ø·Ø±Ø§Ø­ÛŒ Ùˆ Ù¾ÛŒØ§Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ: Ø³Ø¹ÛŒØ¯ Ø³Ø±Ø§ÙˆØ§Ù†ÛŒ';
-        footer.style.cssText = 'text-align:center;font-weight:700;padding:16px;';
+        footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
+        footer.style.cssText = 'text-align:center; font-weight:700; padding:12px; color:#fff; background:rgba(112, 71, 95, 0.9); position:fixed; bottom:0; width:100%; z-index:9999; font-size:14px;';
         document.body.appendChild(footer);
     }
 });
-
-//INTEGRATION: Ø«Ø¨Øª Ù†ØªÛŒØ¬Ù‡ ÙÙ‚Ø· Ø¨Ø§ ØªØ¹Ø¯Ø§Ø¯ Ù¾Ø§Ø³Ø® Ø¯Ø±Ø³Øª Ùˆ ØºÙ„Ø·.
-function platformNumber(selectors) {
-    for (const selector of selectors) {
-        const element = document.querySelector(selector);
-        if (element && /^\s*[0-9Û°-Û¹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9Û°-Û¹]/g, '');
-    }
-    return null;
-}
-async function platformSaveResult() {
-    if (platformSaved || !window.platformStudent) return;
-    const correctText = platformNumber(['#correctCount','#correctFinal','#finalCorrect','#end-correct','#rCorrect','#correct-score','#correctScore']);
-    const wrongText = platformNumber(['#wrongCount','#wrongFinal','#finalWrong','#end-wrong','#rWrong','#wrong-score','#wrongScore']);
-    if (correctText === null || wrongText === null) return;
-    platformSaved = true;
-    const toNumber = value => Number(String(value).replace(/[Û°-Û¹]/g, digit => 'Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹'.indexOf(digit)));
-    const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
-    await syncSaveResult(platformStudent.studentCode, GAME_ID, toNumber(correctText), toNumber(wrongText), durationSeconds);
-}
-new MutationObserver(platformSaveResult).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
 </script>
-
 
 <div class="game">
 
+<!-- نوار راهنما و دکمه بازگشت -->
+<div class="top-nav">
+    <nav class="breadcrumb">
+        <a href="../index.html">🏠 خانه</a>
+        <span class="crumb-sep">/</span>
+        <a href="../index.html">بازی‌ها</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current" id="breadcrumbGameTitle">بازی نشانه «و»</span>
+    </nav>
+    <div class="nav-row">
+        <a href="../index.html" class="back-btn">→ بازگشت به هاب بازی‌ها</a>
+        <!-- نوار آموزگار اینجا توسط جاوااسکریپت اضافه می‌شود -->
+    </div>
+</div>
 
 <div class="container">
-
 
 <!-- =========================
      صفحه اول
 ========================= -->
 
-<section
-class="start-screen"
-id="startScreen">
-
+<section class="start-screen" id="startScreen">
 
 <div class="welcome-card">
 
-
 <div class="logo-ball">
-
 و
-
 </div>
-
 
 <h1>
-
 🌸 خوش آمدی قهرمان! 🌸
-
 </h1>
 
-
 <p>
-
 به بازی شیرین نشانه «و» خوش آمدی!
-
 </p>
 
+<!-- نام دانش‌آموز جایگزین اینپوت متنی شد -->
+<div class="student-greeting">
+    دانش‌آموز عزیز: <span id="startStudentName">...</span>
+</div>
 
-<p>
-
-اول اسم خودت را بنویس:
-
-</p>
-
-
-<input
-
-class="name-input"
-
-id="nameInput"
-
-type="text"
-
-placeholder="نام کودک"
-
-
-autocomplete="off">
-
-
-<br>
-
-
-<button
-
-class="start-button"
-
-id="startButton"
-
-type="button">
-
+<button class="start-button" id="startButton" type="button">
 🎮 شروع بازی
-
 </button>
-
 
 </div>
 
-
 </section>
-
-
 
 <!-- =========================
      بازی
@@ -1082,655 +641,257 @@ type="button">
 
 <section id="game">
 
-
 <div class="top">
 
-
 <div class="badge">
-
 👋 سلام
-
 <span id="childName"></span>
-
 </div>
-
 
 <div class="badge">
-
-⭐ امتیاز:
-
-✅ درست: <span id="correctCount">۰</span>
-❌ غلط: <span id="wrongCount">۰</span>
+✅ درست: <span id="correctCount">۰</span> |
+❌ غلط: <span id="wrongCount">۰</span> |
 ⏱ زمان: <span id="timer">۰:۰۰</span>
-
 </div>
 
-
 </div>
-
-
 
 <div class="question-card">
 
-
 <small>
-
 🎯 همه توپ‌های درست را پیدا کن
-
 </small>
 
-
 <h1 class="question">
-
 در کدام کلمات نشانه «و»
 صدا ندارد؟
-
 </h1>
 
-
 </div>
-
-
 
 <!-- توپ ها -->
 
 <div class="balls">
 
-
-<button
-class="ball"
-data-correct="false">
-
-موش
-
-</button>
-
-
-<button
-class="ball"
-data-correct="false">
-
-رودخانه
-
-</button>
-
-
-<button
-class="ball"
-data-correct="false">
-
-سودابه
-
-</button>
-
-
-<button
-class="ball"
-data-correct="false">
-
-کودک
-
-</button>
-
-
-<button
-class="ball"
-data-correct="true">
-
-خواهر
-
-</button>
-
-
-<button
-class="ball"
-data-correct="false">
-
-ورزش
-
-</button>
-
-
-<button
-class="ball"
-data-correct="false">
-
-وزنه
-
-</button>
-
-
-<button
-class="ball"
-data-correct="false">
-
-نوک
-
-</button>
-
-
-<button
-class="ball"
-data-correct="false">
-
-خودکار
-
-</button>
-
-
-<button
-class="ball"
-data-correct="true">
-
-استخوان
-
-</button>
-
-
-<button
-class="ball"
-data-correct="true">
-
-خواهش
-
-</button>
-
+<button class="ball" data-correct="false">موش</button>
+<button class="ball" data-correct="false">رودخانه</button>
+<button class="ball" data-correct="false">سودابه</button>
+<button class="ball" data-correct="false">کودک</button>
+<button class="ball" data-correct="true">خواهر</button>
+<button class="ball" data-correct="false">ورزش</button>
+<button class="ball" data-correct="false">وزنه</button>
+<button class="ball" data-correct="false">نوک</button>
+<button class="ball" data-correct="false">خودکار</button>
+<button class="ball" data-correct="true">استخوان</button>
+<button class="ball" data-correct="true">خواهش</button>
 
 </div>
-
 
 </section>
 
-
 </div>
-
-
 </div>
-
-
 
 <!-- پیام -->
-
-<div
-class="message"
-id="message">
-
-</div>
-
-
+<div class="message" id="message"></div>
 
 <!-- بمب -->
-
-<div
-class="bomb"
-id="bomb">
-
-💣
-
-</div>
-
-
+<div class="bomb" id="bomb">💣</div>
 
 <script>
 
-
 /* =========================
-   عناصر
+   عناصر و وضعیت بازی
 ========================= */
 
-const startButton =
-document.getElementById(
-"startButton"
-);
-
-
-const startScreen =
-document.getElementById(
-"startScreen"
-);
-
-
-const game =
-document.getElementById(
-"game"
-);
-
-
-const childName =
-document.getElementById(
-"childName"
-);
-
-
+const startButton = document.getElementById("startButton");
+const startScreen = document.getElementById("startScreen");
+const game = document.getElementById("game");
+const childName = document.getElementById("childName");
 const correctText = document.getElementById("correctCount");
 const wrongText = document.getElementById("wrongCount");
 const timerText = document.getElementById("timer");
-
-
-const message =
-document.getElementById(
-"message"
-);
-
-
-const bomb =
-document.getElementById(
-"bomb"
-);
-
+const message = document.getElementById("message");
+const bomb = document.getElementById("bomb");
 
 let correctFound = 0;
 let wrongCount = 0;
 let timerInterval = null;
 let timeLeft = 0;
 let resultSaved = false;
+let startedAt = 0;
 
 const totalCorrect = 3;
-
 
 /* =========================
    شروع بازی
 ========================= */
 
-startButton.addEventListener(
-"click",
-function(){
-
-    childName.textContent =
-    student.fullName;
-
-
-    startScreen.style.display =
-    "none";
-
-
-    game.style.display =
-    "block";
+startButton.addEventListener("click", function(){
+    startedAt = Date.now();
+    childName.textContent = platformStudent ? platformStudent.fullName : "دانش‌آموز";
+    
+    startScreen.style.display = "none";
+    game.style.display = "block";
     startTimer();
-
 });
-
-
-/* Enter */
 
 /* =========================
    توپ ها
 ========================= */
 
-const balls =
-document.querySelectorAll(
-".ball"
-);
+const balls = document.querySelectorAll(".ball");
 
-
-balls.forEach(
-function(ball){
-
-    ball.addEventListener(
-    "click",
-    function(){
-
-        const correct =
-        this.dataset.correct ===
-        "true";
-
+balls.forEach(function(ball){
+    ball.addEventListener("click", function(){
+        const correct = this.dataset.correct === "true";
 
         /* جواب درست */
-
         if(correct){
-
-            if(
-            this.classList.contains(
-            "correct"
-            )
-            ){
-
+            if(this.classList.contains("correct")){
                 return;
-
             }
-
-
-            this.classList.add(
-            "correct"
-            );
-
-
+            this.classList.add("correct");
             correctFound++;
-
             correctText.textContent = correctFound.toLocaleString("fa-IR");
 
-
-            showMessage(
-            "🎇 آفرین! درست پیدا کردی!"
-            );
-
-
+            showMessage("🎇 آفرین! درست پیدا کردی!");
             createFireworks();
 
-
             /* پایان */
-
-            if(
-            correctFound ===
-            totalCorrect
-            ){
-
-                setTimeout(
-                function(){
-
-                    showMessage(
-                    "🏆 فوق‌العاده بود! هر سه کلمه را پیدا کردی!"
-                    );
+            if(correctFound === totalCorrect){
+                setTimeout(function(){
+                    showMessage("🏆 فوق‌العاده بود! هر سه کلمه را پیدا کردی!");
                     finishGame();
-
-                },
-                900
-                );
-
+                }, 900);
             }
-
         }
-
-
         /* جواب غلط */
-
         else{
-
+            if(this.classList.contains("wrong") || this.classList.contains("correct")) return;
             wrongCount++;
             wrongText.textContent = wrongCount.toLocaleString("fa-IR");
-
-            this.classList.add(
-            "wrong"
-            );
-
-
+            
+            this.classList.add("wrong");
             showBomb();
-
-
             playBeep();
-
-
-            showMessage(
-            "💣 اووه! این یکی درست نیست!"
-            );
-
-
-            setTimeout(
-            function(){
-
-                ball.classList.remove(
-                "wrong"
-                );
-
-            },
-            500
-            );
-
+            
+            showMessage("💣 اووه! این یکی درست نیست!");
+            
+            setTimeout(function(){
+                ball.classList.remove("wrong");
+            }, 500);
         }
-
     });
-
 });
 
 function startTimer(){
     clearInterval(timerInterval);
-    timeLeft=window.timerSeconds||180;
+    timeLeft = window.timerSeconds || 180;
     updateTimer();
-    timerInterval=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInterval);balls.forEach(ball=>ball.disabled=true);}},1000);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimer();
+        if(timeLeft <= 0){
+            clearInterval(timerInterval);
+            balls.forEach(ball => ball.disabled = true);
+            finishGame(); // اتمام بازی با اتمام زمان
+        }
+    }, 1000);
 }
 
 function updateTimer(){
-    timerText.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;
+    timerText.textContent = `${Math.floor(timeLeft/60).toLocaleString("fa-IR")}:${String(timeLeft%60).padStart(2,"0").toLocaleString("fa-IR")}`;
 }
 
-function finishGame(){
-    if(resultSaved)return;
-    resultSaved=true;
+async function finishGame(){
+    if(resultSaved) return;
+    resultSaved = true;
     clearInterval(timerInterval);
-    syncSaveResult(student.studentCode,GAME_ID,correctFound,wrongCount,Math.round((Date.now()-platformStartedAt)/1000));
+    balls.forEach(ball => ball.disabled = true);
+    
+    if (window.platformStudent) {
+        const durationSeconds = Math.round((Date.now() - startedAt) / 1000);
+        await syncSaveResult(window.platformStudent.studentCode, GAME_ID, correctFound, wrongCount, durationSeconds);
+    }
 }
-
 
 /* =========================
    پیام
 ========================= */
 
 function showMessage(text){
-
-    message.textContent =
-    text;
-
-
-    message.classList.add(
-    "show"
-    );
-
-
-    clearTimeout(
-    window.messageTimer
-    );
-
-
-    window.messageTimer =
-    setTimeout(
-    function(){
-
-        message.classList.remove(
-        "show"
-        );
-
-    },
-    1100
-    );
-
+    message.textContent = text;
+    message.classList.add("show");
+    
+    clearTimeout(window.messageTimer);
+    window.messageTimer = setTimeout(function(){
+        message.classList.remove("show");
+    }, 1100);
 }
-
 
 /* =========================
    فشفشه
 ========================= */
 
 function createFireworks(){
+    const icons = ["🎇", "✨", "⭐", "🌟", "🎉"];
 
-    const icons = [
-
-        "🎇",
-        "✨",
-        "⭐",
-        "🌟",
-        "🎉"
-
-    ];
-
-
-    for(
-    let i=0;
-    i<22;
-    i++
-    ){
-
-        const spark =
-        document.createElement(
-        "div"
-        );
-
-
-        spark.className =
-        "spark";
-
-
-        spark.textContent =
-        icons[
-            Math.floor(
-            Math.random()
-            *
-            icons.length
-            )
-        ];
-
-
-        spark.style.left =
-        "50%";
-
-
-        spark.style.top =
-        "45%";
-
-
-        spark.style.setProperty(
-
-            "--x",
-
-            (
-                Math.random()
-                *
-                520
-                -
-                260
-            )
-            +
-            "px"
-
-        );
-
-
-        spark.style.setProperty(
-
-            "--y",
-
-            (
-                Math.random()
-                *
-                520
-                -
-                260
-            )
-            +
-            "px"
-
-        );
-
-
-        document.body.appendChild(
-        spark
-        );
-
-
-        setTimeout(
-        function(){
-
-            spark.remove();
-
-        },
-        1000
-        );
-
+    for(let i=0; i<22; i++){
+        const spark = document.createElement("div");
+        spark.className = "spark";
+        spark.textContent = icons[Math.floor(Math.random() * icons.length)];
+        
+        spark.style.left = "50%";
+        spark.style.top = "45%";
+        spark.style.setProperty("--x", (Math.random() * 520 - 260) + "px");
+        spark.style.setProperty("--y", (Math.random() * 520 - 260) + "px");
+        
+        document.body.appendChild(spark);
+        setTimeout(function(){ spark.remove(); }, 1000);
     }
-
 }
-
 
 /* =========================
    بمب
 ========================= */
 
 function showBomb(){
-
-    bomb.classList.remove(
-    "show"
-    );
-
-
+    bomb.classList.remove("show");
     void bomb.offsetWidth;
-
-
-    bomb.classList.add(
-    "show"
-    );
-
-
-    setTimeout(
-    function(){
-
-        bomb.classList.remove(
-        "show"
-        );
-
-    },
-    800
-    );
-
+    bomb.classList.add("show");
+    
+    setTimeout(function(){
+        bomb.classList.remove("show");
+    }, 800);
 }
-
 
 /* =========================
    صدای بوق
 ========================= */
 
 function playBeep(){
-
     try{
-
-        const AudioContext =
-        window.AudioContext ||
-        window.webkitAudioContext;
-
-
-        const audio =
-        new AudioContext();
-
-
-        const oscillator =
-        audio.createOscillator();
-
-
-        const gain =
-        audio.createGain();
-
-
-        oscillator.type =
-        "square";
-
-
-        oscillator.frequency.value =
-        180;
-
-
-        gain.gain.value =
-        0.15;
-
-
-        oscillator.connect(
-        gain
-        );
-
-
-        gain.connect(
-        audio.destination
-        );
-
-
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audio = new AudioContext();
+        const oscillator = audio.createOscillator();
+        const gain = audio.createGain();
+        
+        oscillator.type = "square";
+        oscillator.frequency.value = 180;
+        gain.gain.value = 0.15;
+        
+        oscillator.connect(gain);
+        gain.connect(audio.destination);
+        
         oscillator.start();
-
-
-        oscillator.stop(
-        audio.currentTime
-        +
-        0.25
-        );
-
-    }
-
-    catch(error){
-
+        oscillator.stop(audio.currentTime + 0.25);
+    } catch(error) {
         /* اگر صدا پشتیبانی نشود، بازی ادامه دارد */
-
     }
-
 }
 
 </script>
-
 
 </body>
 </html>
