@@ -513,7 +513,11 @@ async function loadClasses() {
 
   tbody.querySelectorAll('[data-edit-class]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const c = currentClasses.find(x => x.className === btn.dataset.editClass);
+      const c = currentClasses.find(x => x && x.className === btn.dataset.editClass);
+      if (!c) {
+        alert('اطلاعات این کلاس یافت نشد — لطفاً صفحه را رفرش کنید (Ctrl+Shift+R) و دوباره تلاش کنید.');
+        return;
+      }
       document.getElementById('cl_className').value = c.className;
       document.getElementById('cl_teacherName').value = c.teacherName || '';
       document.getElementById('classForm').scrollIntoView({ behavior: 'smooth' });
