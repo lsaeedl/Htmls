@@ -27,6 +27,7 @@
     font-family:'Vazirmatn',Tahoma,sans-serif;
 }
 
+/* ساختار پایه و جلوگیری قطعی از اسکرول کل صفحه */
 html, body {
     margin: 0;
     padding: 0;
@@ -39,6 +40,7 @@ html, body {
     background: #f5dff1;
 }
 
+/* کانتینر اصلی بازی - استفاده از Flexbox برای تراز خودکار */
 .game {
     position: relative;
     width: 100%;
@@ -48,22 +50,29 @@ html, body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    
-    /* این خط باید اضافه شود تا بک‌گراند ثابت بماند و پایین صفحه خالی نشود */
-    background-attachment: fixed; 
-    
+    background-attachment: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.container{
+    position: relative;
+    z-index: 2;
+    width: min(100%, 1050px);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* حذف ابعاد ثابت و سپردن تراز به کانتینر والد */
 .screen{
     display: none;
     width: 100%;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    /* حذف transform برای جلوگیری از خراب شدن مختصات ذرات ثابت */
     animation: fadeIn 0.4s ease forwards;
 }
 
@@ -165,7 +174,7 @@ h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-
     position: absolute;
     z-index: 2;
     left: 50%;
-    top: 76%;
+    top: 76%; /* تثبیت موقعیت متن در ۱/۴ پایین */
     transform: translate(-50%, -50%);
     width: 85%;
     color: #111;
@@ -174,21 +183,16 @@ h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-
     line-height: 1.2;
     text-align: center;
     pointer-events: none;
+    /* ایجاد هاله بسیار ضخیم و سفید برای خوانایی مطلق */
     text-shadow: 0px 0px 4px white, 0px 0px 8px white, 0px 0px 12px white, 1px 1px 0px white, -1px -1px 0px white;
 }
 
 /* هاور و کلیک (مخصوص پاسخ‌های انتخاب‌نشده) */
-.ladybug:not(.answered):hover {
-    transform: translateY(-8px) scale(1.05);
-}
-.ladybug:not(.answered):active {
-    transform: scale(0.92);
-}
+.ladybug:not(.answered):hover { transform: translateY(-8px) scale(1.05); }
+.ladybug:not(.answered):active { transform: scale(0.92); }
 
-/* جلوگیری از تعامل بعد از انتخاب */
-.ladybug.answered {
-    pointer-events: none !important;
-}
+/* جلوگیری از تعامل بعد از انتخاب - بجای disabled */
+.ladybug.answered { pointer-events: none !important; }
 
 /* افکت درست */
 .ladybug.correct{
@@ -261,8 +265,11 @@ h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-
 </head>
 
 <body>
+
+<!-- اسکریپت گوگل سینک پلتفرم -->
 <script src="../assets/js/google-sync.js"></script>
 
+<!-- هدر پلتفرم -->
 <header class="platform-header" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 2px solid white; z-index: 1000;">
     <div style="display: flex; align-items: center; gap: 10px;">
         <div style="font-weight: 900; color: #4a004e; font-size: clamp(12px, 3vw, 15px);">🏠 خانه / بازی‌ها / بازی جادویی «ای»</div>
@@ -271,6 +278,7 @@ h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-
     <a href="../index.html" style="text-decoration: none; background: #00f5d4; color: #111; padding: 6px 14px; border-radius: 15px; font-weight: 900; font-size: 13px;">→ بازگشت</a>
 </header>
 
+<!-- کانتینر اصلی بازی با معماری ظاهری صحیح برای جلوگیری از Overlap -->
 <main class="game-wrapper" style="flex: 1 1 0; position: relative; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column;">
     <div class="game">
         <div class="container">
@@ -283,6 +291,7 @@ h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-
                         کلمه‌هایی را پیدا کن که می‌توانیم در آخرشان «ای» اضافه کنیم.<br>
                         با دقت کفشدوزک‌های درست را انتخاب کن! 🐞🌸
                     </div>
+                    <!-- فیلد نام حذف شد -->
                     <button id="startBtn" class="main-btn" type="button">🚀 شروع بازی</button>
                 </div>
             </section>
@@ -290,6 +299,7 @@ h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-
             <section id="gameScreen" class="screen">
                 <div class="hud">
                     <div class="badge">👋 <span id="playerName"></span></div>
+                    <!-- بج امتیاز حذف شد -->
                     <div class="badge">❌ غلط: <strong id="wrongCount">۰</strong></div>
                     <div class="badge">✅ درست: <strong id="correctCount">۰</strong> / ۶</div>
                 </div>
@@ -343,6 +353,9 @@ h1{ margin: 8px 0 15px; color: #70236f; font-size: clamp(24px, 5vw, 40px); font-
 <footer class="platform-footer" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); text-align: center; padding: 10px; font-weight: 900; color: #4a004e; font-size: 13px; z-index: 1000; border-top: 2px solid white;">طراحی و پیاده‌سازی: سعید سراوانی</footer>
 
 <script>
+// ==========================================
+// 1. تنظیمات پلتفرم و دریافت اطلاعات
+// ==========================================
 const GAME_ID = 4;
 let platformStudent = null;
 let platformSaved = false;
@@ -355,7 +368,7 @@ let timerSeconds = 180;
         if (typeof getCurrentStudent === 'function') {
             platformStudent = getCurrentStudent();
         } else {
-            platformStudent = { fullName: "مسافر", studentCode: "test-123" };
+            platformStudent = { fullName: "دانش‌آموز تستی", studentCode: "test-123" };
         }
         
         if (!platformStudent) { window.location.href = '../index.html'; return; }
@@ -407,6 +420,9 @@ async function saveGameResultFinal(corrects, wrongs) {
     }
 }
 
+// ==========================================
+// 2. تنظیمات بازی (استفاده از مسیرهای لوکال)
+// ==========================================
 const LADYBUG_IMAGE = "../assets/img/game04-ladybug.png";
 
 const words = [
@@ -460,6 +476,9 @@ function shuffle(array){
     return result;
 }
 
+// ==========================================
+// 3. سیستم صدا
+// ==========================================
 let audioContext = null;
 function initAudio(){
     try{
@@ -505,6 +524,9 @@ function soundWin(){
     });
 }
 
+// ==========================================
+// 4. روند اجرای بازی
+// ==========================================
 startBtn.addEventListener("click", startGame);
 restartBtn.addEventListener("click", restartGame);
 
@@ -554,7 +576,7 @@ function createLadybugs(){
 function handleWord(bug, item){
     if(gameFinished || bug.classList.contains("answered")) return;
 
-    bug.classList.add("answered"); // سریعا جلوی هاور اضافی را می‌گیرد
+    bug.classList.add("answered"); 
 
     if(item.correct){
         bug.classList.add("correct");
@@ -587,7 +609,6 @@ function handleWord(bug, item){
 function disableAllBugs(){
     const bugs = document.querySelectorAll(".ladybug");
     bugs.forEach(bug => {
-        /* بسیار مهم: استفاده از disabled=true انیمیشن را در کروم/سافاری قطع می‌کرد! فقط از استایل زیر استفاده شد */
         bug.style.pointerEvents = "none";
     });
 }
@@ -617,8 +638,8 @@ function createBurnEffect(element){
         fire.textContent = icons[Math.floor(Math.random() * icons.length)];
         fire.style.left = `${rect.left + rect.width / 2}px`;
         fire.style.top = `${rect.top + rect.height / 2}px`;
-        spark.style.setProperty("--x", `${Math.random() * 260 - 130}px`);
-        spark.style.setProperty("--y", `${Math.random() * 240 - 120}px`);
+        fire.style.setProperty("--x", `${Math.random() * 260 - 130}px`);
+        fire.style.setProperty("--y", `${Math.random() * 240 - 120}px`);
         document.body.appendChild(fire);
         setTimeout(() => fire.remove(), 850);
     }
@@ -644,6 +665,7 @@ async function finishGame(){
     document.getElementById("finalText").textContent = finalText;
 
     await saveGameResultFinal(correctCount, wrongCount);
+    
     showScreen(reportScreen);
     createFinalSparks();
 }
