@@ -235,7 +235,7 @@ h1{
 }
 
 /* =========================
-   کفشدوزک (بروزرسانی برای وسط‌چین شدن دقیق)
+   کفشدوزک (نوشته در ۱/۴ پایین)
 ========================= */
 
 .ladybug {
@@ -246,14 +246,12 @@ h1{
     padding: 0;
     background: transparent;
     cursor: pointer;
-    display: flex; /* استفاده از فلکس‌باکس برای مرکزیت قطعی */
-    align-items: center;
-    justify-content: center;
+    display: block;
     transition: transform .2s ease, filter .2s ease;
 }
 
 .ladybug img {
-    position: absolute; /* تصویر در پس‌زمینه قرار می‌گیرد */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -267,21 +265,22 @@ h1{
 }
 
 .ladybug-word {
-    position: relative;
-    z-index: 2; /* متن روی تصویر قرار می‌گیرد */
-    width: 80%; /* عرض بیشتر برای جلوگیری از شکستن کلمات طولانی */
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 75%; /* انتقال به ۱/۴ پایینی ارتفاع */
+    transform: translate(-50%, -50%); /* تراز کردن دقیق مرکز متن با نقطه ۷۵٪ */
+    width: 80%;
     color: #000;
     font-size: clamp(17px, 2.7vw, 25px);
     font-weight: 900;
     line-height: 1.45;
     text-align: center;
     pointer-events: none;
-    /* اضافه کردن هاله سفید برای خوانایی بهتر روی عکس */
     text-shadow: 
         0 1px 0 rgba(255,255,255,1), 
         0 0 6px rgba(255,255,255,0.8);
 }
-
 .game-message{
     min-height:50px;
     display:flex;
