@@ -51,7 +51,7 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* محیط بازی */
+        /* محیط بازی استاندارد پلتفرم */
         .game-wrapper {
             flex: 1 1 0;
             position: relative;
@@ -60,6 +60,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 10px;
         }
 
         /* کانتینر اصلی بازی */
@@ -68,20 +69,20 @@
             width: 100%;
             max-width: 800px;
             height: 100%;
-            max-height: 700px;
+            max-height: 680px;
             background: linear-gradient(to bottom, #74b9ff, #81ecec);
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            border: 8px solid #fff;
+            border: 6px solid #fff;
             z-index: 2;
         }
 
         /* افکت لرزش برای پاسخ اشتباه */
         .shake {
-            animation: shake 0.5s calc(1) ease-in-out;
+            animation: shake 0.5s ease-in-out;
         }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -109,7 +110,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
         }
 
@@ -120,31 +121,32 @@
         /* داشبورد بالای بازی */
         .hud {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
+            top: 10px;
+            left: 10px;
+            right: 10px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 50px;
             color: #333;
             font-weight: bold;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             z-index: 10;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
         .hud-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         /* نوار پیشرفت */
         .progress-container {
-            width: 60%;
+            width: 40%;
             background: #dfe6e9;
-            height: 16px;
+            height: 12px;
             border-radius: 10px;
             overflow: hidden;
             border: 2px solid #fff;
@@ -161,11 +163,11 @@
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
         }
         .game-title {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 900;
             color: #fff;
             text-shadow: 0 4px 0 #4834d4, 0 8px 20px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             animation: bounce 2s infinite ease-in-out;
         }
         @keyframes bounce {
@@ -174,23 +176,24 @@
         }
         .login-box {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 20px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
             width: 90%;
-            max-width: 400px;
+            max-width: 380px;
         }
-        .login-box h3 { color: #333; margin-bottom: 15px; }
+        .login-box h3 { color: #333; margin-bottom: 12px; }
+        
         input[type="text"] {
             width: 100%;
-            padding: 12px 20px;
-            font-size: 1.2rem;
+            padding: 10px 15px;
+            font-size: 1.1rem;
             border: 3px solid #dfe6e9;
             border-radius: 12px;
             text-align: center;
             outline: none;
             transition: border-color 0.3s;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         input[type="text"]:focus { border-color: #6c5ce7; }
         
@@ -199,18 +202,18 @@
             background: linear-gradient(to bottom, #ff4757, #ff6b81);
             color: white;
             border: none;
-            padding: 12px 35px;
-            font-size: 1.3rem;
+            padding: 10px 30px;
+            font-size: 1.2rem;
             font-weight: bold;
             border-radius: 15px;
             cursor: pointer;
-            box-shadow: 0 6px 0 #cf1b2b, 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 0 #cf1b2b, 0 8px 15px rgba(0,0,0,0.2);
             transition: all 0.1s;
             text-shadow: 0 2px 2px rgba(0,0,0,0.2);
         }
         .btn:active {
             transform: translateY(4px);
-            box-shadow: 0 2px 0 #cf1b2b, 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 0 #cf1b2b, 0 2px 5px rgba(0,0,0,0.2);
         }
 
         /* محیط گرافیکی جاده سه بعدی */
@@ -219,68 +222,67 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 45%;
+            height: 42%;
             background: #2ed573;
             perspective: 150px;
             overflow: hidden;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
         }
         .road {
             position: absolute;
             bottom: 0;
             left: 50%;
-            width: 200px;
-            height: 300px;
+            width: 180px;
+            height: 250px;
             background: #747d8c;
             transform: translateX(-50%) rotateX(60deg);
             transform-origin: bottom center;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
         }
         .road-line {
             position: absolute;
-            width: 8px;
+            width: 6px;
             height: 100%;
             left: 48%;
             background: linear-gradient(to bottom, #fff 50%, transparent 50%);
-            background-size: 100% 40px;
-            animation: moveRoad 1s linear infinite paused;
+            background-size: 100% 35px;
         }
         
         /* تابلوی راهنما کنار جاده */
         .signboard {
             position: absolute;
-            bottom: 120px;
-            right: 15%;
-            width: 110px;
+            bottom: 100px;
+            right: 12%;
+            width: 95px;
             background: #d2aa53;
-            border: 4px solid #8c6218;
+            border: 3px solid #8c6218;
             border-radius: 8px;
-            padding: 5px;
+            padding: 4px;
             color: #4a2f00;
             font-weight: 900;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-align: center;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.2);
             transform: rotateZ(-5deg);
             z-index: 5;
         }
         .signboard::after {
             content: '';
             position: absolute;
-            bottom: -44px;
+            bottom: -35px;
             left: 40%;
-            width: 12px;
-            height: 40px;
+            width: 10px;
+            height: 35px;
             background: #8c6218;
         }
 
         /* صندوق گنج سه بعدی */
         .chest-container {
             position: absolute;
-            top: 10%;
+            top: 8%;
             left: 50%;
-            transform: translateX(-50%) scale(0.6);
+            transform: translateX(-50%) scale(0.55);
             z-index: 2;
             transition: all 0.5s ease;
         }
@@ -321,13 +323,13 @@
             transform: rotateX(-110deg) translateY(-20px);
         }
 
-        /* شخصیت بازی (کاراکتر فانتزی) */
+        /* شخصیت بازی */
         .character {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 50%;
-            width: 70px;
-            height: 85px;
+            width: 60px;
+            height: 75px;
             transform: translateX(-50%);
             z-index: 4;
             transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s;
@@ -337,22 +339,22 @@
             height: 100%;
             background: #fffa65;
             border-radius: 50% 50% 40% 40%;
-            border: 4px solid #fff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
             position: relative;
             display: flex;
             justify-content: center;
         }
         .char-eyes {
             position: absolute;
-            top: 20px;
-            width: 45px;
+            top: 16px;
+            width: 38px;
             display: flex;
             justify-content: space-between;
         }
         .char-eye {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             background: #333;
             border-radius: 50%;
             position: relative;
@@ -362,40 +364,41 @@
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 4px;
-            height: 4px;
+            width: 3px;
+            height: 3px;
             background: white;
             border-radius: 50%;
         }
         .char-smile {
             position: absolute;
-            bottom: 20px;
-            width: 24px;
-            height: 12px;
-            border-bottom: 4px solid #333;
-            border-radius: 0 0 15px 15px;
+            bottom: 16px;
+            width: 20px;
+            height: 10px;
+            border-bottom: 3px solid #333;
+            border-radius: 0 0 12px 12px;
         }
 
         @keyframes jump {
             0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-40px) scale(1.1); }
+            50% { transform: translateX(-50%) translateY(-30px) scale(1.1); }
         }
 
-        /* بخش سوالات */
+        /* بخش سوالات و گیم‌پلی */
         .gameplay-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 80px;
+            padding-top: 65px;
             width: 100%;
+            z-index: 3;
         }
 
         .cards-container {
             display: flex;
-            gap: 15px;
-            margin: 25px 0;
+            gap: 12px;
+            margin: 15px 0;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -403,57 +406,56 @@
         .letter-card {
             background: linear-gradient(135deg, #ff6b81, #ff4757);
             color: white;
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 900;
-            width: 65px;
-            height: 65px;
+            width: 55px;
+            height: 55px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 16px;
-            box-shadow: 0 8px 0 #cf1b2b, 0 12px 20px rgba(0,0,0,0.15);
+            border-radius: 14px;
+            box-shadow: 0 6px 0 #cf1b2b, 0 10px 15px rgba(0,0,0,0.15);
             transform: rotate(calc(var(--r, 0) * 1deg));
-            transition: transform 0.2s;
         }
-        .letter-card:nth-child(even) { --r: 4; background: linear-gradient(135deg, #1e90ff, #3742fa); box-shadow: 0 8px 0 #1b3ccf, 0 12px 20px rgba(0,0,0,0.15);}
-        .letter-card:nth-child(3n) { --r: -5; background: linear-gradient(135deg, #ffa502, #ff7f50); box-shadow: 0 8px 0 #cf6d1b, 0 12px 20px rgba(0,0,0,0.15);}
+        .letter-card:nth-child(even) { --r: 4; background: linear-gradient(135deg, #1e90ff, #3742fa); box-shadow: 0 6px 0 #1b3ccf, 0 10px 15px rgba(0,0,0,0.15);}
+        .letter-card:nth-child(3n) { --r: -5; background: linear-gradient(135deg, #ffa502, #ff7f50); box-shadow: 0 6px 0 #cf6d1b, 0 10px 15px rgba(0,0,0,0.15);}
 
         .input-area {
             width: 90%;
-            max-width: 400px;
-            margin-bottom: 15px;
+            max-width: 380px;
+            margin-bottom: 10px;
         }
 
         /* صفحات پایان */
         .end-card {
             background: white;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
             color: #333;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
         }
         .medal {
-            font-size: 5rem;
+            font-size: 4rem;
             animation: pulse 1.5s infinite alternate;
         }
         @keyframes pulse {
             0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
+            100% { transform: scale(1.08); }
         }
 
         @media (max-width: 600px) {
-            .game-title { font-size: 2.2rem; }
-            .letter-card { width: 50px; height: 50px; font-size: 1.6rem; }
-            .hud { font-size: 0.9rem; padding: 8px 15px; }
-            .environment-3d { height: 40%; }
-            .character { width: 55px; height: 70px; }
+            .game-title { font-size: 2rem; }
+            .letter-card { width: 45px; height: 45px; font-size: 1.4rem; }
+            .hud { font-size: 0.85rem; padding: 6px 12px; }
+            .environment-3d { height: 38%; }
+            .character { width: 50px; height: 65px; }
         }
     </style>
-    <style id="platform-local-font">
-    @font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
-    </style>
+<style id="platform-local-font">
+@font-face{font-family:'Vazirmatn';src:url('../assets/misc/vazirmatn-arabic.woff2') format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+</style>
 </head>
 <body>
 
@@ -495,7 +497,7 @@
 
         <div class="screen" id="game-screen">
             <div class="gameplay-area">
-                <h2>حروف به هم ریخته را مرتب کن:</h2>
+                <h2 style="font-size: 1.2rem; color: #2f3542;">حروف به هم ریخته را مرتب کن:</h2>
                 
                 <div class="cards-container" id="lettersContainer"></div>
 
@@ -535,8 +537,8 @@
 
         <div class="screen" id="gameover-screen">
             <div class="end-card">
-                <h1 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 15px;">فرصت تمام شد! 🦊</h1>
-                <p style="font-size: 1.2rem; margin-bottom: 25px;">اشکالی نداره قهرمان! دوباره تلاش کن تا به صندوق گنج برسی.</p>
+                <h1 style="color: var(--primary-color); font-size: 2.2rem; margin-bottom: 12px;">فرصت تمام شد! 🦊</h1>
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">اشکالی نداره قهرمان! دوباره تلاش کن تا به صندوق گنج برسی.</p>
                 <button class="btn" onclick="resetGame()">شروع مجدد 🔄</button>
             </div>
         </div>
@@ -544,11 +546,11 @@
         <div class="screen" id="victory-screen">
             <div class="end-card">
                 <div class="medal">🥇</div>
-                <h1 style="color: var(--secondary-color); font-size: 2.3rem; margin-bottom: 15px;" id="victory-title">آفرین!</h1>
-                <p style="font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; line-height: 1.8;" id="victory-msg">تو به گنج واژه‌ها رسیدی.</p>
-                <div style="background: #f1f2f6; padding: 15px; border-radius: 12px; margin-bottom: 25px;">
-                    <h3 style="color: #2f3542;">✅ پاسخ درست: <span id="final-correct">۰</span></h3>
-                    <h3 style="color: #2f3542;">❌ پاسخ غلط: <span id="final-wrong">۰</span></h3>
+                <h1 style="color: var(--secondary-color); font-size: 2rem; margin-bottom: 10px;" id="victory-title">آفرین!</h1>
+                <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; line-height: 1.6;" id="victory-msg">تو به گنج واژه‌ها رسیدی.</p>
+                <div style="background: #f1f2f6; padding: 12px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #2f3542; font-size: 1rem;">✅ پاسخ درست: <span id="final-correct">۰</span></h3>
+                    <h3 style="color: #2f3542; font-size: 1rem; margin-top: 5px;">❌ پاسخ غلط: <span id="final-wrong">۰</span></h3>
                 </div>
                 <button class="btn" onclick="resetGame()">بازگشت به خانه 🏠</button>
             </div>
@@ -561,7 +563,6 @@
 <footer class="platform-footer" style="flex: 0 0 auto; background: rgba(255, 255, 255, 0.9); text-align: center; padding: 10px; font-weight: 900; color: #4a004e; font-size: 13px; z-index: 1000; border-top: 2px solid white;">طراحی و پیاده‌سازی: سعید سراوانی</footer>
 
     <script>
-        // اتصال بازی به پلتفرم
         const GAME_ID = 0; 
         let platformStudent = null;
         let platformSaved = false;
@@ -623,7 +624,6 @@
             }
         }
 
-        // بانک اطلاعاتی مراحل بازی
         const levels = [
             { scrambled: ["ف", "ص", "د"], correct: "صدف" },
             { scrambled: ["ن", "ل", "ز", "و", "ح"], correct: "حلزون" },
@@ -704,7 +704,7 @@
         }
 
         function startGame() {
-            initAudio(); // مدیریت ایمن صدا روی اولین تعامل کاربر
+            initAudio();
             startedAt = Date.now();
             
             const pName = (platformStudent && platformStudent.fullName) ? platformStudent.fullName : "دانش‌آموز";
@@ -756,8 +756,8 @@
 
         function updateCharacterPosition() {
             const char = document.getElementById('gameCharacter');
-            const startBottom = 20; 
-            const endBottom = 160;  
+            const startBottom = 15; 
+            const endBottom = 130;  
             
             const step = (endBottom - startBottom) / levels.length;
             const currentBottom = startBottom + (currentLevelIndex * step);
@@ -765,7 +765,7 @@
             char.style.animation = 'jump 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
             char.style.bottom = currentBottom + 'px';
             
-            const scale = 1 - (currentLevelIndex * 0.03);
+            const scale = 1 - (currentLevelIndex * 0.025);
             char.style.transform = `translateX(-50%) scale(${scale})`;
 
             setTimeout(() => {
@@ -816,7 +816,7 @@
             
             if (isVictory) {
                 document.getElementById('treasureChest').querySelector('.chest').classList.add('open');
-                document.getElementById('victory-title').innerText = `آفرین دختر گل، ${pName}! 🎉`;
+                document.getElementById('victory-title').innerText = `آفرین قهرمان، ${pName}! 🎉`;
                 document.getElementById('victory-msg').innerText = `تو به گنج واژه‌ها رسیدی و تمام کلمات را با موفقیت یاد گرفتی.`;
                 document.getElementById('final-correct').innerText = toFarsiNumber(correctCount);
                 document.getElementById('final-wrong').innerText = toFarsiNumber(errorsCount);
@@ -874,11 +874,11 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = -20;
-                this.size = Math.random() * 8 + 12;
-                this.speedY = Math.random() * 5 + 4;
-                this.speedX = Math.random() * 4 - 2;
+                this.size = Math.random() * 6 + 10;
+                this.speedY = Math.random() * 4 + 3;
+                this.speedX = Math.random() * 3 - 1.5;
                 this.rotation = Math.random() * 360;
-                this.rotationSpeed = Math.random() * 10 - 5;
+                this.rotationSpeed = Math.random() * 8 - 4;
             }
             update() {
                 this.y += this.speedY;
@@ -894,14 +894,8 @@
                 ctx.arc(0, 0, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = '#ffd32a';
                 ctx.fill();
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 2;
                 ctx.strokeStyle = '#ffa502';
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
-                ctx.strokeStyle = '#ffa502';
-                ctx.lineWidth = 1.5;
                 ctx.stroke();
 
                 ctx.restore();
@@ -909,7 +903,7 @@
         }
 
         function startCoinShower() {
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < 20; i++) {
                 coinsArray.push(new Coin());
             }
         }
