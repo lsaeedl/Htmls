@@ -180,10 +180,7 @@ async function syncSaveGameSettings(settingsData) {
 
 // ---------- Classes ----------
 
-// v2: cache key bumped because the cached shape changed from a plain
-// array of class-name strings to {className, teacherName} objects —
-// this avoids an old cached copy silently reappearing in the new format's place.
-function classesCacheKey() { return 'classes_list_v2'; }
+function classesCacheKey() { return 'classes_list'; }
 
 async function syncListClasses() {
   const result = await gsGet('listClasses');

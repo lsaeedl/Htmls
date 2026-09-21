@@ -125,7 +125,10 @@ function initGamesTab() {
     document.getElementById('g_customFileWrap').style.display = e.target.value === 'custom' ? 'block' : 'none';
   });
 
-  document.getElementById('gameFormReset').addEventListener('click', resetGameForm);
+  document.getElementById('gameFormReset').addEventListener('click', () => {
+    resetGameForm();
+    document.getElementById('gameFormStatus').textContent = '';
+  });
 
   document.getElementById('gameForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -179,7 +182,6 @@ function initGamesTab() {
 function resetGameForm() {
   document.getElementById('gameForm').reset();
   document.getElementById('g_customFileWrap').style.display = 'none';
-  document.getElementById('gameFormStatus').textContent = '';
 }
 
 function renderGamesTable() {
@@ -190,7 +192,7 @@ function renderGamesTable() {
       <td>${g.icon || ''} ${g.title}</td>
       <td>${g.subject || ''}</td>
       <td>${g.type === 'custom' ? 'سفارشی' : 'پوسته‌ی آماده'}</td>
-      <td>—</td>
+      <td>${g.isOpen ? '🟢 باز' : '🔴 بسته'}</td>
       <td>
         <button class="btn btn-small btn-ghost" data-edit-game="${g.gameId}">ویرایش</button>
         ${hasPerm('canManageGames') ? `<button class="btn btn-small btn-danger" data-del-game="${g.gameId}">حذف</button>` : ''}

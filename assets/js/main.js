@@ -128,8 +128,15 @@ async function loadAndRenderGames() {
     return;
   }
 
+  const openGames = result.games.filter(g => g.isOpen);
+
+  if (!openGames.length) {
+    gamesGrid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">در حال حاضر بازی فعالی برای شرکت وجود ندارد.</p>`;
+    return;
+  }
+
   gamesGrid.innerHTML = '';
-  result.games.forEach((game) => {
+  openGames.forEach((game) => {
     const tile = document.createElement('a');
     tile.href = game.type === 'custom' && game.customFile
       ? game.customFile
