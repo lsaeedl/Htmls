@@ -655,7 +655,6 @@ window.addEventListener('DOMContentLoaded', function () {
 به بازی شیرین نشانه «و» خوش آمدی!
 </p>
 
-<!-- نام دانش‌آموز جایگزین اینپوت متنی شد -->
 <div class="student-greeting">
     دانش‌آموز عزیز: <span id="startStudentName">...</span>
 </div>
@@ -773,51 +772,75 @@ window.addEventListener('DOMContentLoaded', function () {
 <script>
 
 /* =========================
-   مدیریت صداها (تولید با AudioContext)
+   اعداد فارسی
 ========================= */
 
-let audioContext = null;
+function toFa(num){
+    return String(num).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+}
 
-function initAudio(){
-    if(!audioContext){
-        const Audio = window.AudioContext || window.webkitAudioContext;
-        if(Audio) audioContext = new Audio();
+/* =========================
+   سیستم صوتی پایدار (بدون کرش)
+========================= */
+
+class SoundFX {
+    constructor() {
+        this.ctx = null;
     }
-    if(audioContext && audioContext.state === "suspended") audioContext.resume();
+    init() {
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === "suspended") {
+            this.ctx.resume();
+        }
+    }
+    playTone(freq, duration, type="sine") {
+        if (!this.ctx) return;
+        try {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+    }
+    correct() {
+        if (!this.ctx) return;
+        [523.25, 659.25, 783.99].forEach((f, i) => {
+            setTimeout(() => this.playTone(f, 0.32, "triangle"), i * 80);
+        });
+    }
+    wrong() {
+        if (!this.ctx) return;
+        try {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(55, this.ctx.currentTime + 0.45);
+            gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.45);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.45);
+        } catch(e) {}
+    }
+    victory() {
+        if (!this.ctx) return;
+        [523.25, 659.25, 783.99, 1046.5, 1318.51].forEach((f, i) => {
+            setTimeout(() => this.playTone(f, 0.4, "triangle"), i * 100);
+        });
+    }
 }
 
-function tone(frequency, duration, type="sine", volume=0.12){
-    if(!audioContext) return;
-    try {
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        oscillator.type = type;
-        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-        gain.gain.setValueAtTime(volume, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
-        oscillator.connect(gain);
-        gain.connect(audioContext.destination);
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + duration);
-    } catch(e) {}
-}
-
-function soundCorrect(){
-    initAudio();
-    [523, 659, 784].forEach((f, i) => setTimeout(() => tone(f, 0.22, "triangle", 0.13), i * 80));
-}
-
-function soundWrong(){
-    initAudio();
-    tone(230, 0.18, "sawtooth", 0.12);
-    setTimeout(() => tone(150, 0.25, "sawtooth", 0.1), 100);
-}
-
-function soundWin(){
-    initAudio();
-    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, 0.35, "triangle", 0.13), i * 100));
-}
-
+const sfx = new SoundFX();
 
 /* =========================
    عناصر و وضعیت بازی
@@ -849,7 +872,7 @@ const totalCorrect = 3;
 ========================= */
 
 startButton.addEventListener("click", function(){
-    initAudio();
+    sfx.init();
     startedAt = Date.now();
     childName.textContent = platformStudent ? platformStudent.fullName : "دانش‌آموز";
     
@@ -863,18 +886,16 @@ startButton.addEventListener("click", function(){
 ========================= */
 
 restartButton.addEventListener("click", function(){
-    initAudio();
+    sfx.init();
     endScreen.style.display = "none";
     startScreen.style.display = "flex";
     
-    // ریست متغیرها
     correctFound = 0;
     wrongCount = 0;
     resultSaved = false;
     correctText.textContent = "۰";
     wrongText.textContent = "۰";
     
-    // ریست توپ‌ها
     balls.forEach(ball => {
         ball.classList.remove("correct", "wrong");
         ball.disabled = false;
@@ -890,20 +911,17 @@ const balls = document.querySelectorAll(".ball");
 
 balls.forEach(function(ball){
     ball.addEventListener("click", function(){
-        if(this.disabled) return;
+        if(this.disabled || this.classList.contains("correct") || this.classList.contains("wrong")) return;
         
         const correct = this.dataset.correct === "true";
 
         /* جواب درست */
         if(correct){
-            if(this.classList.contains("correct")){
-                return;
-            }
             this.classList.add("correct");
-            soundCorrect();
+            sfx.correct();
             
             correctFound++;
-            correctText.textContent = correctFound.toLocaleString("fa-IR");
+            correctText.textContent = toFa(correctFound);
 
             showMessage("🎇 آفرین! درست پیدا کردی!");
             createFireworks();
@@ -918,20 +936,18 @@ balls.forEach(function(ball){
         }
         /* جواب غلط */
         else{
-            if(this.classList.contains("wrong") || this.classList.contains("correct")) return;
-            
-            soundWrong();
+            sfx.wrong();
             wrongCount++;
-            wrongText.textContent = wrongCount.toLocaleString("fa-IR");
+            wrongText.textContent = toFa(wrongCount);
             
             this.classList.add("wrong");
             showBomb();
             
             showMessage("💣 اووه! این یکی درست نیست!");
             
-            setTimeout(function(){
-                ball.classList.remove("wrong");
-            }, 500);
+            setTimeout(() => {
+                this.classList.remove("wrong");
+            }, 800);
         }
     });
 });
@@ -949,13 +965,15 @@ function startTimer(){
                 ball.disabled = true;
                 ball.style.pointerEvents = "none";
             });
-            finishGame(); // اتمام بازی با اتمام زمان
+            finishGame();
         }
     }, 1000);
 }
 
 function updateTimer(){
-    timerText.textContent = `${Math.floor(timeLeft/60).toLocaleString("fa-IR")}:${String(timeLeft%60).padStart(2,"0").toLocaleString("fa-IR")}`;
+    const minutes = Math.floor(timeLeft/60);
+    const seconds = String(timeLeft%60).padStart(2,"0");
+    timerText.textContent = toFa(`${minutes}:${seconds}`);
 }
 
 async function finishGame(){
@@ -968,26 +986,24 @@ async function finishGame(){
         ball.style.pointerEvents = "none";
     });
     
-    soundWin();
+    sfx.victory();
     createFireworks();
     
-    // نمایش صفحه پایان بازی (کارنامه)
     setTimeout(async () => {
         game.style.display = "none";
         endScreen.style.display = "flex";
         
         document.getElementById("finalName").textContent = platformStudent ? platformStudent.fullName : "دانش‌آموز";
-        document.getElementById("finalCorrect").textContent = correctFound.toLocaleString("fa-IR");
-        document.getElementById("finalWrong").textContent = wrongCount.toLocaleString("fa-IR");
+        document.getElementById("finalCorrect").textContent = toFa(correctFound);
+        document.getElementById("finalWrong").textContent = toFa(wrongCount);
         
-        // ثبت نتیجه در پلتفرم
         if (window.platformStudent) {
             try {
                 const durationSeconds = Math.round((Date.now() - startedAt) / 1000);
                 await syncSaveResult(window.platformStudent.studentCode, GAME_ID, correctFound, wrongCount, durationSeconds);
-            } catch(e) { console.error("Error saving result", e); }
+            } catch(e) {}
         }
-    }, 1500);
+    }, 2000);
 }
 
 /* =========================
