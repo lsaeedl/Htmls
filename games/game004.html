@@ -57,11 +57,13 @@ body{
     z-index:2;
     width:min(100%,1050px);
     margin:auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .screen{
     display:none;
-    min-height:calc(100vh - 36px);
+    min-height:calc(100vh - 80px); /* کمی فضا برای نوار آموزگار بالا */
     align-items:center;
     justify-content:center;
     flex-direction:column;
@@ -356,11 +358,12 @@ h1{
     position:absolute;
 
     left:50%;
-    top:50%;
+    /* تغییر مکان متن به 3/4 پایینی تصویر */
+    top:75%;
 
     transform:translate(-50%,-50%);
 
-    width:58%;
+    width:70%;
 
     color:#000;
 
@@ -759,7 +762,7 @@ h1{
     }
 
     .screen{
-        min-height:calc(100vh - 20px);
+        min-height:calc(100vh - 40px);
     }
 
     .start-card,
@@ -779,7 +782,7 @@ h1{
     }
 
     .ladybug-word{
-        width:58%;
+        width:70%;
         font-size:17px;
     }
 
@@ -874,12 +877,17 @@ let platformSaved = false;
 })();
 
 window.addEventListener('DOMContentLoaded', function () {
+    // نوار آموزگار از حالت Fixed/Absolute خارج شد و مستقیماً داخل کانتینر در بالای صفحات قرار گرفت تا تداخل ایجاد نکند
     if (!document.querySelector('.platform-teacher')) {
         const teacher = document.createElement('div');
         teacher.className = 'platform-teacher';
         teacher.textContent = 'آموزگار: ' + (window.platformTeacherName || 'خانم دهگودی');
-        teacher.style.cssText = 'position:absolute;top:15px;left:50%;transform:translateX(-50%);text-align:center;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);background:linear-gradient(135deg, #ff69b9, #9b58e8);padding:6px 20px;border-radius:20px;z-index:9999;border:2px solid white;box-shadow:0 4px 10px rgba(0,0,0,0.2);';
-        document.body.appendChild(teacher);
+        teacher.style.cssText = 'position:relative;margin:0 auto 15px auto;text-align:center;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);background:linear-gradient(135deg, #ff69b9, #9b58e8);padding:6px 20px;border-radius:20px;border:2px solid white;box-shadow:0 4px 10px rgba(0,0,0,0.2);display:table;z-index:10;';
+        
+        const container = document.querySelector('.container');
+        if(container) {
+            container.insertBefore(teacher, container.firstChild);
+        }
     }
     if (!document.querySelector('.platform-footer')) {
         const footer = document.createElement('footer');
