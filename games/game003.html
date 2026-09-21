@@ -17,10 +17,12 @@
 
 html,body{
     width:100%;
-    height:100%;
+    height:100dvh;
     overflow:hidden;
     background:#061b2c;
     font-family:Tahoma,Arial,sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 #gameCanvas{
@@ -31,15 +33,18 @@ html,body{
     z-index:1;
 }
 
+/* ساختار استاندارد فلكس‌باکس پلتفرم برای جلوگیری از Overlap */
 #game-layout{
-    position:fixed;
-    inset:0;
+    position:relative;
+    flex: 1 1 0;
     z-index:10;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
     padding:12px;
     pointer-events:none;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .top-section{
@@ -57,12 +62,14 @@ html,body{
     justify-content:space-between;
     align-items:center;
     gap:8px;
+    flex-wrap: wrap;
 }
 
 .hud-group{
     display:flex;
     align-items:center;
     gap:7px;
+    flex-wrap: wrap;
 }
 
 .btn-round{
@@ -732,33 +739,46 @@ html,body{
 <body>
 <script src="../assets/js/google-sync.js"></script>
 <script>
-//INTEGRATION: اتصال بازی به نشست دانش‌آموز، نوبت مجاز، تنظیمات پلتفرم و دریافت نام آموزگار
 const GAME_ID = 3; 
-const platformStudent = getCurrentStudent();
-const platformStartedAt = Date.now();
+let platformStudent = null;
+let platformStartedAt = Date.now();
 let platformSaved = false;
 
 (async function initializeGamePlatform() {
+    if (typeof getCurrentStudent === 'function') {
+        platformStudent = getCurrentStudent();
+    } else {
+        platformStudent = { fullName: "دانش‌آموز تستی", studentCode: "test-123" };
+    }
+
     if (!platformStudent) {
         window.location.href = '../index.html';
         return;
     }
     document.documentElement.style.visibility = 'hidden';
-    const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
-    if (!attemptCheck.success) {
-        document.documentElement.style.visibility = 'visible';
-        document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
-        return;
+
+    if (typeof syncCheckAttempts === 'function') {
+        const attemptCheck = await syncCheckAttempts(platformStudent.studentCode, GAME_ID);
+        if (!attemptCheck.success) {
+            document.documentElement.style.visibility = 'visible';
+            document.body.innerHTML = '<main style="font-family:Tahoma,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px"><h2>' + (attemptCheck.error || 'امکان شرکت در این بازی وجود ندارد.') + '</h2></main>';
+            return;
+        }
     }
-    const settings = await syncGetGameSettings(GAME_ID);
-    window.timerSeconds = settings.timerSeconds || 180;
+
+    if (typeof syncGetGameSettings === 'function') {
+        const settings = await syncGetGameSettings(GAME_ID);
+        window.timerSeconds = settings.timerSeconds || 180;
+    } else {
+        window.timerSeconds = 180;
+    }
+
     window.platformStudent = platformStudent;
 
-    // دریافت نام آموزگار با منطق داینامیک پلتفرم
-    let teacherName = 'خانم دهگودی'; // مقدار پیش‌فرض
+    let teacherName = 'خانم دهگودی';
     if (platformStudent.teacherName) {
         teacherName = platformStudent.teacherName;
-    } else if (platformStudent.className) {
+    } else if (platformStudent.className && typeof syncListClasses === 'function') {
         try {
             const classesResult = await syncListClasses();
             if (classesResult && classesResult.success) {
@@ -776,7 +796,6 @@ let platformSaved = false;
     document.documentElement.style.visibility = 'visible';
 })();
 
-//INTEGRATION: نمایش ثابت آموزگار و فوتر پلتفرم.
 window.addEventListener('DOMContentLoaded', function () {
     if (!document.querySelector('.platform-teacher')) {
         const teacher = document.createElement('div');
@@ -842,7 +861,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
                 </div>
                 
-                <!-- INTEGRATION: نمایش تعداد صحیح و غلط به جای نمره -->
                 <div class="hud-pill">✅ درست: <span id="correct-count">۰</span></div>
                 <div class="hud-pill">❌ غلط: <span id="wrong-count">۰</span></div>
                 <div class="hud-pill">⏱ زمان: <span id="game-timer">۰:۰۰</span></div>
@@ -984,7 +1002,6 @@ window.addEventListener('DOMContentLoaded', function () {
             ">
         </p>
         
-        <!-- INTEGRATION: نمایش آمار درست و غلط در صفحه پایان -->
         <div id="final-correct" style="color:#00f5d4;font-size:1.6rem;font-weight:900;">پاسخ درست: ۰</div>
         <div id="final-wrong" style="color:#ff8a8a;font-size:1.6rem;font-weight:900;margin-bottom:22px;">پاسخ غلط: ۰</div>
 
@@ -1001,10 +1018,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
 <script>
 
-/* =================================
-   AUDIO
-================================= */
-
 class SoundFX{
 
     constructor(){
@@ -1013,21 +1026,16 @@ class SoundFX{
     }
 
     init(){
-
         if(!this.ctx){
-
             this.ctx=
                 new(
                     window.AudioContext ||
                     window.webkitAudioContext
                 )();
-
         }
-
         if(this.ctx.state==="suspended"){
             this.ctx.resume();
         }
-
     }
 
     playTone(
@@ -1035,51 +1043,39 @@ class SoundFX{
         duration,
         type="sine"
     ){
-
         if(!this.ctx || this.muted){
             return;
         }
-
         const osc=
             this.ctx.createOscillator();
-
         const gain=
             this.ctx.createGain();
 
         osc.type=type;
-
         osc.frequency.setValueAtTime(
             freq,
             this.ctx.currentTime
         );
-
         gain.gain.setValueAtTime(
             .2,
             this.ctx.currentTime
         );
-
         gain.gain.exponentialRampToValueAtTime(
             .001,
             this.ctx.currentTime+duration
         );
-
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-
         osc.start();
-
         osc.stop(
             this.ctx.currentTime+duration
         );
-
     }
 
     correct(){
-
         if(!this.ctx || this.muted){
             return;
         }
-
         [
             523.25,
             659.25,
@@ -1087,7 +1083,6 @@ class SoundFX{
             1046.5,
             1318.51
         ].forEach((f,i)=>{
-
             setTimeout(()=>{
                 this.playTone(
                     f,
@@ -1095,65 +1090,49 @@ class SoundFX{
                     "triangle"
                 );
             },i*70);
-
         });
-
     }
 
     wrong(){
-
         if(!this.ctx || this.muted){
             return;
         }
-
         const osc=
             this.ctx.createOscillator();
-
         const gain=
             this.ctx.createGain();
 
         osc.type="sawtooth";
-
         osc.frequency.setValueAtTime(
             180,
             this.ctx.currentTime
         );
-
         osc.frequency.exponentialRampToValueAtTime(
             55,
             this.ctx.currentTime+.45
         );
-
         gain.gain.setValueAtTime(
             .3,
             this.ctx.currentTime
         );
-
         gain.gain.exponentialRampToValueAtTime(
             .001,
             this.ctx.currentTime+.45
         );
-
         osc.connect(gain);
-
         gain.connect(
             this.ctx.destination
         );
-
         osc.start();
-
         osc.stop(
             this.ctx.currentTime+.45
         );
-
     }
 
     victory(){
-
         if(!this.ctx || this.muted){
             return;
         }
-
         [
             523.25,
             659.25,
@@ -1162,7 +1141,6 @@ class SoundFX{
             1318.51,
             1567.98
         ].forEach((f,i)=>{
-
             setTimeout(()=>{
                 this.playTone(
                     f,
@@ -1170,97 +1148,74 @@ class SoundFX{
                     "triangle"
                 );
             },i*100);
-
         });
-
     }
 }
 
 const sfx=
     new SoundFX();
 
-
-/* =================================
-   دقیقاً ۹ کلمه
-================================= */
-
 const WORD_ITEMS=[
-
-    /* درست */
-
     {
         id:1,
         text:"همراه",
         isCorrect:true,
         base:"راه"
     },
-
     {
         id:2,
         text:"همکار",
         isCorrect:true,
         base:"کار"
     },
-
     {
         id:3,
         text:"هم‌سفر",
         isCorrect:true,
         base:"سفر"
     },
-
     {
         id:4,
         text:"هم‌فکر",
         isCorrect:true,
         base:"فکر"
     },
-
     {
         id:5,
         text:"هم‌کلاسی",
         isCorrect:true,
         base:"کلاسی"
     },
-
     {
         id:6,
         text:"هم‌نظر",
         isCorrect:true,
         base:"نظر"
     },
-
-    /* غلط */
-
     {
         id:7,
         text:"همیشه",
         isCorrect:false,
         base:""
     },
-
     {
         id:8,
         text:"همان",
         isCorrect:false,
         base:""
     },
-
     {
         id:9,
         text:"همین",
         isCorrect:false,
         base:""
     }
-
 ];
-
 
 const TOTAL_VALID=
     WORD_ITEMS.filter(
         item=>item.isCorrect
     ).length;
-
 
 let foundCount=0;
 let wrongCount=0;
@@ -1273,24 +1228,12 @@ let studentName=
 
 let isLocked=false;
 
-
-/* =================================
-   فارسی
-================================= */
-
 function toFa(num){
-
     return String(num).replace(
         /\d/g,
         d=>"۰۱۲۳۴۵۶۷۸۹"[d]
     );
-
 }
-
-
-/* =================================
-   CANVAS
-================================= */
 
 const canvas=
     document.getElementById(
@@ -1303,13 +1246,11 @@ const ctx=
 let width=0;
 let height=0;
 
-
 const backgroundImage=
     new Image();
 
 backgroundImage.src=
 "../assets/img/game003-media-02.jpeg";
-
 
 const boat={
     x:0,
@@ -1319,18 +1260,13 @@ const boat={
     bobble:0
 };
 
-
 let bubbles=[];
-let ripples=[];
 let sparkles=[];
 let waterLines=[];
 
-
 function resize(){
-
     width=
         window.innerWidth;
-
     height=
         window.innerHeight;
 
@@ -1339,13 +1275,11 @@ function resize(){
 
     canvas.width=
         width*ratio;
-
     canvas.height=
         height*ratio;
 
     canvas.style.width=
         width+"px";
-
     canvas.style.height=
         height+"px";
 
@@ -1360,122 +1294,83 @@ function resize(){
 
     boat.x=
         width*.5;
-
     boat.y=
         height*.47;
-
 }
-
 
 window.addEventListener(
     "resize",
     resize
 );
 
-
 for(let i=0;i<35;i++){
-
     bubbles.push({
-
         x:
             Math.random()*
             window.innerWidth,
-
         y:
             Math.random()*
             window.innerHeight,
-
         radius:
             2+
             Math.random()*7,
-
         speed:
             .4+
             Math.random()*1.3,
-
         drift:
             Math.random()*10
-
     });
-
 }
 
-
 for(let i=0;i<18;i++){
-
     waterLines.push({
-
         x:
             Math.random()*
             window.innerWidth,
-
         y:
             Math.random()*
             window.innerHeight,
-
         length:
             20+
             Math.random()*70,
-
         speed:
             .3+
             Math.random()*.8,
-
         alpha:
             .08+
             Math.random()*.15
-
     });
-
 }
 
-
-/* =================================
-   BACKGROUND + BOAT
-================================= */
-
 function drawBackground(time){
-
     if(
         backgroundImage.complete &&
         backgroundImage.naturalWidth>0
     ){
-
         const imgRatio=
             backgroundImage.width/
             backgroundImage.height;
-
         const screenRatio=
             width/height;
 
         let dw,dh,ox,oy;
 
         if(imgRatio>screenRatio){
-
             dh=height;
-
             dw=
                 height*
                 imgRatio;
-
             ox=
                 (width-dw)/2;
-
             oy=0;
-
         }else{
-
             dw=width;
-
             dh=
                 width/
                 imgRatio;
-
             ox=0;
-
             oy=
                 (height-dh)/2;
-
         }
 
         ctx.drawImage(
@@ -1485,54 +1380,38 @@ function drawBackground(time){
             dw,
             dh
         );
-
     }else{
-
         ctx.fillStyle="#06283f";
-
         ctx.fillRect(
             0,
             0,
             width,
             height
         );
-
     }
 
-
-    /* حباب‌ها */
-
     bubbles.forEach(b=>{
-
         b.y-=b.speed;
-
         b.x+=
             Math.sin(
                 time*.002+b.drift
             )*.35;
 
         if(b.y<-20){
-
             b.y=
                 height+20;
-
             b.x=
                 Math.random()*width;
-
         }
 
         ctx.save();
-
         ctx.strokeStyle=
             "rgba(255,255,255,.4)";
-
         ctx.fillStyle=
             "rgba(0,245,212,.12)";
-
         ctx.lineWidth=1.3;
 
         ctx.beginPath();
-
         ctx.arc(
             b.x,
             b.y,
@@ -1540,17 +1419,10 @@ function drawBackground(time){
             0,
             Math.PI*2
         );
-
         ctx.fill();
-
         ctx.stroke();
-
         ctx.restore();
-
     });
-
-
-    /* قایق */
 
     boat.bobble=
         Math.sin(
@@ -1558,26 +1430,20 @@ function drawBackground(time){
         )*5;
 
     ctx.save();
-
     ctx.translate(
         boat.x,
         boat.y+
         boat.bobble
     );
 
-
     ctx.save();
-
     ctx.shadowColor=
         "rgba(0,245,212,.75)";
-
     ctx.shadowBlur=25;
-
     ctx.fillStyle=
         "rgba(0,245,212,.18)";
 
     ctx.beginPath();
-
     ctx.ellipse(
         0,
         40,
@@ -1587,11 +1453,8 @@ function drawBackground(time){
         0,
         Math.PI*2
     );
-
     ctx.fill();
-
     ctx.restore();
-
 
     const hull=
         ctx.createLinearGradient(
@@ -1605,86 +1468,62 @@ function drawBackground(time){
         0,
         "#ff007f"
     );
-
     hull.addColorStop(
         .5,
         "#7928ca"
     );
-
     hull.addColorStop(
         1,
         "#4361ee"
     );
 
     ctx.fillStyle=hull;
-
     ctx.shadowColor=
         "#00f5d4";
-
     ctx.shadowBlur=18;
 
     ctx.beginPath();
-
     ctx.moveTo(
         -80,
         -5
     );
-
     ctx.quadraticCurveTo(
         -90,
         25,
         -38,
         40
     );
-
     ctx.lineTo(
         45,
         40
     );
-
     ctx.quadraticCurveTo(
         85,
         25,
         80,
         -5
     );
-
     ctx.closePath();
-
     ctx.fill();
 
     ctx.shadowBlur=0;
-
     ctx.strokeStyle=
         "#ffe600";
-
     ctx.lineWidth=3;
-
     ctx.stroke();
 
-
-    /* دکل */
-
     ctx.strokeStyle="#fff";
-
     ctx.lineWidth=4;
-
     ctx.beginPath();
-
     ctx.moveTo(
         0,
         -5
     );
-
     ctx.lineTo(
         0,
         -82
     );
-
     ctx.stroke();
-
-
-    /* بادبان */
 
     const sail=
         ctx.createLinearGradient(
@@ -1698,83 +1537,58 @@ function drawBackground(time){
         0,
         "#ffe600"
     );
-
     sail.addColorStop(
         1,
         "#ff8c00"
     );
 
     ctx.fillStyle=sail;
-
     ctx.beginPath();
-
     ctx.moveTo(
         2,
         -78
     );
-
     ctx.lineTo(
         52,
         -17
     );
-
     ctx.lineTo(
         2,
         -17
     );
-
     ctx.closePath();
-
     ctx.fill();
-
     ctx.strokeStyle="#fff";
-
     ctx.lineWidth=2;
-
     ctx.stroke();
-
-
-    /* پرچم */
 
     ctx.fillStyle=
         "#00f5d4";
-
     ctx.beginPath();
-
     ctx.moveTo(
         1,
         -85
     );
-
     ctx.lineTo(
         26,
         -76
     );
-
     ctx.lineTo(
         1,
         -68
     );
-
     ctx.closePath();
-
     ctx.fill();
 
     ctx.restore();
 
-
-    /* موج */
-
     ctx.save();
-
     for(let i=0;i<3;i++){
-
         const waveY=
             boat.y+
             40+
             i*8+
             boat.bobble;
-
         const waveWidth=
             55+
             i*18+
@@ -1784,11 +1598,9 @@ function drawBackground(time){
 
         ctx.strokeStyle=
             `rgba(255,255,255,${.25-i*.05})`;
-
         ctx.lineWidth=2;
 
         ctx.beginPath();
-
         ctx.ellipse(
             boat.x,
             waveY,
@@ -1798,48 +1610,33 @@ function drawBackground(time){
             0,
             Math.PI*2
         );
-
         ctx.stroke();
-
     }
-
     ctx.restore();
-
-
-    /* جرقه‌ها */
 
     sparkles.forEach(
         (s,index)=>{
-
             s.x+=s.vx;
             s.y+=s.vy;
             s.vy+=.15;
             s.life-=.025;
 
             if(s.life<=0){
-
                 sparkles.splice(
                     index,
                     1
                 );
-
             }else{
-
                 ctx.save();
-
                 ctx.fillStyle=
                     s.color;
-
                 ctx.globalAlpha=
                     s.life;
-
                 ctx.shadowColor=
                     s.color;
-
                 ctx.shadowBlur=12;
 
                 ctx.beginPath();
-
                 ctx.arc(
                     s.x,
                     s.y,
@@ -1847,52 +1644,34 @@ function drawBackground(time){
                     0,
                     Math.PI*2
                 );
-
                 ctx.fill();
-
                 ctx.restore();
-
             }
-
         }
     );
-
 }
 
-
-/* =================================
-   PARTICLES
-================================= */
-
 function spawnSparkles(x,y){
-
     for(let i=0;i<40;i++){
-
         const angle=
             Math.random()*
             Math.PI*2;
-
         const speed=
             3+
             Math.random()*8;
 
         sparkles.push({
-
             x:x,
             y:y,
-
             vx:
                 Math.cos(angle)*
                 speed,
-
             vy:
                 Math.sin(angle)*
                 speed,
-
             size:
                 3+
                 Math.random()*5,
-
             color:[
                 "#ffe600",
                 "#00f5d4",
@@ -1903,39 +1682,21 @@ function spawnSparkles(x,y){
                     Math.random()*4
                 )
             ],
-
             life:1
-
         });
-
     }
-
 }
 
-
-/* =================================
-   LOOP
-================================= */
-
 function loop(time){
-
     ctx.clearRect(
         0,
         0,
         width,
         height
     );
-
     drawBackground(time);
-
     requestAnimationFrame(loop);
-
 }
-
-
-/* =================================
-   ELEMENTS
-================================= */
 
 const container=
     document.getElementById(
@@ -1972,49 +1733,33 @@ const studentBadge=
         "student-badge"
     );
 
-
-/* =================================
-   GENERATE
-================================= */
-
 function generateCards(){
-
     container.innerHTML="";
-
 
     const shuffled=
         [...WORD_ITEMS].sort(
             ()=>Math.random()-.5
         );
 
-
     shuffled.forEach(
         item=>{
-
             const btn=
                 document.createElement(
                     "div"
                 );
-
             btn.className=
                 "word-btn";
-
 
             const text=
                 document.createElement(
                     "span"
                 );
-
             text.className=
                 "word-text";
-
-
             text.textContent=
                 item.text;
 
-
             btn.appendChild(text);
-
 
             btn.addEventListener(
                 "click",
@@ -2026,24 +1771,15 @@ function generateCards(){
                 }
             );
 
-
             container.appendChild(btn);
-
         }
     );
-
 }
-
-
-/* =================================
-   CLICK
-================================= */
 
 function handleWordClick(
     item,
     btnElement
 ){
-
     if(
         isLocked ||
         btnElement.classList.contains(
@@ -2053,38 +1789,24 @@ function handleWordClick(
             "burning"
         )
     ){
-
         return;
-
     }
 
-
-    /* =============================
-       جواب درست
-    ============================= */
-
     if(item.isCorrect){
-
         isLocked=true;
-
         sfx.correct();
-
         foundCount++;
-
 
         btnElement.classList.add(
             "collected"
         );
-
 
         spawnSparkles(
             boat.x,
             boat.y
         );
 
-
         document.getElementById("correct-count").textContent = toFa(foundCount);
-
 
         progressBar.style.width=
             `${
@@ -2092,125 +1814,82 @@ function handleWordClick(
                 TOTAL_VALID)*100
             }%`;
 
-
         showToast(
             `آفرین ${studentName}! 👏`,
             "success"
         );
 
-
         eduBase.textContent=
             item.base;
-
         eduFull.textContent=
             item.text;
-
 
         eduCard.classList.add(
             "show"
         );
 
-
         setTimeout(
             ()=>{
-
                 eduCard.classList.remove(
                     "show"
                 );
-
                 isLocked=false;
-
 
                 if(
                     foundCount>=
                     TOTAL_VALID
                 ){
-
                     triggerVictory();
-
                 }
-
             },
             1500
         );
-
-
     }
-
-    /* =============================
-       جواب غلط
-    ============================= */
-
     else{
-
         sfx.wrong();
-
         wrongCount++;
         document.getElementById("wrong-count").textContent = toFa(wrongCount);
-
-
-        /* افکت سوختن */
 
         btnElement.classList.add(
             "burning"
         );
-
 
         showToast(
             "🔥 اشتباه بود! دوباره تلاش کن.",
             "retry"
         );
 
-
-        /* جرقه قرمز/نارنجی */
-
         spawnFireParticles(
             btnElement
         );
 
-
         setTimeout(
             ()=>{
-
                 btnElement.classList.remove(
                     "burning"
                 );
-
             },
             850
         );
-
     }
-
 }
 
-
-/* =================================
-   FIRE PARTICLES
-================================= */
-
 function spawnFireParticles(element){
-
     const rect=
         element.getBoundingClientRect();
 
-
     for(let i=0;i<18;i++){
-
         const fire=
             document.createElement(
                 "span"
             );
-
         fire.textContent=
             Math.random()>.5
             ? "🔥"
             : "✨";
 
-
         fire.style.position=
             "fixed";
-
         fire.style.left=
             (
                 rect.left+
@@ -2218,25 +1897,20 @@ function spawnFireParticles(element){
                 (Math.random()-.5)*
                 rect.width
             )+"px";
-
         fire.style.top=
             (
                 rect.top+
                 rect.height/2
             )+"px";
-
         fire.style.fontSize=
             (
                 12+
                 Math.random()*18
             )+"px";
-
         fire.style.zIndex=
             "500";
-
         fire.style.pointerEvents=
             "none";
-
         fire.style.transition=
             "all .7s ease";
 
@@ -2244,10 +1918,8 @@ function spawnFireParticles(element){
             fire
         );
 
-
         requestAnimationFrame(
             ()=>{
-
                 fire.style.transform=
                     `
                     translate(
@@ -2256,12 +1928,9 @@ function spawnFireParticles(element){
                     )
                     scale(.2)
                     `;
-
                 fire.style.opacity="0";
-
             }
         );
-
 
         setTimeout(
             ()=>{
@@ -2269,47 +1938,28 @@ function spawnFireParticles(element){
             },
             750
         );
-
     }
-
 }
-
-
-/* =================================
-   TOAST
-================================= */
 
 function showToast(
     text,
     type
 ){
-
     toast.textContent=
         text;
-
     toast.className=
         `toast ${type}`;
 
-
     setTimeout(
         ()=>{
-
             toast.className=
                 "toast";
-
         },
         1800
     );
-
 }
 
-
-/* =================================
-   VICTORY
-================================= */
-
 async function triggerVictory(){
-
     sfx.victory();
 
     spawnSparkles(
@@ -2328,35 +1978,25 @@ async function triggerVictory(){
         پیشوند «هم» را پیدا کردی! 🏝️✨
         `;
 
-
     document.getElementById("final-correct").textContent = `پاسخ درست: ${toFa(foundCount)}`;
     document.getElementById("final-wrong").textContent = `پاسخ غلط: ${toFa(wrongCount)}`;
     
-    // INTEGRATION: ثبت نتیجه در پلتفرم
     if (!resultSaved && window.platformStudent) {
         resultSaved = true;
         const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
-        await syncSaveResult(platformStudent.studentCode, GAME_ID, foundCount, wrongCount, durationSeconds);
+        await syncSaveResult(window.platformStudent.studentCode, GAME_ID, foundCount, wrongCount, durationSeconds);
     }
 
     document.getElementById(
         "victory-modal"
     ).style.display=
         "flex";
-
 }
 
-
-/* =================================
-   RESET
-================================= */
-
 function resetGame(){
-
     foundCount=0;
     wrongCount=0;
     resultSaved=false;
-
     isLocked=false;
     
     document.getElementById("correct-count").textContent = "۰";
@@ -2366,21 +2006,14 @@ function resetGame(){
         "0%";
 
     generateCards();
-
 }
-
-
-/* =================================
-   START
-================================= */
 
 document.getElementById(
     "start-btn"
 ).addEventListener(
     "click",
     ()=>{
-
-        studentName = window.platformStudent ? window.platformStudent.fullName : "دانش‌آموز";
+        studentName = (window.platformStudent && window.platformStudent.fullName) ? window.platformStudent.fullName : "دانش‌آموز";
 
         studentBadge.textContent=
             `⛵ ناخدا: ${studentName}`;
@@ -2392,17 +2025,13 @@ document.getElementById(
         ).style.display=
             "none";
 
-
         resize();
-
         resetGame();
-        
         startTimer();
 
         requestAnimationFrame(
             loop
         );
-
     }
 );
 
@@ -2427,41 +2056,26 @@ function updateTimer() {
     document.getElementById('game-timer').textContent = `${toFa(minutes)}:${toFa(seconds)}`;
 }
 
-
-/* =================================
-   RESTART
-================================= */
-
 document.getElementById(
     "restart-btn"
 ).addEventListener(
     "click",
     ()=>{
-
         document.getElementById(
             "victory-modal"
         ).style.display=
             "none";
-
         resetGame();
-
     }
 );
-
-
-/* =================================
-   SOUND
-================================= */
 
 document.getElementById(
     "btn-sound"
 ).addEventListener(
     "click",
     ()=>{
-
         sfx.muted=
             !sfx.muted;
-
 
         document.getElementById(
             "btn-sound"
@@ -2469,34 +2083,17 @@ document.getElementById(
             sfx.muted
             ? "🔈"
             : "🔊";
-
     }
 );
-
-
-/* =================================
-   HOME
-================================= */
 
 document.getElementById(
     "btn-home"
 ).addEventListener(
     "click",
     ()=>{
-
-        document.getElementById(
-            "welcome-modal"
-        ).style.display=
-            "flex";
-
-        resetGame();
-
+        window.location.href = '../index.html';
     }
 );
-
-/* =================================
-   INIT
-================================= */
 
 resize();
 
