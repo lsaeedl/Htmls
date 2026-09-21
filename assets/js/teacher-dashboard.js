@@ -758,30 +758,50 @@ async function buildAnalysisPrompt() {
   let statsBlock = `- دامنه: ${subjectLine}
 - بازه: ${TIMEFRAME_LABELS[timeframe]}${timeframe === 'single' ? ' (بازی «' + (game ? game.title : gameId) + '»)' : ''}
 - تعداد آزمون‌های رسمی ثبت‌شده: ${s.count}
-- میانگین درصد پاسخ درست: ${s.avgCorrectPercent}٪
+- میانگین درصد پاسخ درست (نوبت رسمی/اول): ${s.avgCorrectPercent}٪
 - میانگین زمان پاسخگویی: ${formatDuration(s.avgDurationSeconds)}
 - مجموع پاسخ درست: ${s.totalCorrect} | مجموع پاسخ غلط: ${s.totalWrong}`;
 
-  if (timeframe === 'all' && s.perGameBreakdown.length > 1) {
+  if (res.latestAttemptSummary && res.latestAttemptSummary.avgCorrectPercent !== s.avgCorrectPercent) {
+    statsBlock += `\n- میانگین درصد پاسخ درست در آخرین تلاش (رسمی یا تمرینی): ${res.latestAttemptSummary.avgCorrectPercent}٪ — نشان‌دهنده‌ی سطح یادگیری فعلی، فراتر از نمره‌ی رسمی`;
+  }
+  if (res.avgAttemptsPerGame) {
+    statsBlock += `\n- میانگین تعداد نوبت‌های شرکت‌شده تا آخرین تلاش: ${res.avgAttemptsPerGame}`;
+  }
+
+  if (timeframe === 'all' && s.perSubjectBreakdown && s.perSubjectBreakdown.length > 1) {
+    statsBlock += `\n- روند به تفکیک مبحث درسی:\n` + s.perSubjectBreakdown.map(sub =>
+      `  · ${sub.subject}: میانگین ${sub.avgCorrectPercent}٪ (${sub.count} آزمون)`
+    ).join('\n');
+  } else if (timeframe === 'all' && s.perGameBreakdown.length > 1) {
     statsBlock += `\n- روند به تفکیک بازی:\n` + s.perGameBreakdown.map(g => {
       const gInfo = allGames.find(x => String(x.gameId) === g.gameId);
       return `  · ${gInfo ? gInfo.title : 'بازی ' + g.gameId}: میانگین ${g.avgCorrectPercent}٪ (${g.count} آزمون)`;
     }).join('\n');
   }
 
+  if (res.speedAccuracyPattern) {
+    const p = res.speedAccuracyPattern;
+    statsBlock += `\n- الگوی سرعت و دقت (نسبت به میانگین زمان همین محدوده):
+  · سریع و درست (مسلط): ${p.fastAccuratePercent}٪
+  · سریع و غلط (احتمال عجله/حدس): ${p.fastInaccuratePercent}٪
+  · کند و درست (در حال یادگیری، مسیر درست): ${p.slowAccuratePercent}٪
+  · کند و غلط (نیاز به توجه واقعی): ${p.slowInaccuratePercent}٪`;
+  }
+
   if (res.comparison) {
     statsBlock += `\n- ${res.comparison.label}: میانگین پاسخ درست ${res.comparison.avgCorrectPercent}٪، میانگین زمان ${formatDuration(res.comparison.avgDurationSeconds)}`;
   }
 
-  const prompt = `شما یک مشاور آموزشی دبستان هستید. بر اساس آمار خلاصه‌ی زیر (فقط نوبت‌های رسمی، بدون نمره‌ی عددی خام — فقط درصد و آمار تجمیعی)، یک تحلیل کوتاه و راهکارهای عملی ارائه بده. لحن دلسوزانه، سازنده و بدون قضاوت باشد.
+  const prompt = `شما یک مشاور آموزشی دبستان هستید. بر اساس آمار خلاصه‌ی زیر (بدون نمره‌ی عددی خام — فقط درصد و آمار تجمیعی)، یک تحلیل کوتاه و راهکارهای عملی ارائه بده. لحن دلسوزانه، سازنده و بدون قضاوت باشد. توجه کن که «درصد نوبت رسمی» و «درصد آخرین تلاش» ممکن است فرق داشته باشند — این تفاوت خودش یک یافته‌ی مهم است (نشان‌دهنده‌ی یادگیری بعد از تلاش اول).
 
 ${statsBlock}
 
 لطفاً خروجی را در قالب زیر بده:
-۱. جمع‌بندی کلی وضعیت
+۱. جمع‌بندی کلی وضعیت (با توجه به هر دو عدد رسمی و آخرین تلاش)
 ۲. نقاط قوت
-۳. زمینه‌های نیازمند تمرین بیشتر
-۴. تحلیل سرعت پاسخگویی (آیا مناسب سن دبستان است؟ نشانه‌ی عجله یا تردید هست؟)
+۳. مبحث‌ها یا زمینه‌های نیازمند تمرین بیشتر
+۴. تحلیل الگوی سرعت/دقت (این الگو چه می‌گوید؟ عجله، تردید، یا تسلط؟)
 ${res.comparison ? '۵. تحلیل مقایسه‌ای نسبت به میانگین ذکرشده\n۶' : '۵'}. پیشنهادهای عملی برای آموزگار
 ${res.comparison ? '۷' : '۶'}. پیشنهادهای عملی برای والدین جهت تمرین در خانه`;
 
