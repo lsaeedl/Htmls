@@ -235,85 +235,51 @@ h1{
 }
 
 /* =========================
-   کفشدوزک
+   کفشدوزک (بروزرسانی برای وسط‌چین شدن دقیق)
 ========================= */
 
-.ladybug{
-    position:relative;
-    width:100%;
-    aspect-ratio:1 / 1;
-    border:0;
-    padding:0;
-    background:transparent;
-    cursor:pointer;
-    display:block;
+.ladybug {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    display: flex; /* استفاده از فلکس‌باکس برای مرکزیت قطعی */
+    align-items: center;
+    justify-content: center;
     transition: transform .2s ease, filter .2s ease;
 }
 
-.ladybug img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    display:block;
-    pointer-events:none;
+.ladybug img {
+    position: absolute; /* تصویر در پس‌زمینه قرار می‌گیرد */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+    z-index: 1;
     filter: drop-shadow(0 10px 8px rgba(60,20,50,.25));
     transition: filter .2s ease, transform .2s ease;
 }
 
-.ladybug-word{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:58%;
-    color:#000;
-    font-size:clamp(17px,2.7vw,25px);
-    font-weight:900;
-    line-height:1.45;
-    text-align:center;
-    pointer-events:none;
-    text-shadow: 0 1px 0 rgba(255,255,255,.8);
-}
-
-.ladybug:hover{ transform:translateY(-6px) scale(1.035); }
-.ladybug:active{ transform:scale(.96); }
-
-.ladybug.correct{
-    pointer-events:none;
-    animation:correctBug .7s ease forwards;
-}
-
-.ladybug.correct img{
-    filter: drop-shadow(0 0 10px white) drop-shadow(0 0 25px #55e88a);
-}
-
-@keyframes correctBug{
-    0%{ transform:scale(1); opacity:1; }
-    35%{ transform:scale(1.12) rotate(5deg); }
-    70%{ transform:scale(1.05) rotate(-5deg); }
-    100%{ transform:scale(.08) rotate(25deg); opacity:0; }
-}
-
-.ladybug.wrong{
-    pointer-events:none;
-    animation:burnBug .75s ease forwards;
-}
-
-@keyframes burnBug{
-    0%{ transform:scale(1); opacity:1; filter:brightness(1); }
-    20%{
-        transform:scale(1.08) rotate(-5deg);
-        filter: brightness(1.7) saturate(2) drop-shadow(0 0 15px #ff8a00);
-    }
-    40%{
-        transform:scale(1.13) rotate(6deg);
-        filter: brightness(2) saturate(3) drop-shadow(0 0 28px #ff3200);
-    }
-    65%{
-        transform:scale(.95) rotate(-10deg);
-        filter: grayscale(1) brightness(.35) drop-shadow(0 0 15px red);
-    }
-    100%{ transform:scale(.06) rotate(35deg); opacity:0; filter:grayscale(1) brightness(.1); }
+.ladybug-word {
+    position: relative;
+    z-index: 2; /* متن روی تصویر قرار می‌گیرد */
+    width: 80%; /* عرض بیشتر برای جلوگیری از شکستن کلمات طولانی */
+    color: #000;
+    font-size: clamp(17px, 2.7vw, 25px);
+    font-weight: 900;
+    line-height: 1.45;
+    text-align: center;
+    pointer-events: none;
+    /* اضافه کردن هاله سفید برای خوانایی بهتر روی عکس */
+    text-shadow: 
+        0 1px 0 rgba(255,255,255,1), 
+        0 0 6px rgba(255,255,255,0.8);
 }
 
 .game-message{
