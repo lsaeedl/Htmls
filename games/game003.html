@@ -219,7 +219,7 @@ html,body{
     cursor:pointer;
 
     background-image:url(
-        "../assets/img/game003-media-01.png"
+        "https://cdn.imgurl.ir/uploads/q707451_photo-output.png"
     );
 
     background-size:100% 100%;
@@ -732,8 +732,8 @@ html,body{
 <body>
 <script src="../assets/js/google-sync.js"></script>
 <script>
-//INTEGRATION: اتصال بازی ۳ به نشست دانش‌آموز، نوبت مجاز و تنظیمات پلتفرم.
-const GAME_ID = 3;
+//INTEGRATION: اتصال بازی به نشست دانش‌آموز، نوبت مجاز، تنظیمات پلتفرم و دریافت نام آموزگار
+const GAME_ID = 3; 
 const platformStudent = getCurrentStudent();
 const platformStartedAt = Date.now();
 let platformSaved = false;
@@ -751,13 +751,29 @@ let platformSaved = false;
         return;
     }
     const settings = await syncGetGameSettings(GAME_ID);
-    const timerSeconds = settings.timerSeconds || 180;
-    window.timerSeconds = timerSeconds;
+    window.timerSeconds = settings.timerSeconds || 180;
     window.platformStudent = platformStudent;
+
+    // دریافت نام آموزگار با منطق داینامیک پلتفرم
+    let teacherName = 'خانم دهگودی'; // مقدار پیش‌فرض
+    if (platformStudent.teacherName) {
+        teacherName = platformStudent.teacherName;
+    } else if (platformStudent.className) {
+        try {
+            const classesResult = await syncListClasses();
+            if (classesResult && classesResult.success) {
+                const match = classesResult.classes.find(c => c.className === platformStudent.className);
+                if (match && match.teacherName) {
+                    teacherName = match.teacherName;
+                }
+            }
+        } catch (e) {
+            console.error('Error fetching teacher name:', e);
+        }
+    }
+    window.platformTeacherName = teacherName;
+
     document.documentElement.style.visibility = 'visible';
-    document.querySelectorAll('[id*="name"], [id*="Name"], [id*="student"]').forEach(function (element) {
-        if (!element.matches('input,textarea')) element.textContent = platformStudent.fullName;
-    });
 })();
 
 //INTEGRATION: نمایش ثابت آموزگار و فوتر پلتفرم.
@@ -765,39 +781,18 @@ window.addEventListener('DOMContentLoaded', function () {
     if (!document.querySelector('.platform-teacher')) {
         const teacher = document.createElement('div');
         teacher.className = 'platform-teacher';
-        teacher.textContent = 'آموزگار: خانم دهگودی';
-        teacher.style.cssText = 'text-align:center;font-weight:700;margin:8px auto;color:#fff;z-index:9999;position:relative;text-shadow:0 1px 3px rgba(0,0,0,0.8);';
-        const heading = document.querySelector('h1,h2,.title,.game-title') || document.body.firstElementChild;
-        if (heading && heading.parentNode) heading.parentNode.insertBefore(teacher, heading.nextSibling);
+        teacher.textContent = 'آموزگار: ' + (window.platformTeacherName || 'خانم دهگودی');
+        teacher.style.cssText = 'position:fixed;top:12px;left:50%;transform:translateX(-50%);text-align:center;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.8);background:rgba(0,0,0,0.4);padding:6px 16px;border-radius:20px;z-index:9999;';
+        document.body.appendChild(teacher);
     }
     if (!document.querySelector('.platform-footer')) {
         const footer = document.createElement('footer');
         footer.className = 'platform-footer';
         footer.textContent = 'طراحی و پیاده‌سازی: سعید سراوانی';
-        footer.style.cssText = 'text-align:center;font-weight:700;padding:16px;color:#fff;z-index:9999;position:fixed;bottom:0;width:100%;background:rgba(0,0,0,0.4);';
+        footer.style.cssText = 'text-align:center;font-weight:700;padding:12px;color:#fff;background:rgba(0,0,0,0.6);position:fixed;bottom:0;width:100%;z-index:9999;';
         document.body.appendChild(footer);
     }
 });
-
-//INTEGRATION: ثبت نتیجه فقط با تعداد پاسخ درست و غلط.
-function platformNumber(selectors) {
-    for (const selector of selectors) {
-        const element = document.querySelector(selector);
-        if (element && /^\s*[0-9۰-۹]+\s*$/.test(element.textContent)) return element.textContent.replace(/[^0-9۰-۹]/g, '');
-    }
-    return null;
-}
-async function platformSaveResult() {
-    if (platformSaved || !window.platformStudent) return;
-    const correctText = platformNumber(['#correctCount','#correctFinal','#finalCorrect','#end-correct','#rCorrect','#correct-score','#correctScore']);
-    const wrongText = platformNumber(['#wrongCount','#wrongFinal','#finalWrong','#end-wrong','#rWrong','#wrong-score','#wrongScore']);
-    if (correctText === null || wrongText === null) return;
-    platformSaved = true;
-    const toNumber = value => Number(String(value).replace(/[۰-۹]/g, digit => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)));
-    const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
-    await syncSaveResult(platformStudent.studentCode, GAME_ID, toNumber(correctText), toNumber(wrongText), durationSeconds);
-}
-new MutationObserver(platformSaveResult).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
 </script>
 
 <canvas id="gameCanvas"></canvas>
@@ -846,7 +841,8 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
                     </div>
 
                 </div>
-
+                
+                <!-- INTEGRATION: نمایش تعداد صحیح و غلط به جای نمره -->
                 <div class="hud-pill">✅ درست: <span id="correct-count">۰</span></div>
                 <div class="hud-pill">❌ غلط: <span id="wrong-count">۰</span></div>
                 <div class="hud-pill">⏱ زمان: <span id="game-timer">۰:۰۰</span></div>
@@ -939,7 +935,7 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             color:#fff;
             font-size:1.1rem;
             line-height:1.8;
-            margin-bottom:20px;
+            margin-bottom: 25px;
             ">
             به بازی آموزشی<br>
             <b>«قایق کلمات و پیشوند هم»</b><br>
@@ -987,7 +983,8 @@ new MutationObserver(platformSaveResult).observe(document.documentElement, { chi
             margin-bottom:18px;
             ">
         </p>
-
+        
+        <!-- INTEGRATION: نمایش آمار درست و غلط در صفحه پایان -->
         <div id="final-correct" style="color:#00f5d4;font-size:1.6rem;font-weight:900;">پاسخ درست: ۰</div>
         <div id="final-wrong" style="color:#ff8a8a;font-size:1.6rem;font-weight:900;margin-bottom:22px;">پاسخ غلط: ۰</div>
 
@@ -1190,17 +1187,71 @@ const sfx=
 const WORD_ITEMS=[
 
     /* درست */
-    { id:1, text:"همراه", isCorrect:true, base:"راه" },
-    { id:2, text:"همکار", isCorrect:true, base:"کار" },
-    { id:3, text:"هم‌سفر", isCorrect:true, base:"سفر" },
-    { id:4, text:"هم‌فکر", isCorrect:true, base:"فکر" },
-    { id:5, text:"هم‌کلاسی", isCorrect:true, base:"کلاسی" },
-    { id:6, text:"هم‌نظر", isCorrect:true, base:"نظر" },
+
+    {
+        id:1,
+        text:"همراه",
+        isCorrect:true,
+        base:"راه"
+    },
+
+    {
+        id:2,
+        text:"همکار",
+        isCorrect:true,
+        base:"کار"
+    },
+
+    {
+        id:3,
+        text:"هم‌سفر",
+        isCorrect:true,
+        base:"سفر"
+    },
+
+    {
+        id:4,
+        text:"هم‌فکر",
+        isCorrect:true,
+        base:"فکر"
+    },
+
+    {
+        id:5,
+        text:"هم‌کلاسی",
+        isCorrect:true,
+        base:"کلاسی"
+    },
+
+    {
+        id:6,
+        text:"هم‌نظر",
+        isCorrect:true,
+        base:"نظر"
+    },
 
     /* غلط */
-    { id:7, text:"همیشه", isCorrect:false, base:"" },
-    { id:8, text:"همان", isCorrect:false, base:"" },
-    { id:9, text:"همین", isCorrect:false, base:"" }
+
+    {
+        id:7,
+        text:"همیشه",
+        isCorrect:false,
+        base:""
+    },
+
+    {
+        id:8,
+        text:"همان",
+        isCorrect:false,
+        base:""
+    },
+
+    {
+        id:9,
+        text:"همین",
+        isCorrect:false,
+        base:""
+    }
 
 ];
 
@@ -1257,7 +1308,7 @@ const backgroundImage=
     new Image();
 
 backgroundImage.src=
-"../assets/img/game003-media-02.jpeg";
+"https://cdn.imgurl.ir/uploads/t406925_IMG_5227.jpeg";
 
 
 const boat={
@@ -2032,7 +2083,7 @@ function handleWordClick(
         );
 
 
-        document.getElementById("correct-count").textContent=toFa(foundCount);
+        document.getElementById("correct-count").textContent = toFa(foundCount);
 
 
         progressBar.style.width=
@@ -2095,7 +2146,7 @@ function handleWordClick(
         sfx.wrong();
 
         wrongCount++;
-        document.getElementById("wrong-count").textContent=toFa(wrongCount);
+        document.getElementById("wrong-count").textContent = toFa(wrongCount);
 
 
         /* افکت سوختن */
@@ -2257,7 +2308,7 @@ function showToast(
    VICTORY
 ================================= */
 
-function triggerVictory(){
+async function triggerVictory(){
 
     sfx.victory();
 
@@ -2266,6 +2317,7 @@ function triggerVictory(){
         height/2
     );
 
+    clearInterval(timerInterval);
 
     document.getElementById(
         "victory-text"
@@ -2277,16 +2329,15 @@ function triggerVictory(){
         `;
 
 
-    document.getElementById("final-correct").textContent=`پاسخ درست: ${toFa(foundCount)}`;
-    document.getElementById("final-wrong").textContent=`پاسخ غلط: ${toFa(wrongCount)}`;
+    document.getElementById("final-correct").textContent = `پاسخ درست: ${toFa(foundCount)}`;
+    document.getElementById("final-wrong").textContent = `پاسخ غلط: ${toFa(wrongCount)}`;
     
-    // INTEGRATION 5: اصلاح ذخیره‌سازی داده‌های دانش‌آموز بر اساس پلتفرم
-    if(!resultSaved){
-        resultSaved=true;
-        platformSaved=true;
-        syncSaveResult(platformStudent.studentCode,GAME_ID,foundCount,wrongCount,Math.round((Date.now()-platformStartedAt)/1000));
+    // INTEGRATION: ثبت نتیجه در پلتفرم
+    if (!resultSaved && window.platformStudent) {
+        resultSaved = true;
+        const durationSeconds = Math.round((Date.now() - platformStartedAt) / 1000);
+        await syncSaveResult(platformStudent.studentCode, GAME_ID, foundCount, wrongCount, durationSeconds);
     }
-
 
     document.getElementById(
         "victory-modal"
@@ -2307,9 +2358,9 @@ function resetGame(){
     resultSaved=false;
 
     isLocked=false;
-
-    document.getElementById("correct-count").textContent="۰";
-    document.getElementById("wrong-count").textContent="۰";
+    
+    document.getElementById("correct-count").textContent = "۰";
+    document.getElementById("wrong-count").textContent = "۰";
 
     progressBar.style.width=
         "0%";
@@ -2329,15 +2380,12 @@ document.getElementById(
     "click",
     ()=>{
 
-        // INTEGRATION 2: دریافت نام دقیق از پلتفرم
-        studentName = platformStudent.fullName;
+        studentName = window.platformStudent ? window.platformStudent.fullName : "دانش‌آموز";
 
         studentBadge.textContent=
             `⛵ ناخدا: ${studentName}`;
 
-
         sfx.init();
-
 
         document.getElementById(
             "welcome-modal"
@@ -2348,6 +2396,7 @@ document.getElementById(
         resize();
 
         resetGame();
+        
         startTimer();
 
         requestAnimationFrame(
@@ -2357,17 +2406,25 @@ document.getElementById(
     }
 );
 
-function startTimer(){
+function startTimer() {
     clearInterval(timerInterval);
-    timeLeft=window.timerSeconds||180;
+    timeLeft = window.timerSeconds || 180;
     updateTimer();
-    timerInterval=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInterval);document.querySelectorAll('.word-btn').forEach(btn=>btn.style.pointerEvents='none');}},1000);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimer();
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            document.querySelectorAll('.word-btn').forEach(btn => btn.style.pointerEvents = 'none');
+            triggerVictory();
+        }
+    }, 1000);
 }
 
-function updateTimer(){
-    const minutes=Math.floor(timeLeft/60);
-    const seconds=String(timeLeft%60).padStart(2,'0');
-    document.getElementById('game-timer').textContent=`${toFa(minutes)}:${toFa(seconds)}`;
+function updateTimer() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = String(timeLeft % 60).padStart(2, '0');
+    document.getElementById('game-timer').textContent = `${toFa(minutes)}:${toFa(seconds)}`;
 }
 
 
